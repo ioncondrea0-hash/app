@@ -7,266 +7,144 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
   :root {
-    --bg: #070e0b;
-    --surface: #101a15;
-    --surface2: #172118;
-    --felt: #0d3b2e;
-    --gold: #c9a84c;
-    --neon: #00ffa3;
-    --danger: #ff4757;
-    --warn: #ffa502;
-    --muted: #4a7060;
-    --text: #e0f0e8;
-    --border: rgba(201,168,76,0.18);
+    --bg: #070e0b; --surface: #101a15; --surface2: #172118;
+    --felt: #0d3b2e; --gold: #c9a84c; --neon: #00ffa3;
+    --danger: #ff4757; --warn: #ffa502; --muted: #4a7060;
+    --text: #e0f0e8; --border: rgba(201,168,76,0.18);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
 
-  /* HEADER */
   header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; z-index: 50;
+    padding: 12px 16px; background: var(--surface);
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50;
   }
   .logo { font-size: 17px; font-weight: 700; }
-  .logo span { color: var(--gold); }
-  .logo em { color: var(--neon); font-style: normal; }
+  .logo span { color: var(--gold); } .logo em { color: var(--neon); font-style: normal; }
 
   .auto-toggle {
     display: flex; align-items: center; gap: 8px;
     background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 20px; padding: 6px 12px; cursor: pointer;
-    font-size: 12px; font-weight: 600; color: var(--muted);
-    transition: all 0.2s;
+    border-radius: 20px; padding: 7px 14px; cursor: pointer;
+    font-size: 13px; font-weight: 700; color: var(--muted); transition: all 0.2s;
+    -webkit-user-select: none; user-select: none;
   }
   .auto-toggle.active { border-color: var(--neon); color: var(--neon); background: rgba(0,255,163,0.08); }
-  .pulse-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--muted); transition: background 0.2s;
-  }
-  .auto-toggle.active .pulse-dot {
-    background: var(--neon);
-    box-shadow: 0 0 8px var(--neon);
-    animation: pulse 1.2s ease-in-out infinite;
-  }
+  .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background 0.2s; flex-shrink:0; }
+  .auto-toggle.active .pulse-dot { background: var(--neon); box-shadow: 0 0 8px var(--neon); animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
 
   /* CAMERA */
-  .cam-wrap {
-    position: relative; width: 100%;
-    background: #000; overflow: hidden;
+  .start-cam-btn {
+    width: 100%; padding: 30px; background: var(--surface);
+    border: 2px dashed var(--border); color: var(--muted);
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    -webkit-user-select: none; user-select: none;
   }
-  #videoEl { width: 100%; display: block; max-height: 50vh; object-fit: cover; }
+  .start-cam-btn span { font-size: 40px; }
+
+  .cam-wrap { position: relative; width: 100%; background: #000; overflow: hidden; }
+  #videoEl { width: 100%; display: block; max-height: 48vh; object-fit: cover; }
   #canvasEl { display: none; }
 
-  /* Overlay */
   .cam-overlay { position: absolute; inset: 0; pointer-events: none; }
+  .bracket { position: absolute; width: 28px; height: 28px; border-color: var(--neon); border-style: solid; opacity: 0.8; }
+  .bracket.tl{top:10px;left:10px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+  .bracket.tr{top:10px;right:10px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+  .bracket.bl{bottom:10px;left:10px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+  .bracket.br{bottom:10px;right:10px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
 
-  /* Corner brackets */
-  .bracket {
-    position: absolute; width: 28px; height: 28px;
-    border-color: var(--neon); border-style: solid;
-    opacity: 0.8;
-  }
-  .bracket.tl { top: 10px; left: 10px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-  .bracket.tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
-  .bracket.bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
-  .bracket.br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
-
-  /* Scan line */
-  .scanline {
-    position: absolute; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent 0%, var(--neon) 50%, transparent 100%);
-    opacity: 0; top: 0;
-    transition: opacity 0.3s;
-  }
-  .scanline.scanning { opacity: 1; animation: scanMove 2s linear infinite; }
+  .scanline { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--neon),transparent); opacity:0; top:0; }
+  .scanline.on { opacity:1; animation: scanMove 2s linear infinite; }
   @keyframes scanMove { 0%{top:5%} 100%{top:95%} }
 
-  /* Status overlay top-left */
   .cam-status {
-    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-    font-size: 11px; font-family: 'JetBrains Mono', monospace;
-    color: var(--gold); letter-spacing: 1px;
-    background: rgba(0,0,0,0.6); padding: 3px 10px; border-radius: 10px;
-    pointer-events: none;
+    position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--gold);
+    letter-spacing:1px; background:rgba(0,0,0,0.6); padding:3px 10px; border-radius:10px;
   }
 
-  /* Countdown ring */
-  .countdown-wrap {
-    position: absolute; bottom: 10px; right: 10px;
-    width: 40px; height: 40px;
-    display: none;
-  }
-  .countdown-wrap.visible { display: block; }
-  .countdown-svg { width: 40px; height: 40px; transform: rotate(-90deg); }
-  .countdown-circle {
-    fill: none; stroke: var(--neon); stroke-width: 3;
-    stroke-dasharray: 100; stroke-dashoffset: 100;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 0.1s linear;
-  }
-  .countdown-num {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700; color: var(--neon);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .countdown-wrap { position:absolute; bottom:10px; right:10px; width:44px; height:44px; display:none; }
+  .countdown-wrap.on { display:block; }
+  .countdown-svg { width:44px; height:44px; transform:rotate(-90deg); }
+  .countdown-circle { fill:none; stroke:var(--neon); stroke-width:3; stroke-linecap:round; transition:stroke-dashoffset 0.9s linear; }
+  .countdown-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:var(--neon); font-family:'JetBrains Mono',monospace; }
 
-  /* START CAM button */
-  .start-cam-btn {
-    width: 100%; padding: 22px;
-    background: var(--surface); border: 2px dashed var(--border);
-    color: var(--muted); font-size: 15px; font-weight: 600;
-    cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-  }
-  .start-cam-btn span { font-size: 36px; }
+  /* ADVICE */
+  .advice-card { margin:12px; background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+  .action-bar { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); }
+  .action-badge { font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; padding:7px 16px; border-radius:10px; letter-spacing:1px; min-width:110px; text-align:center; }
+  .badge-fold  { background:rgba(255,71,87,0.15);  color:var(--danger); border:2px solid var(--danger); }
+  .badge-call  { background:rgba(255,165,2,0.15);  color:var(--warn);   border:2px solid var(--warn); }
+  .badge-raise { background:rgba(0,255,163,0.12);  color:var(--neon);   border:2px solid var(--neon); }
+  .badge-check { background:rgba(255,255,255,0.07);color:#ccc;          border:2px solid #444; }
+  .badge-wait  { background:var(--surface2);       color:var(--muted);  border:2px dashed var(--border); font-size:13px; }
 
-  /* ADVICE CARD — главный блок */
-  .advice-card {
-    margin: 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-  }
+  .equity-mini { text-align:right; }
+  .equity-mini .pct { font-size:22px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--neon); }
+  .equity-mini .lbl { font-size:10px; color:var(--muted); }
 
-  .action-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .action-badge {
-    font-size: 22px; font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    padding: 6px 16px; border-radius: 10px;
-    letter-spacing: 1px; min-width: 110px; text-align: center;
-  }
-  .badge-fold  { background: rgba(255,71,87,0.15);  color: var(--danger); border: 2px solid var(--danger); }
-  .badge-call  { background: rgba(255,165,2,0.15);  color: var(--warn);   border: 2px solid var(--warn); }
-  .badge-raise { background: rgba(0,255,163,0.12);  color: var(--neon);   border: 2px solid var(--neon); }
-  .badge-check { background: rgba(255,255,255,0.07);color: #ccc;          border: 2px solid #444; }
-  .badge-wait  { background: var(--surface2);       color: var(--muted);  border: 2px dashed var(--border); font-size:14px; }
+  .advice-text { padding:12px 14px; font-size:13px; line-height:1.65; color:var(--text); min-height:70px; }
+  .advice-text.loading { color:var(--muted); display:flex; align-items:center; gap:10px; }
 
-  .equity-mini { text-align: right; }
-  .equity-mini .pct { font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--neon); }
-  .equity-mini .lbl { font-size: 10px; color: var(--muted); }
+  .cards-strip { padding:8px 14px 12px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; border-top:1px solid var(--border); }
+  .strip-lbl { font-size:10px; color:var(--muted); margin-right:4px; font-family:'JetBrains Mono',monospace; }
+  .mini-card { display:inline-flex; flex-direction:column; align-items:center; width:30px; height:42px; border-radius:5px; font-size:11px; font-weight:700; justify-content:center; gap:1px; }
+  .mini-card.red{background:#fff;color:#c0392b} .mini-card.black{background:#fff;color:#111}
+  .mini-card.unk{background:var(--surface2);color:var(--muted);border:1px dashed var(--border);font-size:15px}
+  .csep{width:1px;height:36px;background:var(--border);margin:0 4px}
 
-  .advice-text {
-    padding: 12px 14px;
-    font-size: 13px; line-height: 1.65; color: var(--text);
-    min-height: 70px;
-  }
-  .advice-text.loading { color: var(--muted); display: flex; align-items: center; gap: 10px; }
+  /* MANUAL */
+  .manual-section { padding:0 12px 12px; }
+  .section-lbl { font-size:10px; letter-spacing:1.5px; color:var(--gold); font-family:'JetBrains Mono',monospace; padding:10px 0 8px; text-transform:uppercase; }
+  .cards-row { display:flex; gap:7px; flex-wrap:wrap; }
+  .card-slot { width:40px; height:54px; border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:12px; font-weight:700; cursor:pointer; border:2px solid transparent; flex-shrink:0; }
+  .card-slot.red{background:#fff;color:#c0392b;border-color:#ddd}
+  .card-slot.black{background:#fff;color:#111;border-color:#ddd}
+  .card-slot.empty{background:var(--surface2);border:2px dashed var(--border);color:var(--muted);font-size:20px}
 
-  .cards-detected {
-    padding: 8px 14px 12px;
-    display: flex; align-items: center; gap: 6px;
-    flex-wrap: wrap;
-    border-top: 1px solid var(--border);
-  }
-  .cards-lbl { font-size: 10px; color: var(--muted); margin-right: 4px; font-family: 'JetBrains Mono', monospace; }
-  .mini-card {
-    display: inline-flex; flex-direction: column; align-items: center;
-    width: 32px; height: 44px; border-radius: 5px;
-    font-size: 11px; font-weight: 700;
-    justify-content: center; gap: 1px;
-  }
-  .mini-card.red { background:#fff; color:#c0392b; }
-  .mini-card.black { background:#fff; color:#111; }
-  .mini-card.unknown { background: var(--surface2); color: var(--muted); border: 1px dashed var(--border); font-size:16px; }
-  .sep { width: 1px; height: 36px; background: var(--border); margin: 0 4px; }
-
-  /* MANUAL CARDS */
-  .manual-section { padding: 0 12px 12px; }
-  .section-lbl {
-    font-size: 10px; letter-spacing: 1.5px; color: var(--gold);
-    font-family: 'JetBrains Mono', monospace;
-    padding: 10px 0 8px; text-transform: uppercase;
-  }
-  .cards-row { display: flex; gap: 7px; flex-wrap: wrap; }
-  .card-slot {
-    width: 40px; height: 54px; border-radius: 6px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; cursor: pointer;
-    border: 2px solid transparent; transition: all 0.15s; flex-shrink: 0;
-  }
-  .card-slot.red { background:#fff; color:#c0392b; border-color:#ddd; }
-  .card-slot.black { background:#fff; color:#111; border-color:#ddd; }
-  .card-slot.empty { background: var(--surface2); border: 2px dashed var(--border); color: var(--muted); font-size: 20px; }
-
-  /* GAME PARAMS */
-  .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 0 12px 12px; }
-  .param-cell {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 8px 10px;
-  }
-  .param-cell label { font-size: 10px; color: var(--muted); display: block; margin-bottom: 3px; }
-  .param-cell input, .param-cell select {
-    background: transparent; border: none; color: var(--text);
-    font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600;
-    width: 100%; outline: none;
-  }
-  .param-cell select option { background: #111; }
+  /* PARAMS */
+  .params-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; padding:0 12px 12px; }
+  .param-cell { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:8px 10px; }
+  .param-cell label { font-size:10px; color:var(--muted); display:block; margin-bottom:3px; }
+  .param-cell input, .param-cell select { background:transparent; border:none; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:600; width:100%; outline:none; }
+  .param-cell select option { background:#111; }
 
   /* STREET TABS */
-  .street-row { display: flex; gap: 6px; padding: 0 12px 12px; }
-  .stab {
-    flex: 1; padding: 7px 4px; text-align: center;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; font-size: 11px; font-weight: 600;
-    color: var(--muted); cursor: pointer; transition: all 0.15s;
-  }
-  .stab.active { background: var(--felt); border-color: var(--gold); color: var(--gold); }
+  .street-row { display:flex; gap:6px; padding:0 12px 12px; }
+  .stab { flex:1; padding:7px 4px; text-align:center; background:var(--surface); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:600; color:var(--muted); cursor:pointer; }
+  .stab.active { background:var(--felt); border-color:var(--gold); color:var(--gold); }
 
-  /* LOADER DOTS */
-  .dots { display: inline-flex; gap: 4px; }
-  .dots span { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: dot 0.8s ease-in-out infinite; }
+  /* ERROR BOX */
+  .err-box { margin:0 12px 12px; padding:12px 14px; background:rgba(255,71,87,0.1); border:1px solid var(--danger); border-radius:12px; font-size:13px; color:var(--danger); display:none; }
+
+  /* LOADER */
+  .dots { display:inline-flex; gap:4px; }
+  .dots span { width:6px; height:6px; background:var(--gold); border-radius:50%; animation:dot 0.8s ease-in-out infinite; }
   .dots span:nth-child(2){animation-delay:.15s} .dots span:nth-child(3){animation-delay:.3s}
-  @keyframes dot { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-5px);opacity:1} }
+  @keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
 
   /* TOAST */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: var(--surface2); border: 1px solid var(--gold); color: var(--text);
-    padding: 9px 18px; border-radius: 20px; font-size: 12px; z-index: 999;
-    white-space: nowrap; pointer-events: none;
-    animation: toastIn 0.25s ease;
-  }
-  @keyframes toastIn { from{opacity:0;transform:translate(-50%,8px)} to{opacity:1;transform:translate(-50%,0)} }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--surface2); border:1px solid var(--gold); color:var(--text); padding:9px 18px; border-radius:20px; font-size:12px; z-index:999; white-space:nowrap; pointer-events:none; animation:toastIn 0.25s ease; }
+  @keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
 
   /* MODAL */
-  .modal-bg {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
-    z-index: 200; align-items: flex-end;
-  }
-  .modal-bg.open { display: flex; }
-  .modal {
-    width: 100%; background: var(--surface);
-    border-radius: 20px 20px 0 0; padding: 18px 14px 36px;
-  }
-  .modal-title { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 12px; text-align: center; }
-  .suit-row { display: flex; gap: 6px; margin-bottom: 10px; }
-  .suit-btn {
-    flex: 1; padding: 10px; border-radius: 10px; font-size: 22px; text-align: center;
-    background: var(--surface2); border: 2px solid var(--border); cursor: pointer; transition: all .15s;
-  }
-  .suit-btn.sel { border-color: var(--gold); background: var(--felt); }
-  .rank-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; margin-bottom: 12px; }
-  .rank-btn {
-    padding: 9px 2px; text-align: center; border-radius: 8px; font-size: 13px; font-weight: 700;
-    background: var(--surface2); border: 2px solid var(--border); cursor: pointer; color: var(--text); transition: all .15s;
-  }
-  .rank-btn.sel { border-color: var(--neon); background: rgba(0,255,163,.1); color: var(--neon); }
-  .rank-btn:active { transform: scale(.9); }
-  .modal-btns { display: flex; gap: 8px; }
-  .mbtn { flex:1; padding:12px; border-radius:10px; border:none; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; cursor:pointer; }
-  .mbtn.ok { background: var(--gold); color:#000; }
-  .mbtn.cancel { background: var(--surface2); color: var(--muted); border:1px solid var(--border); }
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:200; align-items:flex-end; }
+  .modal-bg.open { display:flex; }
+  .modal { width:100%; background:var(--surface); border-radius:20px 20px 0 0; padding:18px 14px 40px; }
+  .modal-title { font-size:13px; font-weight:600; color:var(--gold); margin-bottom:12px; text-align:center; }
+  .suit-row { display:flex; gap:6px; margin-bottom:10px; }
+  .suit-btn { flex:1; padding:10px; border-radius:10px; font-size:22px; text-align:center; background:var(--surface2); border:2px solid var(--border); cursor:pointer; }
+  .suit-btn.sel { border-color:var(--gold); background:var(--felt); }
+  .rank-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:12px; }
+  .rank-btn { padding:9px 2px; text-align:center; border-radius:8px; font-size:13px; font-weight:700; background:var(--surface2); border:2px solid var(--border); cursor:pointer; color:var(--text); }
+  .rank-btn.sel { border-color:var(--neon); background:rgba(0,255,163,.1); color:var(--neon); }
+  .modal-btns { display:flex; gap:8px; }
+  .mbtn { flex:1; padding:13px; border-radius:10px; border:none; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; cursor:pointer; }
+  .mbtn.ok { background:var(--gold); color:#000; }
+  .mbtn.cancel { background:var(--surface2); color:var(--muted); border:1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -275,36 +153,35 @@
   <div class="logo">Poker<span>Eye</span> <em>AI</em></div>
   <div class="auto-toggle" id="autoToggle" onclick="toggleAuto()">
     <div class="pulse-dot"></div>
-    <span id="autoLabel">АВТО ВЫКЛ</span>
+    <span id="autoLabel">АВТО</span>
   </div>
 </header>
 
-<!-- CAMERA -->
 <div id="camPlaceholder" class="start-cam-btn" onclick="startCam()">
-  <span>📷</span>
-  Включить камеру
+  <span>📷</span>Включить камеру
 </div>
 <div class="cam-wrap" id="camWrap" style="display:none">
   <video id="videoEl" autoplay playsinline muted></video>
   <canvas id="canvasEl"></canvas>
   <div class="cam-overlay">
-    <div class="bracket tl"></div>
-    <div class="bracket tr"></div>
-    <div class="bracket bl"></div>
-    <div class="bracket br"></div>
+    <div class="bracket tl"></div><div class="bracket tr"></div>
+    <div class="bracket bl"></div><div class="bracket br"></div>
     <div class="scanline" id="scanLine"></div>
     <div class="cam-status" id="camStatus">НАВЕДИ НА СТОЛ</div>
   </div>
-  <div class="countdown-wrap" id="countdownWrap">
-    <svg class="countdown-svg" viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="16" fill="none" stroke="#172118" stroke-width="3"/>
-      <circle class="countdown-circle" id="countCircle" cx="20" cy="20" r="16"/>
+  <div class="countdown-wrap" id="cdWrap">
+    <svg class="countdown-svg" viewBox="0 0 44 44">
+      <circle cx="22" cy="22" r="18" fill="none" stroke="#172118" stroke-width="3"/>
+      <circle class="countdown-circle" id="cdCircle" cx="22" cy="22" r="18"/>
     </svg>
-    <div class="countdown-num" id="countNum">4</div>
+    <div class="countdown-num" id="cdNum">5</div>
   </div>
 </div>
 
-<!-- MAIN ADVICE -->
+<!-- ERROR -->
+<div class="err-box" id="errBox"></div>
+
+<!-- ADVICE -->
 <div class="advice-card">
   <div class="action-bar">
     <div class="action-badge badge-wait" id="actionBadge">ОЖИДАНИЕ</div>
@@ -315,13 +192,13 @@
     </div>
   </div>
   <div class="advice-text" id="adviceText">
-    Включи камеру и нажми <strong style="color:var(--gold)">АВТО</strong> — AI будет сам анализировать стол каждые 4 секунды.
+    Включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong> — AI сам анализирует стол каждые 5 секунд.
   </div>
-  <div class="cards-detected" id="cardsDetected" style="display:none"></div>
+  <div class="cards-strip" id="cardsStrip" style="display:none"></div>
 </div>
 
 <!-- STREET -->
-<div class="street-row">
+<div class="street-row" style="margin-top:12px">
   <div class="stab active" onclick="setStreet('preflop',this)">Префлоп</div>
   <div class="stab" onclick="setStreet('flop',this)">Флоп</div>
   <div class="stab" onclick="setStreet('turn',this)">Тёрн</div>
@@ -340,34 +217,21 @@
 
 <!-- PARAMS -->
 <div class="params-grid">
-  <div class="param-cell"><label>Банк (BB)</label><input id="pot" type="number" value="6"></div>
-  <div class="param-cell"><label>Ставка ко мне (BB)</label><input id="bet" type="number" value="0"></div>
+  <div class="param-cell"><label>Банк (BB)</label><input id="pot" type="number" value="6" inputmode="numeric"></div>
+  <div class="param-cell"><label>Ставка ко мне (BB)</label><input id="bet" type="number" value="0" inputmode="numeric"></div>
   <div class="param-cell"><label>Позиция</label>
-    <select id="pos">
-      <option>UTG</option><option>UTG+1</option><option>MP</option>
-      <option>HJ</option><option>CO</option><option selected>BTN</option>
-      <option>SB</option><option>BB</option>
-    </select>
+    <select id="pos"><option>UTG</option><option>UTG+1</option><option>MP</option><option>HJ</option><option>CO</option><option selected>BTN</option><option>SB</option><option>BB</option></select>
   </div>
   <div class="param-cell"><label>Игроков</label>
-    <select id="players">
-      <option>2</option><option>3</option><option>4</option>
-      <option>5</option><option selected>6</option>
-      <option>7</option><option>8</option><option>9</option>
-    </select>
+    <select id="players"><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option></select>
   </div>
-  <div class="param-cell"><label>Мой стек (BB)</label><input id="stack" type="number" value="100"></div>
+  <div class="param-cell"><label>Стек (BB)</label><input id="stack" type="number" value="100" inputmode="numeric"></div>
   <div class="param-cell"><label>Формат</label>
-    <select id="gameStage">
-      <option selected value="cash">Кэш</option>
-      <option value="early">Турнир (начало)</option>
-      <option value="bubble">Пузырь</option>
-      <option value="ft">Финальный стол</option>
-    </select>
+    <select id="gameStage"><option selected value="cash">Кэш</option><option value="early">Турнир</option><option value="bubble">Пузырь</option><option value="ft">Финальный стол</option></select>
   </div>
 </div>
 
-<!-- CARD PICKER MODAL -->
+<!-- CARD PICKER -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <div class="modal-title">Выбери карту</div>
@@ -378,18 +242,12 @@
       <div class="suit-btn" data-s="♣" onclick="pickSuit(this)">♣</div>
     </div>
     <div class="rank-grid">
-      <div class="rank-btn" onclick="pickRank(this)">A</div>
-      <div class="rank-btn" onclick="pickRank(this)">K</div>
-      <div class="rank-btn" onclick="pickRank(this)">Q</div>
-      <div class="rank-btn" onclick="pickRank(this)">J</div>
-      <div class="rank-btn" onclick="pickRank(this)">T</div>
-      <div class="rank-btn" onclick="pickRank(this)">9</div>
-      <div class="rank-btn" onclick="pickRank(this)">8</div>
-      <div class="rank-btn" onclick="pickRank(this)">7</div>
-      <div class="rank-btn" onclick="pickRank(this)">6</div>
-      <div class="rank-btn" onclick="pickRank(this)">5</div>
-      <div class="rank-btn" onclick="pickRank(this)">4</div>
-      <div class="rank-btn" onclick="pickRank(this)">3</div>
+      <div class="rank-btn" onclick="pickRank(this)">A</div><div class="rank-btn" onclick="pickRank(this)">K</div>
+      <div class="rank-btn" onclick="pickRank(this)">Q</div><div class="rank-btn" onclick="pickRank(this)">J</div>
+      <div class="rank-btn" onclick="pickRank(this)">T</div><div class="rank-btn" onclick="pickRank(this)">9</div>
+      <div class="rank-btn" onclick="pickRank(this)">8</div><div class="rank-btn" onclick="pickRank(this)">7</div>
+      <div class="rank-btn" onclick="pickRank(this)">6</div><div class="rank-btn" onclick="pickRank(this)">5</div>
+      <div class="rank-btn" onclick="pickRank(this)">4</div><div class="rank-btn" onclick="pickRank(this)">3</div>
       <div class="rank-btn" onclick="pickRank(this)">2</div>
     </div>
     <div class="modal-btns">
@@ -399,30 +257,46 @@
   </div>
 </div>
 
-<div style="height:30px"></div>
+<div style="height:40px"></div>
 
 <script>
-// ── STATE
 const S = {
-  street: 'preflop',
-  hole: [null, null],
-  board: [],
-  boardSlots: { preflop:0, flop:3, turn:4, river:5 },
-  autoMode: false,
-  autoInterval: null,
-  countdownInterval: null,
-  INTERVAL_SEC: 5,
-  analyzing: false,
-  stream: null,
-  picker: { type: null, idx: null, suit: null, rank: null },
+  street:'preflop', hole:[null,null], board:[],
+  boardSlots:{preflop:0,flop:3,turn:4,river:5},
+  autoMode:false, analyzing:false, stream:null,
+  cdInterval:null, INTERVAL:5,
+  picker:{type:null,idx:null,suit:null,rank:null}
 };
-const RED_SUITS = ['♥','♦'];
+const RED=['♥','♦'];
+const CIRC = 2 * Math.PI * 18; // r=18
+
+// ── API CALL
+async function callClaude(messages) {
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'anthropic-dangerous-direct-browser-ipc': 'true'   // ← required for browser
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      messages
+    })
+  });
+  if (!resp.ok) {
+    const err = await resp.text();
+    throw new Error(`HTTP ${resp.status}: ${err}`);
+  }
+  const data = await resp.json();
+  return data.content?.map(b => b.text||'').join('') || '';
+}
 
 // ── CAMERA
 async function startCam() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: {ideal:'environment'}, width:{ideal:1280} }
+      video:{ facingMode:{ideal:'environment'}, width:{ideal:1280} }
     });
     S.stream = stream;
     document.getElementById('videoEl').srcObject = stream;
@@ -430,7 +304,7 @@ async function startCam() {
     document.getElementById('camWrap').style.display = 'block';
     toast('📷 Камера включена — нажми АВТО');
   } catch(e) {
-    toast('Нет доступа к камере: ' + e.message);
+    showErr('Камера: ' + e.message);
   }
 }
 
@@ -443,63 +317,56 @@ function toggleAuto() {
   if (S.autoMode) {
     btn.classList.add('active');
     lbl.textContent = 'АВТО ВКЛ';
-    document.getElementById('scanLine').classList.add('scanning');
-    document.getElementById('countdownWrap').classList.add('visible');
+    document.getElementById('scanLine').classList.add('on');
+    document.getElementById('cdWrap').classList.add('on');
+    hideErr();
     startCountdown();
   } else {
     btn.classList.remove('active');
-    lbl.textContent = 'АВТО ВЫКЛ';
-    document.getElementById('scanLine').classList.remove('scanning');
-    document.getElementById('countdownWrap').classList.remove('visible');
-    clearInterval(S.autoInterval);
-    clearInterval(S.countdownInterval);
+    lbl.textContent = 'АВТО';
+    document.getElementById('scanLine').classList.remove('on');
+    document.getElementById('cdWrap').classList.remove('on');
+    clearInterval(S.cdInterval);
   }
 }
 
 function startCountdown() {
-  let remaining = S.INTERVAL_SEC;
-  updateCountdown(remaining);
-  // Immediate first scan
-  runAutoScan();
-
-  S.countdownInterval = setInterval(() => {
-    remaining--;
-    if (remaining <= 0) {
-      remaining = S.INTERVAL_SEC;
-      if (!S.analyzing) runAutoScan();
-    }
-    updateCountdown(remaining);
+  let rem = S.INTERVAL;
+  updateCD(rem);
+  runScan();
+  S.cdInterval = setInterval(() => {
+    rem--;
+    if (rem <= 0) { rem = S.INTERVAL; if (!S.analyzing) runScan(); }
+    updateCD(rem);
   }, 1000);
 }
 
-function updateCountdown(sec) {
-  const pct = (sec / S.INTERVAL_SEC) * 100;
-  const circumference = 2 * Math.PI * 16; // r=16
-  const offset = circumference * (1 - pct/100);
-  document.getElementById('countCircle').style.strokeDasharray = circumference;
-  document.getElementById('countCircle').style.strokeDashoffset = offset;
-  document.getElementById('countNum').textContent = sec;
+function updateCD(sec) {
+  const pct = sec / S.INTERVAL;
+  const offset = CIRC * (1 - pct);
+  const el = document.getElementById('cdCircle');
+  el.style.strokeDasharray = CIRC;
+  el.style.strokeDashoffset = offset;
+  document.getElementById('cdNum').textContent = sec;
 }
 
-async function runAutoScan() {
+async function runScan() {
   if (S.analyzing) return;
   S.analyzing = true;
   document.getElementById('camStatus').textContent = 'АНАЛИЗИРУЮ...';
-
   const vid = document.getElementById('videoEl');
   const canvas = document.getElementById('canvasEl');
-  canvas.width  = vid.videoWidth  || 640;
+  canvas.width = vid.videoWidth || 640;
   canvas.height = vid.videoHeight || 480;
   canvas.getContext('2d').drawImage(vid, 0, 0);
-  const b64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-
-  await analyzeFrame(b64);
+  const b64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
+  await doAnalyze(b64);
   document.getElementById('camStatus').textContent = 'СЛЕЖУ ЗА СТОЛОМ';
   S.analyzing = false;
 }
 
-// ── AI FRAME ANALYSIS (cards + advice in one call)
-async function analyzeFrame(b64Image) {
+// ── MAIN ANALYSIS
+async function doAnalyze(b64Image) {
   showLoading();
   const pot   = document.getElementById('pot').value   || 6;
   const bet   = document.getElementById('bet').value   || 0;
@@ -507,103 +374,79 @@ async function analyzeFrame(b64Image) {
   const plrs  = document.getElementById('players').value;
   const stack = document.getElementById('stack').value || 100;
   const stage = document.getElementById('gameStage').value;
-
   const manualHole  = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
   const manualBoard = S.board.map(c=>c.rank+c.suit).join(' ');
 
-  const prompt = `Ты — профессиональный покерный тренер и эксперт по компьютерному зрению.
+  const prompt = `Ты — профессиональный покерный тренер (Texas Hold'em No-Limit).
+${b64Image ? 'На изображении покерный стол.' : ''}
 
-На изображении — покерный стол (Texas Hold'em No-Limit).
+${b64Image ? `ШАГ 1 — РАСПОЗНАЙ КАРТЫ:
+• holeCards — мои 2 карты в руке (лицом вверх перед игроком или ближе к краю)
+• boardCards — общие карты в центре стола
+• Формат: ранг (A K Q J T 9-2) + масть (h♥ d♦ c♣ s♠). Пример: Ah Kd 2c
+• cardsConfidence: 0.0–1.0 (насколько уверен в распознавании)` : ''}
 
-ШАГ 1: РАСПОЗНАЙ КАРТЫ на изображении.
-- "holeCards" — мои 2 карты в руке (обычно ближе к краю стола или лицом вниз перед игроком)
-- "boardCards" — общие карты на столе (флоп/тёрн/ривер, в центре стола)
-- Если карты частично перекрыты — попробуй распознать всё равно
-- Если карты не видны чётко — используй null
+${manualHole  ? `Игрок указал свои карты вручную: ${manualHole}` : ''}
+${manualBoard ? `Игрок указал борд вручную: ${manualBoard}` : ''}
 
-Формат карты: буква ранга (A K Q J T 9 8 7 6 5 4 3 2) + буква масти (h=червы d=бубны c=трефы s=пики)
-Примеры: Ah Kd Qh 2c Ts
+ПАРАМЕТРЫ:
+• Стрит: ${S.street}
+• Позиция: ${pos} из ${plrs} игроков
+• Банк: ${pot} BB | Ставка ко мне: ${bet} BB | Мой стек: ${stack} BB
+• Формат: ${stage}
 
-${manualHole ? `ВАЖНО: Игрок вручную указал свои карты: ${manualHole} — используй их как holeCards если не видишь лучше.` : ''}
-${manualBoard ? `ВАЖНО: Игрок вручную указал борд: ${manualBoard} — используй его если не видишь лучше.` : ''}
+ШАГ 2 — ДАЙ СОВЕТ.
 
-ШАГ 2: ПАРАМЕТРЫ РАЗДАЧИ (уже известны):
-- Стрит: ${S.street}
-- Позиция: ${pos}
-- Банк: ${pot} BB
-- Ставка ко мне: ${bet} BB  
-- Стек: ${stack} BB
-- Игроков за столом: ${plrs}
-- Формат: ${stage}
-
-ШАГ 3: ДАЙ СОВЕТ основываясь на картах и параметрах.
-
-Ответь ТОЛЬКО валидным JSON (без markdown, без пояснений снаружи):
+Ответь СТРОГО только JSON (без markdown, без текста снаружи):
 {
-  "holeCards": ["Ah","Kd"] или [],
-  "boardCards": ["2c","Jh","Ts"] или [],
-  "cardsConfidence": 0.0-1.0,
-  "action": "FOLD" или "CALL" или "RAISE" или "CHECK",
-  "sizing": "например: рейз до 18BB" или null,
-  "equity": 0.0-1.0,
-  "confidence": 0.0-1.0,
-  "reason": "Объяснение на русском 2-3 предложения: сила руки, почему этот экшн, учёт позиции.",
-  "tip": "Один краткий тактический совет."
+  "holeCards": ["Ah","Kd"],
+  "boardCards": [],
+  "cardsConfidence": 0.8,
+  "action": "FOLD",
+  "sizing": null,
+  "equity": 0.55,
+  "confidence": 0.85,
+  "reason": "Объяснение на русском 2-3 предложения.",
+  "tip": "Один тактический совет."
 }`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: b64Image
-            ? [
-                { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64Image } },
-                { type: 'text', text: prompt }
-              ]
-            : [{ type: 'text', text: prompt }]
-        }]
-      })
-    });
+    const content = [];
+    if (b64Image) content.push({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:b64Image } });
+    content.push({ type:'text', text:prompt });
 
-    const data = await resp.json();
-    const raw = data.content?.map(b => b.text||'').join('') || '';
-    // extract JSON even if wrapped
+    const raw = await callClaude([{ role:'user', content }]);
     const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('No JSON');
+    if (!match) throw new Error('Нет JSON в ответе: ' + raw.slice(0,200));
     const res = JSON.parse(match[0]);
 
-    // Update cards if detected
-    if (res.holeCards?.length === 2 && res.cardsConfidence > 0.5) {
-      const parsed = res.holeCards.map(parseCard).filter(Boolean);
-      if (parsed.length === 2) S.hole = parsed;
+    // Update cards if detected with confidence
+    if (res.holeCards?.length === 2 && (res.cardsConfidence||0) > 0.5) {
+      const p = res.holeCards.map(parseCard).filter(Boolean);
+      if (p.length === 2) S.hole = p;
     }
-    if (res.boardCards?.length > 0 && res.cardsConfidence > 0.5) {
+    if (res.boardCards?.length > 0 && (res.cardsConfidence||0) > 0.5) {
       const slots = S.boardSlots[S.street];
-      const parsed = res.boardCards.slice(0, slots).map(parseCard).filter(Boolean);
-      if (parsed.length > 0) S.board = parsed;
+      const p = res.boardCards.slice(0,slots).map(parseCard).filter(Boolean);
+      if (p.length) S.board = p;
     }
     renderCards();
     showAdvice(res);
-
+    hideErr();
   } catch(e) {
     console.error(e);
-    showError();
+    showErr('Ошибка анализа: ' + e.message);
+    resetAdvice();
   }
 }
 
 function parseCard(code) {
   if (!code || code.length < 2) return null;
-  const RANKS = 'AKQJT98765432';
   const r = code[0].toUpperCase();
-  const sMap = { h:'♥', d:'♦', c:'♣', s:'♠' };
+  const sMap = {h:'♥',d:'♦',c:'♣',s:'♠'};
   const s = sMap[code[1].toLowerCase()];
-  if (!RANKS.includes(r) || !s) return null;
-  return { rank: r, suit: s, red: RED_SUITS.includes(s) };
+  if (!'AKQJT98765432'.includes(r) || !s) return null;
+  return { rank:r, suit:s, red:RED.includes(s) };
 }
 
 // ── UI
@@ -614,162 +457,110 @@ function showLoading() {
   document.getElementById('adviceText').innerHTML = '<div class="dots"><span></span><span></span><span></span></div>&nbsp;Анализирую...';
   document.getElementById('equityMini').style.display = 'none';
 }
-
+function resetAdvice() {
+  document.getElementById('actionBadge').className = 'action-badge badge-wait';
+  document.getElementById('actionBadge').textContent = 'ОШИБКА';
+  document.getElementById('adviceText').className = 'advice-text';
+  document.getElementById('adviceText').textContent = 'Не удалось проанализировать.';
+}
 function showAdvice(res) {
   const MAP = {
-    FOLD:  { cls:'badge-fold',  label:'✕ FOLD'  },
-    CALL:  { cls:'badge-call',  label:'✓ CALL'  },
-    RAISE: { cls:'badge-raise', label:'↑ RAISE' },
-    CHECK: { cls:'badge-check', label:'— CHECK' },
+    FOLD:{cls:'badge-fold',label:'✕ FOLD'},
+    CALL:{cls:'badge-call',label:'✓ CALL'},
+    RAISE:{cls:'badge-raise',label:'↑ RAISE'},
+    CHECK:{cls:'badge-check',label:'— CHECK'}
   };
-  const a = MAP[res.action] || { cls:'badge-check', label: res.action||'?' };
-
+  const a = MAP[res.action] || {cls:'badge-check', label: res.action||'?'};
   document.getElementById('actionBadge').className = 'action-badge ' + a.cls;
   document.getElementById('actionBadge').textContent = a.label;
 
   let html = `<p>${res.reason||''}</p>`;
   if (res.sizing) html += `<p style="margin-top:8px;color:var(--gold);font-size:12px">💰 ${res.sizing}</p>`;
   if (res.tip)    html += `<p style="margin-top:8px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);padding-top:8px">🎯 ${res.tip}</p>`;
-
   document.getElementById('adviceText').className = 'advice-text';
   document.getElementById('adviceText').innerHTML = html;
 
   if (res.equity != null) {
-    const pct = Math.round(res.equity * 100);
-    document.getElementById('equityPct').textContent = pct + '%';
+    document.getElementById('equityPct').textContent = Math.round(res.equity*100)+'%';
     document.getElementById('equityMini').style.display = 'block';
   }
-
-  // Show detected cards strip
-  renderDetectedStrip();
+  renderStrip();
 }
 
-function showError() {
-  document.getElementById('actionBadge').className = 'action-badge badge-wait';
-  document.getElementById('actionBadge').textContent = 'ОШИБКА';
-  document.getElementById('adviceText').className = 'advice-text';
-  document.getElementById('adviceText').textContent = 'Не удалось проанализировать. Проверь соединение.';
-}
-
-function renderDetectedStrip() {
-  const strip = document.getElementById('cardsDetected');
+function renderStrip() {
+  const strip = document.getElementById('cardsStrip');
   const all = [...S.hole.filter(Boolean), ...S.board.filter(Boolean)];
   if (!all.length) { strip.style.display='none'; return; }
   strip.style.display = 'flex';
-  strip.innerHTML = '<span class="cards-lbl">РАСПОЗНАНО:</span>';
-
-  S.hole.forEach((c,i) => {
-    if (c) strip.appendChild(makeMiniCard(c));
-    else {
-      const el = document.createElement('div');
-      el.className = 'mini-card unknown'; el.textContent = '?';
-      strip.appendChild(el);
-    }
+  strip.innerHTML = '<span class="strip-lbl">КАРТЫ:</span>';
+  S.hole.forEach(c => {
+    const el = document.createElement('div');
+    if (c) { el.className=`mini-card ${c.red?'red':'black'}`; el.innerHTML=`<div>${c.rank}</div><div>${c.suit}</div>`; }
+    else   { el.className='mini-card unk'; el.textContent='?'; }
+    strip.appendChild(el);
   });
-
   if (S.board.length) {
-    const sep = document.createElement('div');
-    sep.className = 'sep'; strip.appendChild(sep);
-    S.board.forEach(c => strip.appendChild(makeMiniCard(c)));
+    const sep=document.createElement('div'); sep.className='csep'; strip.appendChild(sep);
+    S.board.forEach(c => {
+      const el=document.createElement('div');
+      el.className=`mini-card ${c.red?'red':'black'}`;
+      el.innerHTML=`<div>${c.rank}</div><div>${c.suit}</div>`;
+      strip.appendChild(el);
+    });
   }
 }
 
-function makeMiniCard(c) {
-  const el = document.createElement('div');
-  el.className = `mini-card ${c.red?'red':'black'}`;
-  el.innerHTML = `<div>${c.rank}</div><div>${c.suit}</div>`;
-  return el;
+function showErr(msg) {
+  const box = document.getElementById('errBox');
+  box.textContent = '⚠️ ' + msg;
+  box.style.display = 'block';
 }
+function hideErr() { document.getElementById('errBox').style.display='none'; }
 
-// ── CARDS MANUAL
+// ── CARDS
 function setStreet(s, el) {
   S.street = s;
   document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   S.board = S.board.slice(0, S.boardSlots[s]);
-  document.getElementById('boardManual').style.display = s==='preflop' ? 'none' : 'block';
+  document.getElementById('boardManual').style.display = s==='preflop'?'none':'block';
   renderCards();
 }
-
 function renderCards() {
-  // Hole
   const hr = document.getElementById('holeRow');
   hr.innerHTML = '';
   for(let i=0;i<2;i++) {
-    const c = S.hole[i];
-    const el = document.createElement('div');
-    if(c) {
-      el.className = `card-slot ${c.red?'red':'black'}`;
-      el.innerHTML = `<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;
-    } else {
-      el.className = 'card-slot empty'; el.textContent = '+';
-    }
-    el.onclick = () => openPicker('hole', i);
-    hr.appendChild(el);
+    const c=S.hole[i], el=document.createElement('div');
+    if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;}
+    else{el.className='card-slot empty';el.textContent='+';}
+    el.onclick=()=>openPicker('hole',i); hr.appendChild(el);
   }
-  // Board
-  const slots = S.boardSlots[S.street];
-  const br = document.getElementById('boardRow');
-  br.innerHTML = '';
-  for(let i=0;i<slots;i++) {
-    const c = S.board[i];
-    const el = document.createElement('div');
-    if(c) {
-      el.className = `card-slot ${c.red?'red':'black'}`;
-      el.innerHTML = `<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;
-    } else {
-      el.className = 'card-slot empty'; el.textContent = '+';
-    }
-    el.onclick = () => openPicker('board', i);
-    br.appendChild(el);
+  const slots=S.boardSlots[S.street], br=document.getElementById('boardRow');
+  br.innerHTML='';
+  for(let i=0;i<slots;i++){
+    const c=S.board[i],el=document.createElement('div');
+    if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;}
+    else{el.className='card-slot empty';el.textContent='+';}
+    el.onclick=()=>openPicker('board',i); br.appendChild(el);
   }
 }
 
 // ── PICKER
-function openPicker(type, idx) {
-  S.picker = { type, idx, suit:null, rank:null };
-  document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));
-  document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('modalBg').classList.add('open');
+function openPicker(type,idx){S.picker={type,idx,suit:null,rank:null};document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));document.getElementById('modalBg').classList.add('open');}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');}
+function pickSuit(el){document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.suit=el.dataset.s;}
+function pickRank(el){document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.rank=el.textContent;}
+function confirmCard(){
+  if(!S.picker.suit||!S.picker.rank){toast('Выбери масть и ранг');return;}
+  const c={rank:S.picker.rank,suit:S.picker.suit,red:RED.includes(S.picker.suit)};
+  if(S.picker.type==='hole')S.hole[S.picker.idx]=c; else S.board[S.picker.idx]=c;
+  renderCards(); closeModal();
+  if(!S.autoMode) { S.analyzing=false; doAnalyze(null); }
 }
-function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
-function pickSuit(el) {
-  document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));
-  el.classList.add('sel'); S.picker.suit = el.dataset.s;
-}
-function pickRank(el) {
-  document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));
-  el.classList.add('sel'); S.picker.rank = el.textContent;
-}
-function confirmCard() {
-  if (!S.picker.suit || !S.picker.rank) { toast('Выбери масть и ранг'); return; }
-  const c = { rank: S.picker.rank, suit: S.picker.suit, red: RED_SUITS.includes(S.picker.suit) };
-  if (S.picker.type === 'hole') S.hole[S.picker.idx] = c;
-  else S.board[S.picker.idx] = c;
-  renderCards();
-  closeModal();
-  // If not in auto mode — analyse manually after card pick
-  if (!S.autoMode) analyzeManual();
-}
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
 
-async function analyzeManual() {
-  if (S.hole.filter(Boolean).length < 2) return;
-  S.analyzing = true;
-  await analyzeFrame(null); // no image, use manual cards only
-  S.analyzing = false;
-}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
 
-document.getElementById('modalBg').addEventListener('click', e => { if(e.target===document.getElementById('modalBg')) closeModal(); });
-
-// ── TOAST
-function toast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(), 2800);
-}
-
-// INIT
 renderCards();
 </script>
 </body>
