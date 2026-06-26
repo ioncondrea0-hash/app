@@ -387,7 +387,19 @@ ${manualOppCount ? 'ПОДСКАЗКА - оппонентов: '+manualOppCount 
     document.getElementById('infoBar').style.display = 'flex';
     parseAndShowInfo(situation);
 
-    // ══ ЭТАП 2: Gemini анализирует покер (только текст)
+    // ── Проверка: видны ли карты?
+    const cardsLine = situation.match(/КАРТЫ ИГРОКА:\s*(.+)/i)?.[1]?.trim() || '';
+    const noCards = cardsLine.includes('НЕИЗВЕСТНО') || cardsLine === '' || cardsLine === '—';
+    const manualCardsExist = manualHole.length > 0;
+
+    if (noCards && !manualCardsExist) {
+      setAdvice('?', 'badge-wait', '🃏 Карты не видны — наведи камеру на свои карты или введи вручную.');
+      setStage(0);
+      document.getElementById('camStatus').textContent = 'СЛЕЖУ ЗА СТОЛОМ';
+      return;
+    }
+
+    // ══ ЭТАП 2: Groq 70b анализирует покер (только текст)
     setStage(2);
     document.getElementById('camStatus').textContent = 'ШАГ 2: GTO АНАЛИЗ...';
 
