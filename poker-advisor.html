@@ -58,6 +58,8 @@
   .advice-text.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
 
   /* MTT STAGE SELECTOR */
+  .pos-btn{flex:1;padding:7px 2px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none;font-family:'JetBrains Mono',monospace}
+  .pos-btn.active{background:rgba(0,255,163,0.12);border-color:var(--neon);color:var(--neon)}
   .mtt-stage{margin:8px 10px;display:flex;gap:5px}
   .mtt-btn{flex:1;padding:7px 4px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none}
   .mtt-btn.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
@@ -143,6 +145,20 @@
   <div class="info-chip"><span class="lbl">СТАВКА</span><span id="infoBet">—</span></div>
   <div class="info-chip"><span class="lbl">СТЕК</span><span id="infoStack">—</span></div>
   <div class="info-chip"><span class="lbl">ОПП</span><span id="infoOpp">—</span></div>
+</div>
+
+<!-- POSITION BUTTONS -->
+<div style="padding:8px 10px 4px;background:var(--surface);border-bottom:1px solid var(--border)">
+  <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:6px">МОЯ ПОЗИЦИЯ (тап чтобы выбрать)</div>
+  <div style="display:flex;gap:5px">
+    <div class="pos-btn" onclick="setPos('UTG',this)">UTG</div>
+    <div class="pos-btn" onclick="setPos('MP',this)">MP</div>
+    <div class="pos-btn" onclick="setPos('HJ',this)">HJ</div>
+    <div class="pos-btn" onclick="setPos('CO',this)">CO</div>
+    <div class="pos-btn active" onclick="setPos('BTN',this)">BTN</div>
+    <div class="pos-btn" onclick="setPos('SB',this)">SB</div>
+    <div class="pos-btn" onclick="setPos('BB',this)">BB</div>
+  </div>
 </div>
 
 <!-- MTT STAGE -->
@@ -362,7 +378,13 @@ const S = {
 const RED=['♥','♦'];
 const CIRC=2*Math.PI*18;
 
-function setMTT(stage, el) {
+S.selectedPos = 'BTN';
+
+function setPos(pos, el) {
+  S.selectedPos = pos;
+  document.querySelectorAll('.pos-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
   S.mttStage = stage;
   document.querySelectorAll('.mtt-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
@@ -467,17 +489,32 @@ ${kb}
 
 ═══ ТЕКУЩАЯ СИТУАЦИЯ ═══
 ${b64Image ? `Изучи изображение покерного стола и определи:
+
+КАРТЫ И БОРД:
 - Мои карты (обычно внизу, помечены HERO)
 - Карты на борде (центр стола)
-- Размер банка
-- Ставки оппонентов (числа у их фишек)
-- Мою позицию за столом
-- Стеки всех игроков
-- Действия оппонентов` : ''}
+
+ПОЗИЦИЯ (ОЧЕНЬ ВАЖНО):
+Найди дилерскую кнопку — это круглый жёлтый/белый кружок с буквой "D" или "Dealer".
+Используй её чтобы определить мою позицию:
+- Кнопка D у меня (внизу экрана) → я BTN (баттон)
+- Кнопка D у игрока справа от меня → я CO (катофф)
+- Кнопка D два места справа → я HJ
+- Кнопка D три места справа → я MP
+- Кнопка D в дальнем конце стола → я UTG
+- Я сижу сразу ПОСЛЕ кнопки D (слева от неё) → я SB
+- Я сижу через одного после кнопки D → я BB
+Если кнопку D не видно — напиши НЕИЗВЕСТНО
+
+СТАВКИ И СТЕКИ:
+- Размер банка (число в центре)
+- Ставки оппонентов (числа рядом с их фишками)
+- Мой стек и стеки оппонентов
+- Действия оппонентов (рейз/колл/чек/олл-ин)` : ''}
 
 ${manualHole ? '✅ Мои карты: '+manualHole : ''}
 ${manualBoard ? '✅ Борд: '+manualBoard : ''}
-${manualPos ? '✅ Позиция: '+manualPos : ''}
+${'✅ Позиция: '+(manualPos || S.selectedPos)}
 ${manualPot ? '✅ Банк: '+manualPot+' BB' : ''}
 ${manualBet ? '✅ Ставка: '+manualBet+' BB' : ''}
 ${manualStack ? '✅ Мой стек: '+manualStack+' BB' : ''}
