@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PokerEye AI — MTT</title>
+<title>PokerEye AI</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
   :root {
@@ -17,16 +17,15 @@
   header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
   .logo{font-size:17px;font-weight:700}
   .logo span{color:var(--gold)}.logo em{color:var(--neon);font-style:normal}
-  .logo small{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-left:6px}
   .auto-toggle{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .2s;-webkit-user-select:none;user-select:none}
   .auto-toggle.active{border-color:var(--neon);color:var(--neon);background:rgba(0,255,163,0.08)}
-  .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .2s}
+  .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0}
   .auto-toggle.active .pulse-dot{background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 1.2s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
   .start-cam-btn{width:100%;padding:28px;background:var(--surface);border:2px dashed var(--border);color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px}
   .start-cam-btn span{font-size:38px}
   .cam-wrap{position:relative;width:100%;background:#000;overflow:hidden}
-  #videoEl{width:100%;display:block;max-height:50vh;object-fit:cover}
+  #videoEl{width:100%;display:block;max-height:48vh;object-fit:cover}
   #canvasEl{display:none}
   .cam-overlay{position:absolute;inset:0;pointer-events:none}
   .bracket{position:absolute;width:26px;height:26px;border-color:var(--neon);border-style:solid;opacity:.85}
@@ -43,27 +42,25 @@
   .countdown-svg{width:42px;height:42px;transform:rotate(-90deg)}
   .countdown-circle{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
   .countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
+  .pos-row{display:flex;gap:5px;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
+  .pos-btn{flex:1;padding:7px 2px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'JetBrains Mono',monospace;-webkit-user-select:none;user-select:none}
+  .pos-btn.active{background:rgba(0,255,163,0.12);border-color:var(--neon);color:var(--neon)}
+  .mtt-row{display:flex;gap:5px;padding:6px 10px;background:var(--surface2);border-bottom:1px solid var(--border)}
+  .mtt-btn{flex:1;padding:6px 2px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none}
+  .mtt-btn.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
   .info-bar{display:none;flex-wrap:wrap;gap:5px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
   .info-chip{display:flex;align-items:center;gap:3px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:3px 7px}
   .info-chip .lbl{color:var(--muted);font-size:9px;margin-right:2px}
   .advice-card{margin:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
   .action-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
-  .action-badge{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:8px 16px;border-radius:10px;letter-spacing:1px;min-width:110px;text-align:center;transition:all .3s}
+  .action-badge{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:8px 16px;border-radius:10px;letter-spacing:1px;min-width:100px;text-align:center}
   .badge-fold{background:rgba(255,71,87,.15);color:var(--danger);border:2px solid var(--danger)}
   .badge-call{background:rgba(255,165,2,.15);color:var(--warn);border:2px solid var(--warn)}
   .badge-raise{background:rgba(0,255,163,.12);color:var(--neon);border:2px solid var(--neon)}
   .badge-check{background:rgba(255,255,255,.07);color:#ccc;border:2px solid #444}
-  .badge-wait{background:var(--surface2);color:var(--muted);border:2px dashed var(--border);font-size:13px}
+  .badge-wait{background:var(--surface2);color:var(--muted);border:2px dashed var(--border);font-size:12px}
   .advice-text{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text);min-height:80px}
   .advice-text.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
-
-  /* MTT STAGE SELECTOR */
-  .pos-btn{flex:1;padding:7px 2px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none;font-family:'JetBrains Mono',monospace}
-  .pos-btn.active{background:rgba(0,255,163,0.12);border-color:var(--neon);color:var(--neon)}
-  .mtt-stage{margin:8px 10px;display:flex;gap:5px}
-  .mtt-btn{flex:1;padding:7px 4px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none}
-  .mtt-btn.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
-
   .manual-wrap{margin:0 10px 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
   .manual-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;-webkit-user-select:none;user-select:none}
   .manual-header span{font-size:11px;font-weight:600;color:var(--muted)}
@@ -108,7 +105,7 @@
 <body>
 
 <header>
-  <div class="logo">Poker<span>Eye</span> <em>AI</em><small>MTT</small></div>
+  <div class="logo">Poker<span>Eye</span> <em>AI</em></div>
   <div class="auto-toggle" id="autoToggle" onclick="toggleAuto()">
     <div class="pulse-dot"></div>
     <span id="autoLabel">АВТО</span>
@@ -136,6 +133,25 @@
   </div>
 </div>
 
+<!-- POSITION -->
+<div class="pos-row">
+  <div class="pos-btn" onclick="setPos('UTG',this)">UTG</div>
+  <div class="pos-btn" onclick="setPos('MP',this)">MP</div>
+  <div class="pos-btn" onclick="setPos('HJ',this)">HJ</div>
+  <div class="pos-btn" onclick="setPos('CO',this)">CO</div>
+  <div class="pos-btn active" onclick="setPos('BTN',this)">BTN</div>
+  <div class="pos-btn" onclick="setPos('SB',this)">SB</div>
+  <div class="pos-btn" onclick="setPos('BB',this)">BB</div>
+</div>
+
+<!-- MTT STAGE -->
+<div class="mtt-row">
+  <div class="mtt-btn active" onclick="setMTT('early',this)">🟢 Начало</div>
+  <div class="mtt-btn" onclick="setMTT('mid',this)">🟡 Середина</div>
+  <div class="mtt-btn" onclick="setMTT('bubble',this)">🔴 Пузырь</div>
+  <div class="mtt-btn" onclick="setMTT('ft',this)">🏆 Финал</div>
+</div>
+
 <!-- INFO BAR -->
 <div class="info-bar" id="infoBar">
   <div class="info-chip"><span class="lbl">КАРТЫ</span><span id="infoCards">—</span></div>
@@ -147,28 +163,6 @@
   <div class="info-chip"><span class="lbl">ОПП</span><span id="infoOpp">—</span></div>
 </div>
 
-<!-- POSITION BUTTONS -->
-<div style="padding:8px 10px 4px;background:var(--surface);border-bottom:1px solid var(--border)">
-  <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:6px">МОЯ ПОЗИЦИЯ (тап чтобы выбрать)</div>
-  <div style="display:flex;gap:5px">
-    <div class="pos-btn" onclick="setPos('UTG',this)">UTG</div>
-    <div class="pos-btn" onclick="setPos('MP',this)">MP</div>
-    <div class="pos-btn" onclick="setPos('HJ',this)">HJ</div>
-    <div class="pos-btn" onclick="setPos('CO',this)">CO</div>
-    <div class="pos-btn active" onclick="setPos('BTN',this)">BTN</div>
-    <div class="pos-btn" onclick="setPos('SB',this)">SB</div>
-    <div class="pos-btn" onclick="setPos('BB',this)">BB</div>
-  </div>
-</div>
-
-<!-- MTT STAGE -->
-<div class="mtt-stage">
-  <div class="mtt-btn active" onclick="setMTT('early',this)">🟢 Начало</div>
-  <div class="mtt-btn" onclick="setMTT('mid',this)">🟡 Середина</div>
-  <div class="mtt-btn" onclick="setMTT('bubble',this)">🔴 Пузырь</div>
-  <div class="mtt-btn" onclick="setMTT('ft',this)">🏆 Фин. стол</div>
-</div>
-
 <!-- ADVICE -->
 <div class="advice-card">
   <div class="action-bar">
@@ -176,7 +170,7 @@
     <div style="flex:1"></div>
   </div>
   <div class="advice-text" id="adviceText">
-    Выбери стадию турнира вверху → включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong>
+    Выбери позицию и стадию МТТ → включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong>
   </div>
 </div>
 
@@ -201,15 +195,15 @@
     </div>
     <div class="sec-lbl" style="margin-top:6px">Параметры</div>
     <div class="mini-params">
-      <div class="mp"><label>Позиция</label>
-        <select id="pos"><option value="">Авто</option><option>UTG</option><option>UTG+1</option><option>MP</option><option>HJ</option><option>CO</option><option>BTN</option><option>SB</option><option>BB</option></select>
-      </div>
       <div class="mp"><label>Банк (BB)</label><input id="pot" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Ставка (BB)</label><input id="bet" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Мой стек (BB)</label><input id="stack" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Стек оппонента</label><input id="oppStack" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Оппонентов в руке</label>
+      <div class="mp"><label>Оппонентов</label>
         <select id="oppCount"><option value="">Авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
+      </div>
+      <div class="mp"><label>Действие оппонента</label>
+        <select id="oppAction"><option value="">Авто</option><option>лимп</option><option>рейз</option><option>3-бет</option><option>4-бет</option><option>олл-ин</option><option>чек</option><option>бет</option></select>
       </div>
     </div>
   </div>
@@ -245,126 +239,39 @@
 <script>
 const PROXY = 'https://cold-king-654b.ioncondrea0.workers.dev';
 
-// ── MTT KNOWLEDGE BASE
 const MTT_KB = {
-  early: `
-СТАДИЯ: Начало МТТ (стеки 50-100BB+)
-ЦЕЛЬ: Накопить фишки, играть агрессивно с хорошими руками.
+  early: `СТАДИЯ: Начало МТТ (стеки 50-100BB+). Цель: накопить фишки.
+ПРЕФЛОП ДИАПАЗОНЫ:
+- UTG: AA-77, AKo-AJs, AQo, KQs
+- MP: AA-66, AKo-ATs, AJo+, KQs-KTs, QJs, JTs
+- CO: AA-55, AKo-A9s, ATo+, KQo-KJo, QJo, T9s-87s
+- BTN: AA-22, AKo-A2s, KQo-K9o, QJo+, JTo, 98s-54s
+- SB: AA-22, AKo-A2s, широко
+- BB: защита широко
+ПРОТИВ 3-БЕТА: продолжать только AA/KK/QQ/JJ/AKs — остальное FOLD
+ПРОТИВ 4-БЕТА: только AA/KK — остальное FOLD`,
 
-ПРЕФЛОП ДИАПАЗОНЫ (открытие рейзом 2.5BB):
-- UTG: AA-77, AKo-AJs, AQo, KQs, KJs, QJs
-- MP: AA-66, AKo-ATs, AJo-AQo, KQs-KTs, QJs-QTs, JTs
-- CO: AA-55, AKo-A9s, ATo+, KQo-KJo, QJo, JTo, T9s, 98s, 87s
-- BTN: AA-22, AKo-A2s, KQo-K9o, QJo-Q9o, JTo-J9o, T9o, 98s-54s
-- SB: AA-22, AKo-A2s, KQo-K8o, широкий диапазон
-- BB: Защита против стилов широко
+  mid: `СТАДИЯ: Середина МТТ (стеки 20-50BB). ICM важен.
+ПУШ/ФОЛД при стеке < 15BB:
+- 15BB: AA-22, AKo-A2s, KQo-K9s
+- 10BB: AA-22, AKo-A7s, KQo-KJs
+- 7BB: почти любые 2 карты в поздней позиции
+ПРОТИВ ПУША: колл только AA-TT, AKo-AQs
+НЕ иди в монету без сильного преимущества!`,
 
-ПРОТИВ РЕЙЗА:
-- 3-бет для значения: AA, KK, QQ, JJ, AKs, AKo
-- 3-бет блеф (в позиции): A5s-A2s, KQs, некоторые suited connectors
-- Колл рейза: TT-77, AQo-AJs, KQs, suited connectors с позиции
-- FOLD против рейза: всё слабее при плохих пот-оддс
+  bubble: `СТАДИЯ: ПУЗЫРЬ — КРИТИЧНО! Попасть в мани важнее всего.
+ПРАВИЛА:
+- Никогда не рискуй всем стеком без AA/KK
+- С большим стеком: атакуй всех, особенно средние стеки
+- С коротким стеком (< 15BB): пуш или фолд ТОЛЬКО
+- Не колл олл-ин без AA/KK/QQ/AK на пузыре
+- Избегай сложных постфлоп ситуаций`,
 
-ПРОТИВ 3-БЕТА:
-- 4-бет для значения: AA, KK, QQ (иногда AKs)
-- Колл 3-бета: JJ, TT, AKo с позиции
-- FOLD: всё остальное
-
-ПРОТИВ 4-БЕТА:
-- Олл-ин или фолд: только AA, KK
-
-ПОСТФЛОП:
-- C-bet на флопе: 50-60% при 1 оппоненте, 33% при 2+
-- Топ пара + хороший кикер: бет 2 улицы
-- Сет/стрит/флеш: slow play или бет для создания банка
-- Дро: полублеф бет или колл при хороших шансах
-`,
-  mid: `
-СТАДИЯ: Середина МТТ (стеки 20-50BB, приближаемся к мани)
-ЦЕЛЬ: Сохранить стек, избегать ненужных рисков, использовать слабых игроков.
-
-КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ vs начало:
-- Играть тайтнее с маленькими стеками (20-30BB)
-- Пуш/фолд при стеке < 15BB
-- Больше ценить выживание
-- Атаковать короткие стеки
-
-ПУШ/ФОЛД ДИАПАЗОНЫ (стек < 15BB):
-- 15BB: пуш AA-22, AKo-A2s, KQo-K9s, QJs, JTs
-- 12BB: пуш AA-22, AKo-A4s, KQo-KTo, QJo, JTo
-- 10BB: пуш AA-22, AKo-A7s, KQo-KJs
-- 7BB: пуш почти любые 2 карты в поздней позиции
-
-ПРОТИВ ПУША (колл диапазон):
-- 15BB пуш: колл AA-TT, AKo-AQs
-- 10BB пуш: колл AA-99, AKo-AJs
-- Никогда не колл с плохими руками даже при хороших шансах в МТТ (ICM!)
-
-ICM ДАВЛЕНИЕ:
-- На пузыре сохранение стека важнее EV
-- Не иди в монету без сильного преимущества
-`,
-  bubble: `
-СТАДИЯ: ПУЗЫРЬ МТТ — КРИТИЧЕСКАЯ СТАДИЯ
-ЦЕЛЬ: Попасть в мани. Это важнее всего!
-
-ФУНДАМЕНТАЛЬНЫЕ ПРАВИЛА ПУЗЫРЯ:
-1. НИКОГДА не рискуй всем стеком без нат руки (AA/KK)
-2. Используй ICM давление на коротких стеков
-3. Сам будучи коротким стеком — пуш или фолд, никаких коллов без топ руки
-4. С большим стеком — атакуй всех, особенно средние стеки
-
-БОЛЬШОЙ СТЕК (50BB+):
-- Рейзь практически любые 2 карты против средних стеков
-- Атакуй BB коротких стеков с широким диапазоном
-- Не вступай в конфликт с другими большими стеками без топ руки
-
-СРЕДНИЙ СТЕК (20-40BB):
-- Играй тайтнее обычного
-- Не колл олл-ин без AA/KK/QQ/AK
-- Пуш с позиции против слабых стеков
-
-КОРОТКИЙ СТЕК (< 15BB):
-- Пуш или фолд ТОЛЬКО
-- Пуш с: AA-22, AKo-A2s, KQo-K9s в поздней позиции
-- Помни: лучше пройти в мани с 5BB чем вылететь на пузыре
-
-ПОСТФЛОП НА ПУЗЫРЕ:
-- Минимизируй постфлоп игру
-- Избегай сложных ситуаций
-- Лучше фолд чем риск всем стеком
-`,
-  ft: `
-СТАДИЯ: ФИНАЛЬНЫЙ СТОЛ МТТ
-ЦЕЛЬ: Максимизировать призовые. ICM критически важен.
-
-КЛЮЧЕВЫЕ ПРИНЦИПЫ:
-1. Каждое место = значительная разница в призовых
-2. ICM важнее EV чипов
-3. Адаптируйся к стекам за столом
-
-СТРАТЕГИЯ ПО СТЕКАМ:
-Большой стек (лидер):
-- Давление на всех кроме других больших стеков
-- Атакуй средние стеки которые не хотят рисковать
-- Позволяй коротким стекам биться между собой
-
-Средний стек:
-- Тайтнее чем обычно
-- Жди хороших спотов
-- Не колл пуш без TT+/AQs+
-- Следи за короткими стеками — они могут удвоиться
-
-Короткий стек:
-- Пуш или фолд немедленно
-- Лучше пушить сейчас пока есть fold equity
-- С 5BB пуш почти любые 2 карты в поздней позиции
-
-ХЕДЗ-АП (финал):
-- Играй очень широко
-- Пуш с любой A, любой парой, любым кингом
-- Агрессия ключ к победе
-`
+  ft: `СТАДИЯ: ФИНАЛЬНЫЙ СТОЛ. ICM критически важен!
+Большой стек: давление на всех, атакуй средние стеки
+Средний стек: тайтнее обычного, жди хороших спотов
+Короткий стек (< 10BB): пуш или фолд немедленно, не жди
+Хедз-ап: играй очень широко, агрессия ключ`
 };
 
 const S = {
@@ -373,80 +280,74 @@ const S = {
   autoMode:false, analyzing:false, stream:null,
   cdInterval:null, INTERVAL:5,
   picker:{type:null,idx:null,suit:null,rank:null},
-  mttStage: 'early'
+  pos:'BTN', mtt:'early'
 };
 const RED=['♥','♦'];
 const CIRC=2*Math.PI*18;
 
-S.selectedPos = 'BTN';
-
-function setPos(pos, el) {
-  S.selectedPos = pos;
+function setPos(p,el){
+  S.pos=p;
   document.querySelectorAll('.pos-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
 }
-  S.mttStage = stage;
+
+function setMTT(m,el){
+  S.mtt=m;
   document.querySelectorAll('.mtt-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  toast('Стадия: ' + el.textContent);
 }
 
-async function callClaude(prompt, image) {
-  const body = { prompt };
-  if (image) body.image = image;
-  const resp = await fetch(PROXY, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(body)
-  });
-  if (!resp.ok) throw new Error('HTTP '+resp.status);
-  const data = await resp.json();
-  if (data.error) throw new Error(data.error);
-  return data.text || '';
+async function callClaude(prompt,image){
+  const body={prompt};
+  if(image)body.image=image;
+  const resp=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!resp.ok)throw new Error('HTTP '+resp.status);
+  const data=await resp.json();
+  if(data.error)throw new Error(data.error);
+  return data.text||'';
 }
 
-async function startCam() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:{ideal:'environment'},width:{ideal:1280}}
-    });
-    S.stream = stream;
-    document.getElementById('videoEl').srcObject = stream;
-    document.getElementById('camPlaceholder').style.display = 'none';
-    document.getElementById('camWrap').style.display = 'block';
+async function startCam(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}}});
+    S.stream=stream;
+    document.getElementById('videoEl').srcObject=stream;
+    document.getElementById('camPlaceholder').style.display='none';
+    document.getElementById('camWrap').style.display='block';
     toast('📷 Камера включена — нажми АВТО');
-  } catch(e) { setAdvice('ОШИБКА','badge-wait','❌ '+e.message); }
+  }catch(e){setAdvice('ОШИБКА','badge-wait','❌ '+e.message);}
 }
 
-function toggleAuto() {
-  if (!S.stream) { toast('Сначала включи камеру'); return; }
-  S.autoMode = !S.autoMode;
-  const btn = document.getElementById('autoToggle');
-  if (S.autoMode) {
+function toggleAuto(){
+  if(!S.stream){toast('Сначала включи камеру');return;}
+  S.autoMode=!S.autoMode;
+  const btn=document.getElementById('autoToggle');
+  if(S.autoMode){
     btn.classList.add('active');
-    document.getElementById('autoLabel').textContent = 'АВТО ВКЛ';
+    document.getElementById('autoLabel').textContent='АВТО ВКЛ';
     document.getElementById('scanLine').classList.add('on');
     document.getElementById('cdWrap').classList.add('on');
     startCountdown();
-  } else {
+  }else{
     btn.classList.remove('active');
-    document.getElementById('autoLabel').textContent = 'АВТО';
+    document.getElementById('autoLabel').textContent='АВТО';
     document.getElementById('scanLine').classList.remove('on');
     document.getElementById('cdWrap').classList.remove('on');
     clearInterval(S.cdInterval);
   }
 }
 
-function startCountdown() {
-  let rem = S.INTERVAL;
-  updateCD(rem); runScan();
-  S.cdInterval = setInterval(()=>{
+function startCountdown(){
+  let rem=S.INTERVAL;
+  updateCD(rem);runScan();
+  S.cdInterval=setInterval(()=>{
     rem--;
     if(rem<=0){rem=S.INTERVAL;if(!S.analyzing)runScan();}
     updateCD(rem);
   },1000);
 }
 
-function updateCD(sec) {
+function updateCD(sec){
   const offset=CIRC*(1-sec/S.INTERVAL);
   const el=document.getElementById('cdCircle');
   el.style.strokeDasharray=CIRC;
@@ -454,7 +355,7 @@ function updateCD(sec) {
   document.getElementById('cdNum').textContent=sec;
 }
 
-async function runScan() {
+async function runScan(){
   if(S.analyzing)return;
   S.analyzing=true;
   document.getElementById('camStatus').textContent='АНАЛИЗИРУЮ...';
@@ -469,124 +370,107 @@ async function runScan() {
   S.analyzing=false;
 }
 
-async function doAnalyze(b64Image) {
+async function doAnalyze(b64Image){
   showLoading();
+  const manualHole=S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
+  const manualBoard=S.board.map(c=>c.rank+c.suit).join(' ');
+  const pot=document.getElementById('pot').value;
+  const bet=document.getElementById('bet').value;
+  const stack=document.getElementById('stack').value;
+  const oppStack=document.getElementById('oppStack').value;
+  const oppCount=document.getElementById('oppCount').value;
+  const oppAction=document.getElementById('oppAction').value;
+  const kb=MTT_KB[S.mtt];
 
-  const manualHole     = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
-  const manualBoard    = S.board.map(c=>c.rank+c.suit).join(' ');
-  const manualPos      = document.getElementById('pos').value;
-  const manualPot      = document.getElementById('pot').value;
-  const manualBet      = document.getElementById('bet').value;
-  const manualStack    = document.getElementById('stack').value;
-  const manualOppStack = document.getElementById('oppStack').value;
-  const manualOppCount = document.getElementById('oppCount').value;
-  const kb             = MTT_KB[S.mttStage];
+  const prompt=`Ты профессиональный МТТ покерный тренер (Texas Hold'em No-Limit).
 
-  const prompt = `Ты профессиональный МТТ покерный тренер с глубоким знанием ICM и GTO стратегии.
-
-═══ БАЗА ЗНАНИЙ МТТ ═══
+═══ МТТ СТРАТЕГИЯ ═══
 ${kb}
 
-═══ ТЕКУЩАЯ СИТУАЦИЯ ═══
-${b64Image ? `Изучи изображение покерного стола и определи:
+═══ СИТУАЦИЯ ═══
+МОЯ ПОЗИЦИЯ: ${S.pos}
+${b64Image?`
+Изучи изображение покерного стола:
+- Мои карты (внизу экрана, HERO)
+- Борд (центр стола)
+- Банк (число в центре)
+- Ставки оппонентов (числа у их фишек)
+- Стеки игроков
 
-КАРТЫ И БОРД:
-- Мои карты (обычно внизу, помечены HERO)
-- Карты на борде (центр стола)
+ОПРЕДЕЛЕНИЕ ПОЗИЦИИ ПО ЖЕТОНАМ:
+На столе есть два типа жетонов:
+1. Жёлтый круглый жетон с буквой "D" = дилерская кнопка = BTN
+2. Жетоны "1BB" или "2BB" = блайнды (НЕ путай с кнопкой D!)
+   - Игрок с жетоном "1BB" = SB
+   - Игрок с жетоном "2BB" = BB  
+   - Игрок СПРАВА от "1BB" = BTN
+Используй эти жетоны для подтверждения моей позиции (${S.pos}).`:''}
 
-ПОЗИЦИЯ (ОЧЕНЬ ВАЖНО):
-На покерном столе есть ДВА похожих круглых жетона — НЕ ПУТАЙ ИХ:
-
-1. ДИЛЕРСКАЯ КНОПКА = круглый жёлтый жетон с буквой "D" → это BTN (баттон)
-2. БЛАЙНД ЖЕТОН = круглый жетон с надписью "1BB", "2BB", "BB", "SB" → это НЕ позиция дилера, игнорируй его для определения BTN
-
-Найди именно жетон с буквой "D" и используй его:
-- Жетон D у меня (внизу экрана) → я BTN
-- Жетон D у игрока справа → я CO
-- Жетон D два места справа → я HJ
-- Жетон D три места справа → я MP
-- Жетон D в дальней части стола → я UTG
-- Я сижу сразу слева от жетона D → я SB
-- Я сижу через одного слева от жетона D → я BB
-Если жетон D не виден — напиши НЕИЗВЕСТНО
-
-СТАВКИ И СТЕКИ:
-- Размер банка (число в центре)
-- Ставки оппонентов (числа рядом с их фишками)
-- Мой стек и стеки оппонентов
-- Действия оппонентов (рейз/колл/чек/олл-ин)` : ''}
-
-${manualHole ? '✅ Мои карты: '+manualHole : ''}
-${manualBoard ? '✅ Борд: '+manualBoard : ''}
-${'✅ Позиция: '+(manualPos || S.selectedPos)}
-${manualPot ? '✅ Банк: '+manualPot+' BB' : ''}
-${manualBet ? '✅ Ставка: '+manualBet+' BB' : ''}
-${manualStack ? '✅ Мой стек: '+manualStack+' BB' : ''}
-${manualOppStack ? '✅ Стек оппонента: '+manualOppStack+' BB' : ''}
-${manualOppCount ? '✅ Оппонентов: '+manualOppCount : ''}
+${manualHole?'✅ Мои карты: '+manualHole:''}
+${manualBoard?'✅ Борд: '+manualBoard:''}
+${pot?'✅ Банк: '+pot+' BB':''}
+${bet?'✅ Ставка: '+bet+' BB':''}
+${stack?'✅ Мой стек: '+stack+' BB':''}
+${oppStack?'✅ Стек оппонента: '+oppStack+' BB':''}
+${oppCount?'✅ Оппонентов: '+oppCount:''}
+${oppAction?'✅ Действие оппонента: '+oppAction:''}
 
 ═══ ЗАДАЧА ═══
-Если карты не видны на изображении и не введены вручную — напиши ТОЛЬКО: "КАРТЫ НЕ ВИДНЫ"
+Если карты не видны — напиши ТОЛЬКО: КАРТЫ НЕ ВИДНЫ
 
-Иначе дай точный совет учитывая:
-1. Стадию турнира и ICM давление
-2. Силу руки относительно диапазона оппонента
-3. Размер стека (пуш/фолд если < 15BB)
-4. Позицию и действия оппонентов
-5. Количество активных оппонентов
+Иначе дай точный совет с учётом:
+1. Стадии турнира и ICM
+2. Моей позиции (${S.pos})
+3. Силы руки vs диапазона оппонента
+4. Размера стека
+5. Действий оппонентов
 
-Начни с одного слова: FOLD, CALL, RAISE или CHECK
-Затем 2-3 чётких предложения на русском с конкретным обоснованием.
-Последняя строка: [К:карты|Б:борд|П:позиция|БК:банк|СТ:ставка|СК:стек|О:действие_оппонента]`;
+Первое слово: FOLD, CALL, RAISE или CHECK
+Затем 2-3 предложения на русском.
+Последняя строка: [К:карты|Б:борд|БК:банк|СТ:ставка|СК:стек|О:действие]`;
 
-  try {
-    const raw = await callClaude(prompt, b64Image);
-    if(!raw||raw.trim().length===0) throw new Error('Пустой ответ');
-
-    if (raw.includes('КАРТЫ НЕ ВИДНЫ')) {
-      setAdvice('?','badge-wait','🃏 Карты не видны — наведи камеру на свои карты или введи вручную.');
+  try{
+    const raw=await callClaude(prompt,b64Image);
+    if(!raw||raw.trim().length===0)throw new Error('Пустой ответ');
+    if(raw.includes('КАРТЫ НЕ ВИДНЫ')){
+      setAdvice('?','badge-wait','🃏 Карты не видны — наведи камеру или введи вручную.');
       return;
     }
-
-    const first = raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
-    const ACTIONS = ['FOLD','CALL','RAISE','CHECK'];
-    const action = ACTIONS.find(a=>first.includes(a)) || ACTIONS.find(a=>raw.toUpperCase().includes(a)) || '?';
-    const MAP = {FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
-    const LABELS = {FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
-
+    const first=raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
+    const ACTIONS=['FOLD','CALL','RAISE','CHECK'];
+    const action=ACTIONS.find(a=>first.includes(a))||ACTIONS.find(a=>raw.toUpperCase().includes(a))||'?';
+    const MAP={FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
+    const LABELS={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
     document.getElementById('actionBadge').textContent=LABELS[action]||action;
-
-    const infoMatch = raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
-    if (infoMatch) {
+    const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
+    if(infoMatch){
       document.getElementById('infoBar').style.display='flex';
-      document.getElementById('infoCards').textContent  = infoMatch[1]?.trim()||'—';
-      document.getElementById('infoBoard').textContent  = infoMatch[2]?.trim()||'—';
-      document.getElementById('infoPos').textContent    = infoMatch[3]?.trim()||'—';
-      document.getElementById('infoPot').textContent    = infoMatch[4]?.trim()||'—';
-      document.getElementById('infoBet').textContent    = infoMatch[5]?.trim()||'—';
-      document.getElementById('infoStack').textContent  = infoMatch[6]?.trim()||'—';
-      document.getElementById('infoOpp').textContent    = infoMatch[7]?.trim()||'—';
+      document.getElementById('infoCards').textContent=infoMatch[1]?.trim()||'—';
+      document.getElementById('infoBoard').textContent=infoMatch[2]?.trim()||'—';
+      document.getElementById('infoPos').textContent=S.pos;
+      document.getElementById('infoPot').textContent=infoMatch[3]?.trim()||'—';
+      document.getElementById('infoBet').textContent=infoMatch[4]?.trim()||'—';
+      document.getElementById('infoStack').textContent=infoMatch[5]?.trim()||'—';
+      document.getElementById('infoOpp').textContent=infoMatch[6]?.trim()||'—';
     }
-
-    const cleanText = raw.replace(/\[К:.*?\]/gi,'').trim();
+    const cleanText=raw.replace(/\[К:.*?\]/gi,'').trim();
     document.getElementById('adviceText').className='advice-text';
     document.getElementById('adviceText').textContent=cleanText;
-
-  } catch(e) {
+  }catch(e){
     console.error(e);
     setAdvice('ОШИБКА','badge-wait','❌ '+e.message);
   }
 }
 
-function showLoading() {
+function showLoading(){
   document.getElementById('actionBadge').className='action-badge badge-wait';
   document.getElementById('actionBadge').textContent='...';
   document.getElementById('adviceText').className='advice-text loading';
   document.getElementById('adviceText').innerHTML='<div class="dots"><span></span><span></span><span></span></div>&nbsp;Claude анализирует...';
 }
 
-function setAdvice(label,cls,text) {
+function setAdvice(label,cls,text){
   document.getElementById('actionBadge').className='action-badge '+cls;
   document.getElementById('actionBadge').textContent=label;
   document.getElementById('adviceText').className='advice-text';
@@ -621,7 +505,12 @@ function renderCards(){
   }
 }
 
-function openPicker(t,i){S.picker={type:t,idx:i,suit:null,rank:null};document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));document.getElementById('modalBg').classList.add('open');}
+function openPicker(t,i){
+  S.picker={type:t,idx:i,suit:null,rank:null};
+  document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('modalBg').classList.add('open');
+}
 function closeModal(){document.getElementById('modalBg').classList.remove('open');}
 function pickSuit(el){document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.suit=el.dataset.s;}
 function pickRank(el){document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.rank=el.textContent;}
