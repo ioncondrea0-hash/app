@@ -14,127 +14,89 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
-
-  header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; background: var(--surface);
-    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50;
-  }
-  .logo { font-size: 17px; font-weight: 700; }
-  .logo span { color: var(--gold); } .logo em { color: var(--neon); font-style: normal; }
-
-  .auto-toggle {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 20px; padding: 7px 14px; cursor: pointer;
-    font-size: 13px; font-weight: 700; color: var(--muted); transition: all 0.2s;
-    -webkit-user-select: none; user-select: none;
-  }
-  .auto-toggle.active { border-color: var(--neon); color: var(--neon); background: rgba(0,255,163,0.08); }
-  .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background 0.2s; flex-shrink:0; }
-  .auto-toggle.active .pulse-dot { background: var(--neon); box-shadow: 0 0 8px var(--neon); animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
-
-  .start-cam-btn {
-    width: 100%; padding: 30px; background: var(--surface);
-    border: 2px dashed var(--border); color: var(--muted);
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-  }
-  .start-cam-btn span { font-size: 40px; }
-
-  .cam-wrap { position: relative; width: 100%; background: #000; overflow: hidden; }
-  #videoEl { width: 100%; display: block; max-height: 48vh; object-fit: cover; }
-  #canvasEl { display: none; }
-
-  .cam-overlay { position: absolute; inset: 0; pointer-events: none; }
-  .bracket { position: absolute; width: 28px; height: 28px; border-color: var(--neon); border-style: solid; opacity: 0.8; }
+  header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50; }
+  .logo { font-size:17px; font-weight:700; }
+  .logo span{color:var(--gold)} .logo em{color:var(--neon);font-style:normal}
+  .auto-toggle { display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border); border-radius:20px; padding:7px 14px; cursor:pointer; font-size:13px; font-weight:700; color:var(--muted); transition:all 0.2s; -webkit-user-select:none; user-select:none; }
+  .auto-toggle.active{border-color:var(--neon);color:var(--neon);background:rgba(0,255,163,0.08)}
+  .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background 0.2s;flex-shrink:0}
+  .auto-toggle.active .pulse-dot{background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.7)}}
+  .start-cam-btn{width:100%;padding:30px;background:var(--surface);border:2px dashed var(--border);color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .start-cam-btn span{font-size:40px}
+  .cam-wrap{position:relative;width:100%;background:#000;overflow:hidden}
+  #videoEl{width:100%;display:block;max-height:48vh;object-fit:cover}
+  #canvasEl{display:none}
+  .cam-overlay{position:absolute;inset:0;pointer-events:none}
+  .bracket{position:absolute;width:28px;height:28px;border-color:var(--neon);border-style:solid;opacity:0.8}
   .bracket.tl{top:10px;left:10px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
   .bracket.tr{top:10px;right:10px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
   .bracket.bl{bottom:10px;left:10px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
   .bracket.br{bottom:10px;right:10px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-
-  .scanline { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--neon),transparent); opacity:0; top:0; }
-  .scanline.on { opacity:1; animation: scanMove 2s linear infinite; }
-  @keyframes scanMove { 0%{top:5%} 100%{top:95%} }
-
-  .cam-status {
-    position:absolute; top:10px; left:50%; transform:translateX(-50%);
-    font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--gold);
-    letter-spacing:1px; background:rgba(0,0,0,0.6); padding:3px 10px; border-radius:10px;
-  }
-
-  .countdown-wrap { position:absolute; bottom:10px; right:10px; width:44px; height:44px; display:none; }
-  .countdown-wrap.on { display:block; }
-  .countdown-svg { width:44px; height:44px; transform:rotate(-90deg); }
-  .countdown-circle { fill:none; stroke:var(--neon); stroke-width:3; stroke-linecap:round; transition:stroke-dashoffset 0.9s linear; }
-  .countdown-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:var(--neon); font-family:'JetBrains Mono',monospace; }
-
-  .advice-card { margin:12px; background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
-  .action-bar { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--border); }
-  .action-badge { font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; padding:7px 16px; border-radius:10px; letter-spacing:1px; min-width:110px; text-align:center; }
-  .badge-fold  { background:rgba(255,71,87,0.15);  color:var(--danger); border:2px solid var(--danger); }
-  .badge-call  { background:rgba(255,165,2,0.15);  color:var(--warn);   border:2px solid var(--warn); }
-  .badge-raise { background:rgba(0,255,163,0.12);  color:var(--neon);   border:2px solid var(--neon); }
-  .badge-check { background:rgba(255,255,255,0.07);color:#ccc;          border:2px solid #444; }
-  .badge-wait  { background:var(--surface2);       color:var(--muted);  border:2px dashed var(--border); font-size:13px; }
-
-  .equity-mini { text-align:right; }
-  .equity-mini .pct { font-size:22px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--neon); }
-  .equity-mini .lbl { font-size:10px; color:var(--muted); }
-
-  .advice-text { padding:12px 14px; font-size:13px; line-height:1.65; color:var(--text); min-height:70px; }
-  .advice-text.loading { color:var(--muted); display:flex; align-items:center; gap:10px; }
-
-  .cards-strip { padding:8px 14px 12px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; border-top:1px solid var(--border); }
-  .strip-lbl { font-size:10px; color:var(--muted); margin-right:4px; font-family:'JetBrains Mono',monospace; }
-  .mini-card { display:inline-flex; flex-direction:column; align-items:center; width:30px; height:42px; border-radius:5px; font-size:11px; font-weight:700; justify-content:center; gap:1px; }
-  .mini-card.red{background:#fff;color:#c0392b} .mini-card.black{background:#fff;color:#111}
+  .scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0;top:0}
+  .scanline.on{opacity:1;animation:scanMove 2s linear infinite}
+  @keyframes scanMove{0%{top:5%}100%{top:95%}}
+  .cam-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--gold);letter-spacing:1px;background:rgba(0,0,0,0.6);padding:3px 10px;border-radius:10px}
+  .countdown-wrap{position:absolute;bottom:10px;right:10px;width:44px;height:44px;display:none}
+  .countdown-wrap.on{display:block}
+  .countdown-svg{width:44px;height:44px;transform:rotate(-90deg)}
+  .countdown-circle{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 0.9s linear}
+  .countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
+  .advice-card{margin:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+  .action-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
+  .action-badge{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:7px 16px;border-radius:10px;letter-spacing:1px;min-width:110px;text-align:center}
+  .badge-fold{background:rgba(255,71,87,0.15);color:var(--danger);border:2px solid var(--danger)}
+  .badge-call{background:rgba(255,165,2,0.15);color:var(--warn);border:2px solid var(--warn)}
+  .badge-raise{background:rgba(0,255,163,0.12);color:var(--neon);border:2px solid var(--neon)}
+  .badge-check{background:rgba(255,255,255,0.07);color:#ccc;border:2px solid #444}
+  .badge-wait{background:var(--surface2);color:var(--muted);border:2px dashed var(--border);font-size:13px}
+  .equity-mini{text-align:right}
+  .equity-mini .pct{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--neon)}
+  .equity-mini .lbl{font-size:10px;color:var(--muted)}
+  .advice-text{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text);min-height:70px}
+  .advice-text.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
+  .cards-strip{padding:8px 14px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border)}
+  .strip-lbl{font-size:10px;color:var(--muted);margin-right:4px;font-family:'JetBrains Mono',monospace}
+  .mini-card{display:inline-flex;flex-direction:column;align-items:center;width:30px;height:42px;border-radius:5px;font-size:11px;font-weight:700;justify-content:center;gap:1px}
+  .mini-card.red{background:#fff;color:#c0392b}.mini-card.black{background:#fff;color:#111}
   .mini-card.unk{background:var(--surface2);color:var(--muted);border:1px dashed var(--border);font-size:15px}
   .csep{width:1px;height:36px;background:var(--border);margin:0 4px}
-
-  .err-box { margin:0 12px 12px; padding:12px 14px; background:rgba(255,71,87,0.1); border:1px solid var(--danger); border-radius:12px; font-size:13px; color:var(--danger); display:none; }
-
-  .manual-section { padding:0 12px 12px; }
-  .section-lbl { font-size:10px; letter-spacing:1.5px; color:var(--gold); font-family:'JetBrains Mono',monospace; padding:10px 0 8px; text-transform:uppercase; }
-  .cards-row { display:flex; gap:7px; flex-wrap:wrap; }
-  .card-slot { width:40px; height:54px; border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:12px; font-weight:700; cursor:pointer; border:2px solid transparent; flex-shrink:0; }
+  .err-box{margin:0 12px 12px;padding:12px 14px;background:rgba(255,71,87,0.1);border:1px solid var(--danger);border-radius:12px;font-size:12px;color:var(--danger);display:none;word-break:break-all}
+  .manual-section{padding:0 12px 12px}
+  .section-lbl{font-size:10px;letter-spacing:1.5px;color:var(--gold);font-family:'JetBrains Mono',monospace;padding:10px 0 8px;text-transform:uppercase}
+  .cards-row{display:flex;gap:7px;flex-wrap:wrap}
+  .card-slot{width:40px;height:54px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;flex-shrink:0}
   .card-slot.red{background:#fff;color:#c0392b;border-color:#ddd}
   .card-slot.black{background:#fff;color:#111;border-color:#ddd}
   .card-slot.empty{background:var(--surface2);border:2px dashed var(--border);color:var(--muted);font-size:20px}
-
-  .params-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; padding:0 12px 12px; }
-  .param-cell { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:8px 10px; }
-  .param-cell label { font-size:10px; color:var(--muted); display:block; margin-bottom:3px; }
-  .param-cell input, .param-cell select { background:transparent; border:none; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:600; width:100%; outline:none; }
-  .param-cell select option { background:#111; }
-
-  .street-row { display:flex; gap:6px; padding:0 12px 12px; }
-  .stab { flex:1; padding:7px 4px; text-align:center; background:var(--surface); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:600; color:var(--muted); cursor:pointer; }
-  .stab.active { background:var(--felt); border-color:var(--gold); color:var(--gold); }
-
-  .dots { display:inline-flex; gap:4px; }
-  .dots span { width:6px; height:6px; background:var(--gold); border-radius:50%; animation:dot 0.8s ease-in-out infinite; }
-  .dots span:nth-child(2){animation-delay:.15s} .dots span:nth-child(3){animation-delay:.3s}
+  .params-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 12px 12px}
+  .param-cell{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+  .param-cell label{font-size:10px;color:var(--muted);display:block;margin-bottom:3px}
+  .param-cell input,.param-cell select{background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;width:100%;outline:none}
+  .param-cell select option{background:#111}
+  .street-row{display:flex;gap:6px;padding:0 12px 12px}
+  .stab{flex:1;padding:7px 4px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer}
+  .stab.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
+  .dots{display:inline-flex;gap:4px}
+  .dots span{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dot 0.8s ease-in-out infinite}
+  .dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
   @keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
-
-  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--surface2); border:1px solid var(--gold); color:var(--text); padding:9px 18px; border-radius:20px; font-size:12px; z-index:999; white-space:nowrap; pointer-events:none; animation:toastIn 0.25s ease; }
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--gold);color:var(--text);padding:9px 18px;border-radius:20px;font-size:12px;z-index:999;white-space:nowrap;pointer-events:none;animation:toastIn 0.25s ease}
   @keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
-
-  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:200; align-items:flex-end; }
-  .modal-bg.open { display:flex; }
-  .modal { width:100%; background:var(--surface); border-radius:20px 20px 0 0; padding:18px 14px 40px; }
-  .modal-title { font-size:13px; font-weight:600; color:var(--gold); margin-bottom:12px; text-align:center; }
-  .suit-row { display:flex; gap:6px; margin-bottom:10px; }
-  .suit-btn { flex:1; padding:10px; border-radius:10px; font-size:22px; text-align:center; background:var(--surface2); border:2px solid var(--border); cursor:pointer; }
-  .suit-btn.sel { border-color:var(--gold); background:var(--felt); }
-  .rank-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:12px; }
-  .rank-btn { padding:9px 2px; text-align:center; border-radius:8px; font-size:13px; font-weight:700; background:var(--surface2); border:2px solid var(--border); cursor:pointer; color:var(--text); }
-  .rank-btn.sel { border-color:var(--neon); background:rgba(0,255,163,.1); color:var(--neon); }
-  .modal-btns { display:flex; gap:8px; }
-  .mbtn { flex:1; padding:13px; border-radius:10px; border:none; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; cursor:pointer; }
-  .mbtn.ok { background:var(--gold); color:#000; }
-  .mbtn.cancel { background:var(--surface2); color:var(--muted); border:1px solid var(--border); }
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:200;align-items:flex-end}
+  .modal-bg.open{display:flex}
+  .modal{width:100%;background:var(--surface);border-radius:20px 20px 0 0;padding:18px 14px 40px}
+  .modal-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:12px;text-align:center}
+  .suit-row{display:flex;gap:6px;margin-bottom:10px}
+  .suit-btn{flex:1;padding:10px;border-radius:10px;font-size:22px;text-align:center;background:var(--surface2);border:2px solid var(--border);cursor:pointer}
+  .suit-btn.sel{border-color:var(--gold);background:var(--felt)}
+  .rank-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px}
+  .rank-btn{padding:9px 2px;text-align:center;border-radius:8px;font-size:13px;font-weight:700;background:var(--surface2);border:2px solid var(--border);cursor:pointer;color:var(--text)}
+  .rank-btn.sel{border-color:var(--neon);background:rgba(0,255,163,.1);color:var(--neon)}
+  .modal-btns{display:flex;gap:8px}
+  .mbtn{flex:1;padding:13px;border-radius:10px;border:none;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+  .mbtn.ok{background:var(--gold);color:#000}
+  .mbtn.cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -244,7 +206,6 @@
 <div style="height:40px"></div>
 
 <script>
-// ── PROXY URL (Cloudflare Worker)
 const PROXY = 'https://cold-king-654b.ioncondrea0.workers.dev';
 
 const S = {
@@ -257,7 +218,6 @@ const S = {
 const RED=['♥','♦'];
 const CIRC = 2 * Math.PI * 18;
 
-// ── GEMINI API CALL via proxy
 async function callGemini(prompt, b64Image) {
   const parts = [];
   if (b64Image) {
@@ -267,7 +227,7 @@ async function callGemini(prompt, b64Image) {
 
   const body = {
     contents: [{ parts }],
-    generationConfig: { temperature: 0.3, maxOutputTokens: 1000 }
+    generationConfig: { temperature: 0.2, maxOutputTokens: 800 }
   };
 
   const resp = await fetch(PROXY, {
@@ -276,12 +236,25 @@ async function callGemini(prompt, b64Image) {
     body: JSON.stringify(body)
   });
 
-  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error('HTTP ' + resp.status + ': ' + errText.slice(0, 100));
+  }
+
   const data = await resp.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  // Log full response for debugging
+  console.log('Gemini response:', JSON.stringify(data).slice(0, 500));
+
+  // Handle Gemini response format
+  if (data.error) throw new Error(data.error.message || 'Gemini error');
+  
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('Пустой ответ от Gemini: ' + JSON.stringify(data).slice(0, 200));
+  
+  return text;
 }
 
-// ── CAMERA
 async function startCam() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -297,7 +270,6 @@ async function startCam() {
   }
 }
 
-// ── AUTO MODE
 function toggleAuto() {
   if (!S.stream) { toast('Сначала включи камеру'); return; }
   S.autoMode = !S.autoMode;
@@ -346,13 +318,12 @@ async function runScan() {
   canvas.width = vid.videoWidth || 640;
   canvas.height = vid.videoHeight || 480;
   canvas.getContext('2d').drawImage(vid, 0, 0);
-  const b64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
+  const b64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
   await doAnalyze(b64);
   document.getElementById('camStatus').textContent = 'СЛЕЖУ ЗА СТОЛОМ';
   S.analyzing = false;
 }
 
-// ── MAIN ANALYSIS
 async function doAnalyze(b64Image) {
   showLoading();
   const pot   = document.getElementById('pot').value   || 6;
@@ -364,35 +335,39 @@ async function doAnalyze(b64Image) {
   const manualHole  = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
   const manualBoard = S.board.map(c=>c.rank+c.suit).join(' ');
 
-  const prompt = `Ты профессиональный покерный тренер (Texas Hold'em No-Limit).
-${b64Image ? 'На изображении покерный стол. Распознай карты.' : ''}
+  const prompt = `Ты покерный тренер (Texas Hold'em No-Limit).
+${b64Image ? 'Смотри на изображение покерного стола и распознай карты.' : ''}
+${manualHole ? 'Карты игрока: ' + manualHole : ''}
+${manualBoard ? 'Борд: ' + manualBoard : ''}
 
-${manualHole  ? `Карты игрока (вручную): ${manualHole}` : ''}
-${manualBoard ? `Борд (вручную): ${manualBoard}` : ''}
+Параметры: стрит=${S.street}, позиция=${pos}, игроков=${plrs}, банк=${pot}BB, ставка=${bet}BB, стек=${stack}BB, формат=${stage}
 
-ПАРАМЕТРЫ:
-- Стрит: ${S.street}
-- Позиция: ${pos} из ${plrs} игроков  
-- Банк: ${pot} BB | Ставка: ${bet} BB | Стек: ${stack} BB
-- Формат: ${stage}
-
-Ответь ТОЛЬКО JSON без markdown:
-{
-  "holeCards": ["Ah","Kd"],
-  "boardCards": [],
-  "cardsConfidence": 0.8,
-  "action": "FOLD",
-  "sizing": null,
-  "equity": 0.55,
-  "reason": "Объяснение на русском 2-3 предложения.",
-  "tip": "Один тактический совет."
-}`;
+ВАЖНО: Ответь СТРОГО только валидным JSON объектом. Никакого текста до или после. Никаких markdown блоков. Только JSON:
+{"holeCards":["Ah","Kd"],"boardCards":[],"cardsConfidence":0.8,"action":"FOLD","sizing":null,"equity":0.55,"reason":"Объяснение на русском.","tip":"Совет."}`;
 
   try {
     const raw = await callGemini(prompt, b64Image);
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Нет JSON');
-    const res = JSON.parse(match[0]);
+    console.log('Raw response:', raw.slice(0, 300));
+    
+    // Try multiple JSON extraction methods
+    let res = null;
+    
+    // Method 1: direct parse
+    try { res = JSON.parse(raw.trim()); } catch(e) {}
+    
+    // Method 2: extract JSON object
+    if (!res) {
+      const match = raw.match(/\{[^{}]*\}/s) || raw.match(/\{[\s\S]*\}/);
+      if (match) try { res = JSON.parse(match[0]); } catch(e) {}
+    }
+    
+    // Method 3: remove markdown and retry
+    if (!res) {
+      const clean = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+      try { res = JSON.parse(clean); } catch(e) {}
+    }
+
+    if (!res) throw new Error('Не удалось разобрать ответ: ' + raw.slice(0, 150));
 
     if (res.holeCards?.length === 2 && (res.cardsConfidence||0) > 0.5) {
       const p = res.holeCards.map(parseCard).filter(Boolean);
@@ -407,7 +382,7 @@ ${manualBoard ? `Борд (вручную): ${manualBoard}` : ''}
     hideErr();
   } catch(e) {
     console.error(e);
-    showErr('Ошибка: ' + e.message);
+    showErr(e.message);
     resetAdvice();
   }
 }
@@ -432,7 +407,7 @@ function resetAdvice() {
   document.getElementById('actionBadge').className = 'action-badge badge-wait';
   document.getElementById('actionBadge').textContent = 'ОШИБКА';
   document.getElementById('adviceText').className = 'advice-text';
-  document.getElementById('adviceText').textContent = 'Не удалось проанализировать.';
+  document.getElementById('adviceText').textContent = 'Смотри детали ошибки выше.';
 }
 function showAdvice(res) {
   const MAP = {
@@ -444,13 +419,11 @@ function showAdvice(res) {
   const a = MAP[res.action] || {cls:'badge-check', label: res.action||'?'};
   document.getElementById('actionBadge').className = 'action-badge ' + a.cls;
   document.getElementById('actionBadge').textContent = a.label;
-
   let html = `<p>${res.reason||''}</p>`;
   if (res.sizing) html += `<p style="margin-top:8px;color:var(--gold);font-size:12px">💰 ${res.sizing}</p>`;
   if (res.tip)    html += `<p style="margin-top:8px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);padding-top:8px">🎯 ${res.tip}</p>`;
   document.getElementById('adviceText').className = 'advice-text';
   document.getElementById('adviceText').innerHTML = html;
-
   if (res.equity != null) {
     document.getElementById('equityPct').textContent = Math.round(res.equity*100)+'%';
     document.getElementById('equityMini').style.display = 'block';
@@ -523,7 +496,6 @@ function confirmCard(){
   if(!S.autoMode){S.analyzing=false;doAnalyze(null);}
 }
 document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
-
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
 
 renderCards();
