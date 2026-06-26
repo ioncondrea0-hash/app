@@ -43,17 +43,10 @@
   .countdown-circle{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
   .countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
 
-  /* STAGE INDICATOR */
-  .stage-bar{display:flex;gap:6px;padding:8px 10px;background:var(--surface2);border-bottom:1px solid var(--border);align-items:center}
-  .stage-pill{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:8px;border:1px solid var(--border);color:var(--muted)}
-  .stage-pill.active{border-color:var(--neon);color:var(--neon);background:rgba(0,255,163,0.1)}
-  .stage-pill.done{border-color:var(--gold);color:var(--gold)}
-  .stage-arrow{color:var(--muted);font-size:10px}
-
   /* INFO BAR */
   .info-bar{display:none;flex-wrap:wrap;gap:5px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
   .info-chip{display:flex;align-items:center;gap:3px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:3px 7px}
-  .info-chip .lbl{color:var(--muted);font-size:9px}
+  .info-chip .lbl{color:var(--muted);font-size:9px;margin-right:2px}
 
   /* ADVICE */
   .advice-card{margin:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
@@ -66,10 +59,6 @@
   .badge-wait{background:var(--surface2);color:var(--muted);border:2px dashed var(--border);font-size:13px}
   .advice-text{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text);min-height:80px}
   .advice-text.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
-
-  /* DETECTED SITUATION */
-  .situation-box{margin:0 10px 10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:12px;line-height:1.6;color:var(--muted);display:none}
-  .situation-box .sit-title{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--gold);letter-spacing:1px;margin-bottom:5px}
 
   /* MANUAL */
   .manual-wrap{margin:0 10px 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
@@ -145,13 +134,6 @@
   </div>
 </div>
 
-<!-- STAGE INDICATOR -->
-<div class="stage-bar" id="stageBar" style="display:none">
-  <div class="stage-pill" id="stage1">👁 Распознавание</div>
-  <div class="stage-arrow">→</div>
-  <div class="stage-pill" id="stage2">🧠 Анализ GTO</div>
-</div>
-
 <!-- INFO BAR -->
 <div class="info-bar" id="infoBar">
   <div class="info-chip"><span class="lbl">КАРТЫ</span><span id="infoCards">—</span></div>
@@ -171,21 +153,14 @@
   </div>
   <div class="advice-text" id="adviceText">
     Включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong><br><br>
-    ШАГ 1: Llama видит стол и собирает данные<br>
-    ШАГ 2: Gemini анализирует покерную ситуацию
+    Claude видит карты, позицию, ставки оппонентов и банк автоматически.
   </div>
-</div>
-
-<!-- SITUATION BOX -->
-<div class="situation-box" id="situationBox">
-  <div class="sit-title">📋 СИТУАЦИЯ (распознано Llama)</div>
-  <div id="situationText"></div>
 </div>
 
 <!-- MANUAL -->
 <div class="manual-wrap">
   <div class="manual-header" onclick="toggleManual()">
-    <span>✏️ Ввести вручную</span>
+    <span>✏️ Ввести вручную (если камера не видит)</span>
     <span>▼</span>
   </div>
   <div class="manual-body" id="manualBody">
@@ -210,8 +185,8 @@
       <div class="mp"><label>Ставка (BB)</label><input id="bet" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Мой стек (BB)</label><input id="stack" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Стек оппонента</label><input id="oppStack" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Оппонентов в руке</label>
-        <select id="oppCount"><option value="">Авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
+      <div class="mp"><label>Формат</label>
+        <select id="gameStage"><option value="cash">Кэш</option><option value="early">Турнир</option><option value="bubble">Пузырь</option><option value="ft">Фин. стол</option></select>
       </div>
     </div>
   </div>
@@ -257,9 +232,8 @@ const S = {
 const RED=['♥','♦'];
 const CIRC=2*Math.PI*18;
 
-// ── API CALLS
-async function callProxy(mode, prompt, image) {
-  const body = { mode, prompt };
+async function callClaude(prompt, image) {
+  const body = { prompt };
   if (image) body.image = image;
   const resp = await fetch(PROXY, {
     method:'POST', headers:{'Content-Type':'application/json'},
@@ -271,7 +245,6 @@ async function callProxy(mode, prompt, image) {
   return data.text || '';
 }
 
-// ── CAMERA
 async function startCam() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -294,7 +267,6 @@ function toggleAuto() {
     document.getElementById('autoLabel').textContent = 'АВТО ВКЛ';
     document.getElementById('scanLine').classList.add('on');
     document.getElementById('cdWrap').classList.add('on');
-    document.getElementById('stageBar').style.display = 'flex';
     startCountdown();
   } else {
     btn.classList.remove('active');
@@ -326,17 +298,18 @@ function updateCD(sec) {
 async function runScan() {
   if(S.analyzing)return;
   S.analyzing=true;
+  document.getElementById('camStatus').textContent='АНАЛИЗИРУЮ...';
   const vid=document.getElementById('videoEl');
   const canvas=document.getElementById('canvasEl');
   canvas.width=vid.videoWidth||640;
   canvas.height=vid.videoHeight||480;
   canvas.getContext('2d').drawImage(vid,0,0);
-  const b64=canvas.toDataURL('image/jpeg',0.82).split(',')[1];
+  const b64=canvas.toDataURL('image/jpeg',0.85).split(',')[1];
   await doAnalyze(b64);
+  document.getElementById('camStatus').textContent='СЛЕЖУ ЗА СТОЛОМ';
   S.analyzing=false;
 }
 
-// ── TWO-STAGE ANALYSIS
 async function doAnalyze(b64Image) {
   showLoading();
 
@@ -347,141 +320,106 @@ async function doAnalyze(b64Image) {
   const manualBet   = document.getElementById('bet').value;
   const manualStack = document.getElementById('stack').value;
   const manualOppStack = document.getElementById('oppStack').value;
-  const manualOppCount = document.getElementById('oppCount').value;
+  const stage       = document.getElementById('gameStage').value;
+
+  const prompt = `Ты профессиональный GTO покерный тренер (Texas Hold'em No-Limit).
+${b64Image ? 'На изображении покерный стол. Внимательно изучи его.' : ''}
+
+ШАГИ АНАЛИЗА:
+
+1. РАСПОЗНАЙ с изображения (если есть):
+   - Мои карты (обычно внизу с пометкой HERO или просто лицом вверх)
+   - Карты на борде (в центре стола)
+   - Размер банка (число рядом с фишками в центре)
+   - Ставки оппонентов (числа рядом с их фишками)
+   - Мою позицию (BTN/SB/BB/UTG/CO и т.д.)
+   - Мой стек и стеки оппонентов
+   - Действия оппонентов (рейз/колл/чек/олл-ин)
+   - Количество активных игроков
+
+${manualHole ? '✅ Карты игрока (вручную): '+manualHole : ''}
+${manualBoard ? '✅ Борд (вручную): '+manualBoard : ''}
+${manualPos ? '✅ Позиция (вручную): '+manualPos : ''}
+${manualPot ? '✅ Банк (вручную): '+manualPot+' BB' : ''}
+${manualBet ? '✅ Ставка (вручную): '+manualBet+' BB' : ''}
+${manualStack ? '✅ Стек (вручную): '+manualStack+' BB' : ''}
+${manualOppStack ? '✅ Стек оппонента (вручную): '+manualOppStack+' BB' : ''}
+Формат: ${stage}
+
+2. ЕСЛИ КАРТЫ НЕ ВИДНЫ — напиши только: "КАРТЫ НЕ ВИДНЫ" и остановись.
+
+3. ПОКЕРНЫЙ АНАЛИЗ на основе увиденного:
+
+GTO ПРАВИЛА:
+ПРЕФЛОП:
+- AA/KK/QQ/JJ/TT/99 — всегда рейз, никогда не фолд против одиночного рейза
+- AK/AQ — рейз, против 3-бета колл с ранней позиции
+- Против 3-бета: продолжать только с AA/KK/QQ/JJ/AKs — остальное FOLD
+- Против 4-бета: только AA/KK — остальное FOLD
+- Мусорные руки (Q7/J4/83/T2 без масти) — FOLD против любой агрессии
+- При 2+ оппонентах — нужна рука на 30% сильнее
+- Стек < 20BB — только пуш топ рукой или FOLD
+
+ПОСТФЛОП:
+- Топ пара + топ кикер — бет 60-70% банка
+- Стрит/флеш/сет — рейз или медленная игра
+- Без пары и без дро — FOLD против бета
+- Дро (флеш/стрит) при хороших пот-оддс — колл
+- SPR < 3 — пуш с любой парой выше средней карты борда
+
+4. ОТВЕТ:
+Первое слово: FOLD, CALL, RAISE или CHECK
+Затем 2-3 предложения объяснения на русском.
+Последняя строка: [КАРТЫ:X|БОРД:X|ПОЗ:X|БАНК:X|СТАВКА:X|СТЕК:X|ОПП:X]`;
 
   try {
-    // ══ ЭТАП 1: Llama видит картинку → собирает данные в текст
-    setStage(1);
-    document.getElementById('camStatus').textContent = 'ШАГ 1: РАСПОЗНАЮ...';
+    const raw = await callClaude(prompt, b64Image);
+    if(!raw||raw.trim().length===0) throw new Error('Пустой ответ');
 
-    const visionPrompt = `Ты анализируешь покерный стол (Texas Hold'em).
-Посмотри на изображение и извлеки ТОЛЬКО факты в точном формате:
-
-КАРТЫ ИГРОКА: [например: Ah Kd] или НЕИЗВЕСТНО
-КАРТЫ НА БОРДЕ: [например: 2c Jh Ts] или НЕТ (префлоп)
-МОЯ ПОЗИЦИЯ: [BTN/SB/BB/UTG/UTG+1/MP/HJ/CO] или НЕИЗВЕСТНО
-БАНК: [число] BB или НЕИЗВЕСТНО
-СТАВКА КО МНЕ: [число] BB или НЕТ
-МОЙ СТЕК: [число] BB или НЕИЗВЕСТНО
-СТЕК ОППОНЕНТА: [число] BB или НЕИЗВЕСТНО
-АКТИВНЫХ ОППОНЕНТОВ: [число] или НЕИЗВЕСТНО
-ДЕЙСТВИЕ ОППОНЕНТА: [лимп/рейз/3-бет/4-бет/олл-ин/чек/бет/пас] или НЕТ
-СТРИТ: [префлоп/флоп/тёрн/ривер]
-
-${manualHole ? 'ПОДСКАЗКА - карты игрока: '+manualHole : ''}
-${manualBoard ? 'ПОДСКАЗКА - борд: '+manualBoard : ''}
-${manualPos ? 'ПОДСКАЗКА - позиция: '+manualPos : ''}
-${manualPot ? 'ПОДСКАЗКА - банк: '+manualPot+' BB' : ''}
-${manualBet ? 'ПОДСКАЗКА - ставка: '+manualBet+' BB' : ''}
-${manualStack ? 'ПОДСКАЗКА - стек: '+manualStack+' BB' : ''}
-${manualOppStack ? 'ПОДСКАЗКА - стек оппонента: '+manualOppStack+' BB' : ''}
-${manualOppCount ? 'ПОДСКАЗКА - оппонентов: '+manualOppCount : ''}
-
-Пиши только факты, без лишних слов.`;
-
-    const situation = await callProxy('vision', visionPrompt, b64Image);
-
-    // Show detected situation
-    document.getElementById('situationBox').style.display = 'block';
-    document.getElementById('situationText').textContent = situation;
-    document.getElementById('infoBar').style.display = 'flex';
-    parseAndShowInfo(situation);
-
-    // ── Проверка: видны ли карты?
-    const cardsLine = situation.match(/КАРТЫ ИГРОКА:\s*(.+)/i)?.[1]?.trim() || '';
-    const noCards = cardsLine.includes('НЕИЗВЕСТНО') || cardsLine === '' || cardsLine === '—';
-    const manualCardsExist = manualHole.length > 0;
-
-    if (noCards && !manualCardsExist) {
-      setAdvice('?', 'badge-wait', '🃏 Карты не видны — наведи камеру на свои карты или введи вручную.');
-      setStage(0);
-      document.getElementById('camStatus').textContent = 'СЛЕЖУ ЗА СТОЛОМ';
+    // Карты не видны
+    if (raw.includes('КАРТЫ НЕ ВИДНЫ')) {
+      setAdvice('?','badge-wait','🃏 Карты не видны — наведи камеру на свои карты или введи вручную.');
       return;
     }
 
-    // ══ ЭТАП 2: Groq 70b анализирует покер (только текст)
-    setStage(2);
-    document.getElementById('camStatus').textContent = 'ШАГ 2: GTO АНАЛИЗ...';
-
-    const analysisPrompt = `Ты профессиональный GTO покерный тренер (Texas Hold'em No-Limit).
-
-СИТУАЦИЯ ЗА СТОЛОМ:
-${situation}
-
-GTO ПРАВИЛА (строго обязательны):
-
-ПРЕФЛОП:
-- AA/KK/QQ/JJ/TT — рейз с любой позиции, никогда не фолд против одного рейза
-- AK/AQ — рейз, колл против 3-бета с ранних позиций
-- Против 3-бета: колл/ререйз только AA/KK/QQ/JJ/AKs, всё остальное — FOLD
-- Против 4-бета: только AA/KK, остальное FOLD
-- При 2+ оппонентах — диапазон сужается вдвое
-- Мусорные руки (Q7o, J4o, 83o, T2o и т.п.) — FOLD всегда против агрессии
-- Стек < 20BB — только пуш AA/KK/QQ/JJ/AK или FOLD, без колла рейза
-
-ПОСТФЛОП:
-- Топ пара + топ кикер — бет/рейз
-- Дро с 8+ аутами при хороших пот-оддс — колл
-- Без пары и без дро — FOLD против бета
-- SPR < 3 — пуш с любой парой выше средней карты борда
-- Блеф только в позиции и с бэкдор дро
-
-Учти количество оппонентов — больше оппонентов = уже диапазон для продолжения.
-
-Начни ответ с одного слова: FOLD, CALL, RAISE или CHECK.
-Затем объясни на русском 2-3 чётких предложения почему.`;
-
-    const advice = await callProxy('analysis', analysisPrompt, null);
-
-    // Parse action
-    const first = advice.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
+    // Extract action
+    const first = raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
     const ACTIONS = ['FOLD','CALL','RAISE','CHECK'];
-    const action = ACTIONS.find(a=>first.includes(a)) || ACTIONS.find(a=>advice.toUpperCase().includes(a)) || '?';
-
+    const action = ACTIONS.find(a=>first.includes(a)) || ACTIONS.find(a=>raw.toUpperCase().includes(a)) || '?';
     const MAP = {FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
     const LABELS = {FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
-    document.getElementById('actionBadge').className = 'action-badge '+(MAP[action]||'badge-check');
-    document.getElementById('actionBadge').textContent = LABELS[action]||action;
-    document.getElementById('adviceText').className = 'advice-text';
-    document.getElementById('adviceText').textContent = advice;
 
-    setStage(0); // done
-    document.getElementById('camStatus').textContent = 'СЛЕЖУ ЗА СТОЛОМ';
+    document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
+    document.getElementById('actionBadge').textContent=LABELS[action]||action;
+
+    // Extract info line
+    const infoMatch = raw.match(/\[КАРТЫ:(.*?)\|БОРД:(.*?)\|ПОЗ:(.*?)\|БАНК:(.*?)\|СТАВКА:(.*?)\|СТЕК:(.*?)\|ОПП:(.*?)\]/i);
+    if (infoMatch) {
+      document.getElementById('infoBar').style.display='flex';
+      document.getElementById('infoCards').textContent  = infoMatch[1]?.trim()||'—';
+      document.getElementById('infoBoard').textContent  = infoMatch[2]?.trim()||'—';
+      document.getElementById('infoPos').textContent    = infoMatch[3]?.trim()||'—';
+      document.getElementById('infoPot').textContent    = infoMatch[4]?.trim()||'—';
+      document.getElementById('infoBet').textContent    = infoMatch[5]?.trim()||'—';
+      document.getElementById('infoStack').textContent  = infoMatch[6]?.trim()||'—';
+      document.getElementById('infoOpp').textContent    = infoMatch[7]?.trim()||'—';
+    }
+
+    const cleanText = raw.replace(/\[КАРТЫ:.*?\]/gi,'').trim();
+    document.getElementById('adviceText').className='advice-text';
+    document.getElementById('adviceText').textContent=cleanText;
 
   } catch(e) {
     console.error(e);
     setAdvice('ОШИБКА','badge-wait','❌ '+e.message);
-    document.getElementById('camStatus').textContent = 'ОШИБКА';
-    setStage(0);
   }
-}
-
-function parseAndShowInfo(text) {
-  const get = (label) => {
-    const m = text.match(new RegExp(label+':\\s*(.+)', 'i'));
-    return m ? m[1].trim() : '—';
-  };
-  document.getElementById('infoCards').textContent  = get('КАРТЫ ИГРОКА');
-  document.getElementById('infoBoard').textContent  = get('КАРТЫ НА БОРДЕ');
-  document.getElementById('infoPos').textContent    = get('МОЯ ПОЗИЦИЯ');
-  document.getElementById('infoPot').textContent    = get('БАНК');
-  document.getElementById('infoBet').textContent    = get('СТАВКА КО МНЕ');
-  document.getElementById('infoStack').textContent  = get('МОЙ СТЕК');
-  document.getElementById('infoOpp').textContent    = get('ДЕЙСТВИЕ ОППОНЕНТА');
-}
-
-function setStage(n) {
-  const s1=document.getElementById('stage1');
-  const s2=document.getElementById('stage2');
-  s1.className='stage-pill'+(n===1?' active':n>1?' done':'');
-  s2.className='stage-pill'+(n===2?' active':n>2?' done':'');
 }
 
 function showLoading() {
   document.getElementById('actionBadge').className='action-badge badge-wait';
   document.getElementById('actionBadge').textContent='...';
   document.getElementById('adviceText').className='advice-text loading';
-  document.getElementById('adviceText').innerHTML='<div class="dots"><span></span><span></span><span></span></div>&nbsp;Анализирую...';
+  document.getElementById('adviceText').innerHTML='<div class="dots"><span></span><span></span><span></span></div>&nbsp;Claude анализирует...';
 }
 
 function setAdvice(label,cls,text) {
@@ -491,20 +429,9 @@ function setAdvice(label,cls,text) {
   document.getElementById('adviceText').textContent=text;
 }
 
-function toggleManual() {
-  document.getElementById('manualBody').classList.toggle('open');
-}
+function toggleManual(){document.getElementById('manualBody').classList.toggle('open');}
 
-function parseCard(code) {
-  if(!code||code.length<2)return null;
-  const r=code[0].toUpperCase();
-  const sMap={h:'♥',d:'♦',c:'♣',s:'♠'};
-  const s=sMap[code[1].toLowerCase()];
-  if(!'AKQJT98765432'.includes(r)||!s)return null;
-  return{rank:r,suit:s,red:RED.includes(s)};
-}
-
-function setStreet(s,el) {
+function setStreet(s,el){
   S.street=s;
   document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
@@ -513,7 +440,7 @@ function setStreet(s,el) {
   renderCards();
 }
 
-function renderCards() {
+function renderCards(){
   const hr=document.getElementById('holeRow');hr.innerHTML='';
   for(let i=0;i<2;i++){
     const c=S.hole[i],el=document.createElement('div');
