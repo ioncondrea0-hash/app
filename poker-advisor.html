@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PokerEye AI</title>
+<title>PokerEye AI — MTT</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
   :root {
@@ -17,6 +17,7 @@
   header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
   .logo{font-size:17px;font-weight:700}
   .logo span{color:var(--gold)}.logo em{color:var(--neon);font-style:normal}
+  .logo small{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-left:6px}
   .auto-toggle{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .2s;-webkit-user-select:none;user-select:none}
   .auto-toggle.active{border-color:var(--neon);color:var(--neon);background:rgba(0,255,163,0.08)}
   .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .2s}
@@ -42,13 +43,9 @@
   .countdown-svg{width:42px;height:42px;transform:rotate(-90deg)}
   .countdown-circle{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
   .countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
-
-  /* INFO BAR */
   .info-bar{display:none;flex-wrap:wrap;gap:5px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
   .info-chip{display:flex;align-items:center;gap:3px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:3px 7px}
   .info-chip .lbl{color:var(--muted);font-size:9px;margin-right:2px}
-
-  /* ADVICE */
   .advice-card{margin:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
   .action-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
   .action-badge{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:8px 16px;border-radius:10px;letter-spacing:1px;min-width:110px;text-align:center;transition:all .3s}
@@ -60,7 +57,11 @@
   .advice-text{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text);min-height:80px}
   .advice-text.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
 
-  /* MANUAL */
+  /* MTT STAGE SELECTOR */
+  .mtt-stage{margin:8px 10px;display:flex;gap:5px}
+  .mtt-btn{flex:1;padding:7px 4px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none}
+  .mtt-btn.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
+
   .manual-wrap{margin:0 10px 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
   .manual-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;-webkit-user-select:none;user-select:none}
   .manual-header span{font-size:11px;font-weight:600;color:var(--muted)}
@@ -80,7 +81,6 @@
   .mp label{font-size:9px;color:var(--muted);display:block;margin-bottom:2px}
   .mp input,.mp select{background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;width:100%;outline:none}
   .mp select option{background:#111}
-
   .dots{display:inline-flex;gap:4px}
   .dots span{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dot .8s ease-in-out infinite}
   .dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
@@ -106,7 +106,7 @@
 <body>
 
 <header>
-  <div class="logo">Poker<span>Eye</span> <em>AI</em></div>
+  <div class="logo">Poker<span>Eye</span> <em>AI</em><small>MTT</small></div>
   <div class="auto-toggle" id="autoToggle" onclick="toggleAuto()">
     <div class="pulse-dot"></div>
     <span id="autoLabel">АВТО</span>
@@ -145,6 +145,14 @@
   <div class="info-chip"><span class="lbl">ОПП</span><span id="infoOpp">—</span></div>
 </div>
 
+<!-- MTT STAGE -->
+<div class="mtt-stage">
+  <div class="mtt-btn active" onclick="setMTT('early',this)">🟢 Начало</div>
+  <div class="mtt-btn" onclick="setMTT('mid',this)">🟡 Середина</div>
+  <div class="mtt-btn" onclick="setMTT('bubble',this)">🔴 Пузырь</div>
+  <div class="mtt-btn" onclick="setMTT('ft',this)">🏆 Фин. стол</div>
+</div>
+
 <!-- ADVICE -->
 <div class="advice-card">
   <div class="action-bar">
@@ -152,15 +160,14 @@
     <div style="flex:1"></div>
   </div>
   <div class="advice-text" id="adviceText">
-    Включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong><br><br>
-    Claude видит карты, позицию, ставки оппонентов и банк автоматически.
+    Выбери стадию турнира вверху → включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong>
   </div>
 </div>
 
 <!-- MANUAL -->
 <div class="manual-wrap">
   <div class="manual-header" onclick="toggleManual()">
-    <span>✏️ Ввести вручную (если камера не видит)</span>
+    <span>✏️ Ввести вручную</span>
     <span>▼</span>
   </div>
   <div class="manual-body" id="manualBody">
@@ -185,8 +192,8 @@
       <div class="mp"><label>Ставка (BB)</label><input id="bet" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Мой стек (BB)</label><input id="stack" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Стек оппонента</label><input id="oppStack" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Формат</label>
-        <select id="gameStage"><option value="cash">Кэш</option><option value="early">Турнир</option><option value="bubble">Пузырь</option><option value="ft">Фин. стол</option></select>
+      <div class="mp"><label>Оппонентов в руке</label>
+        <select id="oppCount"><option value="">Авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
       </div>
     </div>
   </div>
@@ -222,15 +229,145 @@
 <script>
 const PROXY = 'https://cold-king-654b.ioncondrea0.workers.dev';
 
+// ── MTT KNOWLEDGE BASE
+const MTT_KB = {
+  early: `
+СТАДИЯ: Начало МТТ (стеки 50-100BB+)
+ЦЕЛЬ: Накопить фишки, играть агрессивно с хорошими руками.
+
+ПРЕФЛОП ДИАПАЗОНЫ (открытие рейзом 2.5BB):
+- UTG: AA-77, AKo-AJs, AQo, KQs, KJs, QJs
+- MP: AA-66, AKo-ATs, AJo-AQo, KQs-KTs, QJs-QTs, JTs
+- CO: AA-55, AKo-A9s, ATo+, KQo-KJo, QJo, JTo, T9s, 98s, 87s
+- BTN: AA-22, AKo-A2s, KQo-K9o, QJo-Q9o, JTo-J9o, T9o, 98s-54s
+- SB: AA-22, AKo-A2s, KQo-K8o, широкий диапазон
+- BB: Защита против стилов широко
+
+ПРОТИВ РЕЙЗА:
+- 3-бет для значения: AA, KK, QQ, JJ, AKs, AKo
+- 3-бет блеф (в позиции): A5s-A2s, KQs, некоторые suited connectors
+- Колл рейза: TT-77, AQo-AJs, KQs, suited connectors с позиции
+- FOLD против рейза: всё слабее при плохих пот-оддс
+
+ПРОТИВ 3-БЕТА:
+- 4-бет для значения: AA, KK, QQ (иногда AKs)
+- Колл 3-бета: JJ, TT, AKo с позиции
+- FOLD: всё остальное
+
+ПРОТИВ 4-БЕТА:
+- Олл-ин или фолд: только AA, KK
+
+ПОСТФЛОП:
+- C-bet на флопе: 50-60% при 1 оппоненте, 33% при 2+
+- Топ пара + хороший кикер: бет 2 улицы
+- Сет/стрит/флеш: slow play или бет для создания банка
+- Дро: полублеф бет или колл при хороших шансах
+`,
+  mid: `
+СТАДИЯ: Середина МТТ (стеки 20-50BB, приближаемся к мани)
+ЦЕЛЬ: Сохранить стек, избегать ненужных рисков, использовать слабых игроков.
+
+КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ vs начало:
+- Играть тайтнее с маленькими стеками (20-30BB)
+- Пуш/фолд при стеке < 15BB
+- Больше ценить выживание
+- Атаковать короткие стеки
+
+ПУШ/ФОЛД ДИАПАЗОНЫ (стек < 15BB):
+- 15BB: пуш AA-22, AKo-A2s, KQo-K9s, QJs, JTs
+- 12BB: пуш AA-22, AKo-A4s, KQo-KTo, QJo, JTo
+- 10BB: пуш AA-22, AKo-A7s, KQo-KJs
+- 7BB: пуш почти любые 2 карты в поздней позиции
+
+ПРОТИВ ПУША (колл диапазон):
+- 15BB пуш: колл AA-TT, AKo-AQs
+- 10BB пуш: колл AA-99, AKo-AJs
+- Никогда не колл с плохими руками даже при хороших шансах в МТТ (ICM!)
+
+ICM ДАВЛЕНИЕ:
+- На пузыре сохранение стека важнее EV
+- Не иди в монету без сильного преимущества
+`,
+  bubble: `
+СТАДИЯ: ПУЗЫРЬ МТТ — КРИТИЧЕСКАЯ СТАДИЯ
+ЦЕЛЬ: Попасть в мани. Это важнее всего!
+
+ФУНДАМЕНТАЛЬНЫЕ ПРАВИЛА ПУЗЫРЯ:
+1. НИКОГДА не рискуй всем стеком без нат руки (AA/KK)
+2. Используй ICM давление на коротких стеков
+3. Сам будучи коротким стеком — пуш или фолд, никаких коллов без топ руки
+4. С большим стеком — атакуй всех, особенно средние стеки
+
+БОЛЬШОЙ СТЕК (50BB+):
+- Рейзь практически любые 2 карты против средних стеков
+- Атакуй BB коротких стеков с широким диапазоном
+- Не вступай в конфликт с другими большими стеками без топ руки
+
+СРЕДНИЙ СТЕК (20-40BB):
+- Играй тайтнее обычного
+- Не колл олл-ин без AA/KK/QQ/AK
+- Пуш с позиции против слабых стеков
+
+КОРОТКИЙ СТЕК (< 15BB):
+- Пуш или фолд ТОЛЬКО
+- Пуш с: AA-22, AKo-A2s, KQo-K9s в поздней позиции
+- Помни: лучше пройти в мани с 5BB чем вылететь на пузыре
+
+ПОСТФЛОП НА ПУЗЫРЕ:
+- Минимизируй постфлоп игру
+- Избегай сложных ситуаций
+- Лучше фолд чем риск всем стеком
+`,
+  ft: `
+СТАДИЯ: ФИНАЛЬНЫЙ СТОЛ МТТ
+ЦЕЛЬ: Максимизировать призовые. ICM критически важен.
+
+КЛЮЧЕВЫЕ ПРИНЦИПЫ:
+1. Каждое место = значительная разница в призовых
+2. ICM важнее EV чипов
+3. Адаптируйся к стекам за столом
+
+СТРАТЕГИЯ ПО СТЕКАМ:
+Большой стек (лидер):
+- Давление на всех кроме других больших стеков
+- Атакуй средние стеки которые не хотят рисковать
+- Позволяй коротким стекам биться между собой
+
+Средний стек:
+- Тайтнее чем обычно
+- Жди хороших спотов
+- Не колл пуш без TT+/AQs+
+- Следи за короткими стеками — они могут удвоиться
+
+Короткий стек:
+- Пуш или фолд немедленно
+- Лучше пушить сейчас пока есть fold equity
+- С 5BB пуш почти любые 2 карты в поздней позиции
+
+ХЕДЗ-АП (финал):
+- Играй очень широко
+- Пуш с любой A, любой парой, любым кингом
+- Агрессия ключ к победе
+`
+};
+
 const S = {
   street:'preflop', hole:[null,null], board:[],
   boardSlots:{preflop:0,flop:3,turn:4,river:5},
   autoMode:false, analyzing:false, stream:null,
   cdInterval:null, INTERVAL:5,
-  picker:{type:null,idx:null,suit:null,rank:null}
+  picker:{type:null,idx:null,suit:null,rank:null},
+  mttStage: 'early'
 };
 const RED=['♥','♦'];
 const CIRC=2*Math.PI*18;
+
+function setMTT(stage, el) {
+  S.mttStage = stage;
+  document.querySelectorAll('.mtt-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  toast('Стадия: ' + el.textContent);
+}
 
 async function callClaude(prompt, image) {
   const body = { prompt };
@@ -313,76 +450,63 @@ async function runScan() {
 async function doAnalyze(b64Image) {
   showLoading();
 
-  const manualHole  = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
-  const manualBoard = S.board.map(c=>c.rank+c.suit).join(' ');
-  const manualPos   = document.getElementById('pos').value;
-  const manualPot   = document.getElementById('pot').value;
-  const manualBet   = document.getElementById('bet').value;
-  const manualStack = document.getElementById('stack').value;
+  const manualHole     = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
+  const manualBoard    = S.board.map(c=>c.rank+c.suit).join(' ');
+  const manualPos      = document.getElementById('pos').value;
+  const manualPot      = document.getElementById('pot').value;
+  const manualBet      = document.getElementById('bet').value;
+  const manualStack    = document.getElementById('stack').value;
   const manualOppStack = document.getElementById('oppStack').value;
-  const stage       = document.getElementById('gameStage').value;
+  const manualOppCount = document.getElementById('oppCount').value;
+  const kb             = MTT_KB[S.mttStage];
 
-  const prompt = `Ты профессиональный GTO покерный тренер (Texas Hold'em No-Limit).
-${b64Image ? 'На изображении покерный стол. Внимательно изучи его.' : ''}
+  const prompt = `Ты профессиональный МТТ покерный тренер с глубоким знанием ICM и GTO стратегии.
 
-ШАГИ АНАЛИЗА:
+═══ БАЗА ЗНАНИЙ МТТ ═══
+${kb}
 
-1. РАСПОЗНАЙ с изображения (если есть):
-   - Мои карты (обычно внизу с пометкой HERO или просто лицом вверх)
-   - Карты на борде (в центре стола)
-   - Размер банка (число рядом с фишками в центре)
-   - Ставки оппонентов (числа рядом с их фишками)
-   - Мою позицию (BTN/SB/BB/UTG/CO и т.д.)
-   - Мой стек и стеки оппонентов
-   - Действия оппонентов (рейз/колл/чек/олл-ин)
-   - Количество активных игроков
+═══ ТЕКУЩАЯ СИТУАЦИЯ ═══
+${b64Image ? `Изучи изображение покерного стола и определи:
+- Мои карты (обычно внизу, помечены HERO)
+- Карты на борде (центр стола)
+- Размер банка
+- Ставки оппонентов (числа у их фишек)
+- Мою позицию за столом
+- Стеки всех игроков
+- Действия оппонентов` : ''}
 
-${manualHole ? '✅ Карты игрока (вручную): '+manualHole : ''}
-${manualBoard ? '✅ Борд (вручную): '+manualBoard : ''}
-${manualPos ? '✅ Позиция (вручную): '+manualPos : ''}
-${manualPot ? '✅ Банк (вручную): '+manualPot+' BB' : ''}
-${manualBet ? '✅ Ставка (вручную): '+manualBet+' BB' : ''}
-${manualStack ? '✅ Стек (вручную): '+manualStack+' BB' : ''}
-${manualOppStack ? '✅ Стек оппонента (вручную): '+manualOppStack+' BB' : ''}
-Формат: ${stage}
+${manualHole ? '✅ Мои карты: '+manualHole : ''}
+${manualBoard ? '✅ Борд: '+manualBoard : ''}
+${manualPos ? '✅ Позиция: '+manualPos : ''}
+${manualPot ? '✅ Банк: '+manualPot+' BB' : ''}
+${manualBet ? '✅ Ставка: '+manualBet+' BB' : ''}
+${manualStack ? '✅ Мой стек: '+manualStack+' BB' : ''}
+${manualOppStack ? '✅ Стек оппонента: '+manualOppStack+' BB' : ''}
+${manualOppCount ? '✅ Оппонентов: '+manualOppCount : ''}
 
-2. ЕСЛИ КАРТЫ НЕ ВИДНЫ — напиши только: "КАРТЫ НЕ ВИДНЫ" и остановись.
+═══ ЗАДАЧА ═══
+Если карты не видны на изображении и не введены вручную — напиши ТОЛЬКО: "КАРТЫ НЕ ВИДНЫ"
 
-3. ПОКЕРНЫЙ АНАЛИЗ на основе увиденного:
+Иначе дай точный совет учитывая:
+1. Стадию турнира и ICM давление
+2. Силу руки относительно диапазона оппонента
+3. Размер стека (пуш/фолд если < 15BB)
+4. Позицию и действия оппонентов
+5. Количество активных оппонентов
 
-GTO ПРАВИЛА:
-ПРЕФЛОП:
-- AA/KK/QQ/JJ/TT/99 — всегда рейз, никогда не фолд против одиночного рейза
-- AK/AQ — рейз, против 3-бета колл с ранней позиции
-- Против 3-бета: продолжать только с AA/KK/QQ/JJ/AKs — остальное FOLD
-- Против 4-бета: только AA/KK — остальное FOLD
-- Мусорные руки (Q7/J4/83/T2 без масти) — FOLD против любой агрессии
-- При 2+ оппонентах — нужна рука на 30% сильнее
-- Стек < 20BB — только пуш топ рукой или FOLD
-
-ПОСТФЛОП:
-- Топ пара + топ кикер — бет 60-70% банка
-- Стрит/флеш/сет — рейз или медленная игра
-- Без пары и без дро — FOLD против бета
-- Дро (флеш/стрит) при хороших пот-оддс — колл
-- SPR < 3 — пуш с любой парой выше средней карты борда
-
-4. ОТВЕТ:
-Первое слово: FOLD, CALL, RAISE или CHECK
-Затем 2-3 предложения объяснения на русском.
-Последняя строка: [КАРТЫ:X|БОРД:X|ПОЗ:X|БАНК:X|СТАВКА:X|СТЕК:X|ОПП:X]`;
+Начни с одного слова: FOLD, CALL, RAISE или CHECK
+Затем 2-3 чётких предложения на русском с конкретным обоснованием.
+Последняя строка: [К:карты|Б:борд|П:позиция|БК:банк|СТ:ставка|СК:стек|О:действие_оппонента]`;
 
   try {
     const raw = await callClaude(prompt, b64Image);
     if(!raw||raw.trim().length===0) throw new Error('Пустой ответ');
 
-    // Карты не видны
     if (raw.includes('КАРТЫ НЕ ВИДНЫ')) {
       setAdvice('?','badge-wait','🃏 Карты не видны — наведи камеру на свои карты или введи вручную.');
       return;
     }
 
-    // Extract action
     const first = raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
     const ACTIONS = ['FOLD','CALL','RAISE','CHECK'];
     const action = ACTIONS.find(a=>first.includes(a)) || ACTIONS.find(a=>raw.toUpperCase().includes(a)) || '?';
@@ -392,8 +516,7 @@ GTO ПРАВИЛА:
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
     document.getElementById('actionBadge').textContent=LABELS[action]||action;
 
-    // Extract info line
-    const infoMatch = raw.match(/\[КАРТЫ:(.*?)\|БОРД:(.*?)\|ПОЗ:(.*?)\|БАНК:(.*?)\|СТАВКА:(.*?)\|СТЕК:(.*?)\|ОПП:(.*?)\]/i);
+    const infoMatch = raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
     if (infoMatch) {
       document.getElementById('infoBar').style.display='flex';
       document.getElementById('infoCards').textContent  = infoMatch[1]?.trim()||'—';
@@ -405,7 +528,7 @@ GTO ПРАВИЛА:
       document.getElementById('infoOpp').textContent    = infoMatch[7]?.trim()||'—';
     }
 
-    const cleanText = raw.replace(/\[КАРТЫ:.*?\]/gi,'').trim();
+    const cleanText = raw.replace(/\[К:.*?\]/gi,'').trim();
     document.getElementById('adviceText').className='advice-text';
     document.getElementById('adviceText').textContent=cleanText;
 
