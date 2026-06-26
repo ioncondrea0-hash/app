@@ -218,17 +218,10 @@ const S = {
 const RED=['♥','♦'];
 const CIRC = 2 * Math.PI * 18;
 
-async function callGemini(prompt, b64Image) {
-  const parts = [];
-  if (b64Image) {
-    parts.push({ inline_data: { mime_type: 'image/jpeg', data: b64Image } });
-  }
-  parts.push({ text: prompt });
-
-  const body = {
-    contents: [{ parts }],
-    generationConfig: { temperature: 0.2, maxOutputTokens: 800 }
-  };
+// ── API: отправляем {prompt, image} → получаем {text}
+async function callAI(prompt, b64Image) {
+  const body = { prompt };
+  if (b64Image) body.image = b64Image;
 
   const resp = await fetch(PROXY, {
     method: 'POST',
@@ -236,23 +229,10 @@ async function callGemini(prompt, b64Image) {
     body: JSON.stringify(body)
   });
 
-  if (!resp.ok) {
-    const errText = await resp.text();
-    throw new Error('HTTP ' + resp.status + ': ' + errText.slice(0, 100));
-  }
-
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
   const data = await resp.json();
-
-  // Log full response for debugging
-  console.log('Gemini response:', JSON.stringify(data).slice(0, 500));
-
-  // Handle Gemini response format
-  if (data.error) throw new Error(data.error.message || 'Gemini error');
-  
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Пустой ответ от Gemini: ' + JSON.stringify(data).slice(0, 200));
-  
-  return text;
+  if (data.error) throw new Error(data.error);
+  return data.text || '';
 }
 
 async function startCam() {
@@ -265,9 +245,7 @@ async function startCam() {
     document.getElementById('camPlaceholder').style.display = 'none';
     document.getElementById('camWrap').style.display = 'block';
     toast('📷 Камера включена — нажми АВТО');
-  } catch(e) {
-    showErr('Камера: ' + e.message);
-  }
+  } catch(e) { showErr('Камера: ' + e.message); }
 }
 
 function toggleAuto() {
@@ -279,8 +257,7 @@ function toggleAuto() {
     document.getElementById('autoLabel').textContent = 'АВТО ВКЛ';
     document.getElementById('scanLine').classList.add('on');
     document.getElementById('cdWrap').classList.add('on');
-    hideErr();
-    startCountdown();
+    hideErr(); startCountdown();
   } else {
     btn.classList.remove('active');
     document.getElementById('autoLabel').textContent = 'АВТО';
@@ -292,8 +269,7 @@ function toggleAuto() {
 
 function startCountdown() {
   let rem = S.INTERVAL;
-  updateCD(rem);
-  runScan();
+  updateCD(rem); runScan();
   S.cdInterval = setInterval(() => {
     rem--;
     if (rem <= 0) { rem = S.INTERVAL; if (!S.analyzing) runScan(); }
@@ -335,39 +311,30 @@ async function doAnalyze(b64Image) {
   const manualHole  = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
   const manualBoard = S.board.map(c=>c.rank+c.suit).join(' ');
 
-  const prompt = `Ты покерный тренер (Texas Hold'em No-Limit).
-${b64Image ? 'Смотри на изображение покерного стола и распознай карты.' : ''}
+  const prompt = `Ты покерный тренер Texas Hold'em No-Limit.
+${b64Image ? 'На изображении покерный стол. Распознай карты.' : ''}
 ${manualHole ? 'Карты игрока: ' + manualHole : ''}
 ${manualBoard ? 'Борд: ' + manualBoard : ''}
+Параметры: стрит=${S.street}, позиция=${pos}, игроков=${plrs}, банк=${pot}BB, ставка=${bet}BB, стек=${stack}BB, формат=${stage}.
 
-Параметры: стрит=${S.street}, позиция=${pos}, игроков=${plrs}, банк=${pot}BB, ставка=${bet}BB, стек=${stack}BB, формат=${stage}
-
-ВАЖНО: Ответь СТРОГО только валидным JSON объектом. Никакого текста до или после. Никаких markdown блоков. Только JSON:
+Ответь ТОЛЬКО JSON без markdown и без текста снаружи:
 {"holeCards":["Ah","Kd"],"boardCards":[],"cardsConfidence":0.8,"action":"FOLD","sizing":null,"equity":0.55,"reason":"Объяснение на русском.","tip":"Совет."}`;
 
   try {
-    const raw = await callGemini(prompt, b64Image);
-    console.log('Raw response:', raw.slice(0, 300));
-    
-    // Try multiple JSON extraction methods
+    const raw = await callAI(prompt, b64Image);
+
+    // Parse JSON from response
     let res = null;
-    
-    // Method 1: direct parse
     try { res = JSON.parse(raw.trim()); } catch(e) {}
-    
-    // Method 2: extract JSON object
     if (!res) {
-      const match = raw.match(/\{[^{}]*\}/s) || raw.match(/\{[\s\S]*\}/);
-      if (match) try { res = JSON.parse(match[0]); } catch(e) {}
+      const m = raw.match(/\{[\s\S]*\}/);
+      if (m) try { res = JSON.parse(m[0]); } catch(e) {}
     }
-    
-    // Method 3: remove markdown and retry
     if (!res) {
       const clean = raw.replace(/```json/g,'').replace(/```/g,'').trim();
       try { res = JSON.parse(clean); } catch(e) {}
     }
-
-    if (!res) throw new Error('Не удалось разобрать ответ: ' + raw.slice(0, 150));
+    if (!res) throw new Error('Ответ не JSON: ' + raw.slice(0,100));
 
     if (res.holeCards?.length === 2 && (res.cardsConfidence||0) > 0.5) {
       const p = res.holeCards.map(parseCard).filter(Boolean);
@@ -377,13 +344,10 @@ ${manualBoard ? 'Борд: ' + manualBoard : ''}
       const p = res.boardCards.slice(0, S.boardSlots[S.street]).map(parseCard).filter(Boolean);
       if (p.length) S.board = p;
     }
-    renderCards();
-    showAdvice(res);
-    hideErr();
+    renderCards(); showAdvice(res); hideErr();
   } catch(e) {
     console.error(e);
-    showErr(e.message);
-    resetAdvice();
+    showErr(e.message); resetAdvice();
   }
 }
 
@@ -416,7 +380,7 @@ function showAdvice(res) {
     RAISE:{cls:'badge-raise',label:'↑ RAISE'},
     CHECK:{cls:'badge-check',label:'— CHECK'}
   };
-  const a = MAP[res.action] || {cls:'badge-check', label: res.action||'?'};
+  const a = MAP[res.action] || {cls:'badge-check',label:res.action||'?'};
   document.getElementById('actionBadge').className = 'action-badge ' + a.cls;
   document.getElementById('actionBadge').textContent = a.label;
   let html = `<p>${res.reason||''}</p>`;
@@ -433,19 +397,19 @@ function showAdvice(res) {
 
 function renderStrip() {
   const strip = document.getElementById('cardsStrip');
-  const all = [...S.hole.filter(Boolean), ...S.board.filter(Boolean)];
+  const all = [...S.hole.filter(Boolean),...S.board.filter(Boolean)];
   if (!all.length) { strip.style.display='none'; return; }
-  strip.style.display = 'flex';
-  strip.innerHTML = '<span class="strip-lbl">КАРТЫ:</span>';
-  S.hole.forEach(c => {
-    const el = document.createElement('div');
-    if (c) { el.className=`mini-card ${c.red?'red':'black'}`; el.innerHTML=`<div>${c.rank}</div><div>${c.suit}</div>`; }
-    else   { el.className='mini-card unk'; el.textContent='?'; }
+  strip.style.display='flex';
+  strip.innerHTML='<span class="strip-lbl">КАРТЫ:</span>';
+  S.hole.forEach(c=>{
+    const el=document.createElement('div');
+    if(c){el.className=`mini-card ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div>${c.suit}</div>`;}
+    else{el.className='mini-card unk';el.textContent='?';}
     strip.appendChild(el);
   });
-  if (S.board.length) {
-    const sep=document.createElement('div'); sep.className='csep'; strip.appendChild(sep);
-    S.board.forEach(c => {
+  if(S.board.length){
+    const sep=document.createElement('div');sep.className='csep';strip.appendChild(sep);
+    S.board.forEach(c=>{
       const el=document.createElement('div');
       el.className=`mini-card ${c.red?'red':'black'}`;
       el.innerHTML=`<div>${c.rank}</div><div>${c.suit}</div>`;
@@ -454,33 +418,31 @@ function renderStrip() {
   }
 }
 
-function showErr(msg) { const b=document.getElementById('errBox'); b.textContent='⚠️ '+msg; b.style.display='block'; }
-function hideErr() { document.getElementById('errBox').style.display='none'; }
+function showErr(msg){const b=document.getElementById('errBox');b.textContent='⚠️ '+msg;b.style.display='block';}
+function hideErr(){document.getElementById('errBox').style.display='none';}
 
-function setStreet(s, el) {
-  S.street = s;
+function setStreet(s,el){
+  S.street=s;
   document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  S.board = S.board.slice(0, S.boardSlots[s]);
-  document.getElementById('boardManual').style.display = s==='preflop'?'none':'block';
+  S.board=S.board.slice(0,S.boardSlots[s]);
+  document.getElementById('boardManual').style.display=s==='preflop'?'none':'block';
   renderCards();
 }
-function renderCards() {
-  const hr = document.getElementById('holeRow');
-  hr.innerHTML = '';
-  for(let i=0;i<2;i++) {
-    const c=S.hole[i], el=document.createElement('div');
+function renderCards(){
+  const hr=document.getElementById('holeRow');hr.innerHTML='';
+  for(let i=0;i<2;i++){
+    const c=S.hole[i],el=document.createElement('div');
     if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;}
     else{el.className='card-slot empty';el.textContent='+';}
-    el.onclick=()=>openPicker('hole',i); hr.appendChild(el);
+    el.onclick=()=>openPicker('hole',i);hr.appendChild(el);
   }
-  const slots=S.boardSlots[S.street], br=document.getElementById('boardRow');
-  br.innerHTML='';
+  const slots=S.boardSlots[S.street],br=document.getElementById('boardRow');br.innerHTML='';
   for(let i=0;i<slots;i++){
     const c=S.board[i],el=document.createElement('div');
     if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;}
     else{el.className='card-slot empty';el.textContent='+';}
-    el.onclick=()=>openPicker('board',i); br.appendChild(el);
+    el.onclick=()=>openPicker('board',i);br.appendChild(el);
   }
 }
 
@@ -491,8 +453,8 @@ function pickRank(el){document.querySelectorAll('.rank-btn').forEach(b=>b.classL
 function confirmCard(){
   if(!S.picker.suit||!S.picker.rank){toast('Выбери масть и ранг');return;}
   const c={rank:S.picker.rank,suit:S.picker.suit,red:RED.includes(S.picker.suit)};
-  if(S.picker.type==='hole')S.hole[S.picker.idx]=c; else S.board[S.picker.idx]=c;
-  renderCards(); closeModal();
+  if(S.picker.type==='hole')S.hole[S.picker.idx]=c;else S.board[S.picker.idx]=c;
+  renderCards();closeModal();
   if(!S.autoMode){S.analyzing=false;doAnalyze(null);}
 }
 document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
