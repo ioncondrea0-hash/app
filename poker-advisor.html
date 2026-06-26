@@ -22,72 +22,86 @@
   .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background 0.2s;flex-shrink:0}
   .auto-toggle.active .pulse-dot{background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 1.2s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.7)}}
-  .start-cam-btn{width:100%;padding:30px;background:var(--surface);border:2px dashed var(--border);color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px}
-  .start-cam-btn span{font-size:40px}
+  .start-cam-btn{width:100%;padding:24px;background:var(--surface);border:2px dashed var(--border);color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .start-cam-btn span{font-size:36px}
   .cam-wrap{position:relative;width:100%;background:#000;overflow:hidden}
-  #videoEl{width:100%;display:block;max-height:48vh;object-fit:cover}
+  #videoEl{width:100%;display:block;max-height:45vh;object-fit:cover}
   #canvasEl{display:none}
   .cam-overlay{position:absolute;inset:0;pointer-events:none}
-  .bracket{position:absolute;width:28px;height:28px;border-color:var(--neon);border-style:solid;opacity:0.8}
-  .bracket.tl{top:10px;left:10px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
-  .bracket.tr{top:10px;right:10px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
-  .bracket.bl{bottom:10px;left:10px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
-  .bracket.br{bottom:10px;right:10px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+  .bracket{position:absolute;width:24px;height:24px;border-color:var(--neon);border-style:solid;opacity:0.8}
+  .bracket.tl{top:8px;left:8px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+  .bracket.tr{top:8px;right:8px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+  .bracket.bl{bottom:8px;left:8px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+  .bracket.br{bottom:8px;right:8px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
   .scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0;top:0}
   .scanline.on{opacity:1;animation:scanMove 2s linear infinite}
   @keyframes scanMove{0%{top:5%}100%{top:95%}}
-  .cam-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--gold);letter-spacing:1px;background:rgba(0,0,0,0.6);padding:3px 10px;border-radius:10px}
-  .countdown-wrap{position:absolute;bottom:10px;right:10px;width:44px;height:44px;display:none}
+  .cam-status{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--gold);letter-spacing:1px;background:rgba(0,0,0,0.6);padding:3px 8px;border-radius:10px}
+  .countdown-wrap{position:absolute;bottom:8px;right:8px;width:40px;height:40px;display:none}
   .countdown-wrap.on{display:block}
-  .countdown-svg{width:44px;height:44px;transform:rotate(-90deg)}
+  .countdown-svg{width:40px;height:40px;transform:rotate(-90deg)}
   .countdown-circle{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 0.9s linear}
-  .countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
-  .advice-card{margin:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-  .action-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
-  .action-badge{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:7px 16px;border-radius:10px;letter-spacing:1px;min-width:110px;text-align:center}
+  .countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
+
+  /* ADVICE */
+  .advice-card{margin:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .action-bar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border)}
+  .action-badge{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:6px 14px;border-radius:10px;letter-spacing:1px;min-width:100px;text-align:center}
   .badge-fold{background:rgba(255,71,87,0.15);color:var(--danger);border:2px solid var(--danger)}
   .badge-call{background:rgba(255,165,2,0.15);color:var(--warn);border:2px solid var(--warn)}
   .badge-raise{background:rgba(0,255,163,0.12);color:var(--neon);border:2px solid var(--neon)}
   .badge-check{background:rgba(255,255,255,0.07);color:#ccc;border:2px solid #444}
-  .badge-wait{background:var(--surface2);color:var(--muted);border:2px dashed var(--border);font-size:13px}
-  .equity-mini{text-align:right}
-  .equity-mini .pct{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--neon)}
-  .equity-mini .lbl{font-size:10px;color:var(--muted)}
-  .advice-text{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text);min-height:70px}
+  .badge-wait{background:var(--surface2);color:var(--muted);border:2px dashed var(--border);font-size:12px}
+  .gto-tag{font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid var(--gold);font-family:'JetBrains Mono',monospace}
+  .advice-text{padding:10px 12px;font-size:13px;line-height:1.6;color:var(--text);min-height:60px}
   .advice-text.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
-  .manual-section{padding:0 12px 12px}
-  .section-lbl{font-size:10px;letter-spacing:1.5px;color:var(--gold);font-family:'JetBrains Mono',monospace;padding:10px 0 8px;text-transform:uppercase}
-  .cards-row{display:flex;gap:7px;flex-wrap:wrap}
-  .card-slot{width:40px;height:54px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;flex-shrink:0}
+
+  /* SECTIONS */
+  .sec{padding:0 10px 10px}
+  .sec-lbl{font-size:10px;letter-spacing:1.5px;color:var(--gold);font-family:'JetBrains Mono',monospace;padding:8px 0 6px;text-transform:uppercase}
+  .cards-row{display:flex;gap:6px;flex-wrap:wrap}
+  .card-slot{width:38px;height:52px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;border:2px solid transparent;flex-shrink:0}
   .card-slot.red{background:#fff;color:#c0392b;border-color:#ddd}
   .card-slot.black{background:#fff;color:#111;border-color:#ddd}
-  .card-slot.empty{background:var(--surface2);border:2px dashed var(--border);color:var(--muted);font-size:20px}
-  .params-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 12px 12px}
-  .param-cell{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
-  .param-cell label{font-size:10px;color:var(--muted);display:block;margin-bottom:3px}
-  .param-cell input,.param-cell select{background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;width:100%;outline:none}
-  .param-cell select option{background:#111}
-  .street-row{display:flex;gap:6px;padding:0 12px 12px}
-  .stab{flex:1;padding:7px 4px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer}
+  .card-slot.empty{background:var(--surface2);border:2px dashed var(--border);color:var(--muted);font-size:18px}
+
+  /* STREET */
+  .street-row{display:flex;gap:5px;padding:0 10px 8px}
+  .stab{flex:1;padding:6px 2px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer}
   .stab.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
+
+  /* PARAMS GRID */
+  .params-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 8px}
+  .param-cell{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 10px}
+  .param-cell label{font-size:10px;color:var(--muted);display:block;margin-bottom:2px}
+  .param-cell input,.param-cell select{background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;width:100%;outline:none}
+  .param-cell select option{background:#111}
+
+  /* OPPONENTS */
+  .opp-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 10px}
+  .opp-cell{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 10px}
+  .opp-cell label{font-size:10px;color:var(--muted);display:block;margin-bottom:2px}
+  .opp-cell select{background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;width:100%;outline:none}
+  .opp-cell select option{background:#111}
+
   .dots{display:inline-flex;gap:4px}
   .dots span{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dot 0.8s ease-in-out infinite}
   .dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
   @keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--gold);color:var(--text);padding:9px 18px;border-radius:20px;font-size:12px;z-index:999;white-space:nowrap;pointer-events:none;animation:toastIn 0.25s ease}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--gold);color:var(--text);padding:8px 16px;border-radius:20px;font-size:12px;z-index:999;white-space:nowrap;pointer-events:none;animation:toastIn 0.25s ease}
   @keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
   .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:200;align-items:flex-end}
   .modal-bg.open{display:flex}
-  .modal{width:100%;background:var(--surface);border-radius:20px 20px 0 0;padding:18px 14px 40px}
-  .modal-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:12px;text-align:center}
-  .suit-row{display:flex;gap:6px;margin-bottom:10px}
-  .suit-btn{flex:1;padding:10px;border-radius:10px;font-size:22px;text-align:center;background:var(--surface2);border:2px solid var(--border);cursor:pointer}
+  .modal{width:100%;background:var(--surface);border-radius:20px 20px 0 0;padding:16px 14px 36px}
+  .modal-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:10px;text-align:center}
+  .suit-row{display:flex;gap:6px;margin-bottom:8px}
+  .suit-btn{flex:1;padding:9px;border-radius:10px;font-size:20px;text-align:center;background:var(--surface2);border:2px solid var(--border);cursor:pointer}
   .suit-btn.sel{border-color:var(--gold);background:var(--felt)}
-  .rank-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px}
-  .rank-btn{padding:9px 2px;text-align:center;border-radius:8px;font-size:13px;font-weight:700;background:var(--surface2);border:2px solid var(--border);cursor:pointer;color:var(--text)}
+  .rank-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+  .rank-btn{padding:8px 2px;text-align:center;border-radius:8px;font-size:12px;font-weight:700;background:var(--surface2);border:2px solid var(--border);cursor:pointer;color:var(--text)}
   .rank-btn.sel{border-color:var(--neon);background:rgba(0,255,163,.1);color:var(--neon)}
   .modal-btns{display:flex;gap:8px}
-  .mbtn{flex:1;padding:13px;border-radius:10px;border:none;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+  .mbtn{flex:1;padding:12px;border-radius:10px;border:none;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
   .mbtn.ok{background:var(--gold);color:#000}
   .mbtn.cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
 </style>
@@ -123,51 +137,106 @@
   </div>
 </div>
 
+<!-- ADVICE -->
 <div class="advice-card">
   <div class="action-bar">
     <div class="action-badge badge-wait" id="actionBadge">ОЖИДАНИЕ</div>
     <div style="flex:1"></div>
-    <div class="equity-mini" id="equityMini" style="display:none">
-      <div class="pct" id="equityPct">0%</div>
-      <div class="lbl">equity</div>
-    </div>
+    <div class="gto-tag" id="gtoTag" style="display:none">GTO</div>
   </div>
   <div class="advice-text" id="adviceText">
-    Включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong> — AI анализирует стол каждые 5 секунд.
+    Включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong>
   </div>
 </div>
 
-<div class="street-row" style="margin-top:12px">
+<!-- STREET -->
+<div class="street-row" style="margin-top:10px">
   <div class="stab active" onclick="setStreet('preflop',this)">Префлоп</div>
   <div class="stab" onclick="setStreet('flop',this)">Флоп</div>
   <div class="stab" onclick="setStreet('turn',this)">Тёрн</div>
   <div class="stab" onclick="setStreet('river',this)">Ривер</div>
 </div>
 
-<div class="manual-section">
-  <div class="section-lbl">Моя рука (тап чтобы изменить)</div>
+<!-- MY CARDS -->
+<div class="sec">
+  <div class="sec-lbl">Моя рука</div>
   <div class="cards-row" id="holeRow"></div>
 </div>
-<div class="manual-section" id="boardManual" style="display:none">
-  <div class="section-lbl">Борд</div>
+<div class="sec" id="boardSec" style="display:none">
+  <div class="sec-lbl">Борд</div>
   <div class="cards-row" id="boardRow"></div>
 </div>
 
+<!-- GAME PARAMS -->
+<div class="sec"><div class="sec-lbl">Параметры раздачи</div></div>
 <div class="params-grid">
-  <div class="param-cell"><label>Банк (BB)</label><input id="pot" type="number" value="6" inputmode="numeric"></div>
-  <div class="param-cell"><label>Ставка ко мне (BB)</label><input id="bet" type="number" value="0" inputmode="numeric"></div>
   <div class="param-cell"><label>Позиция</label>
     <select id="pos"><option>UTG</option><option>UTG+1</option><option>MP</option><option>HJ</option><option>CO</option><option selected>BTN</option><option>SB</option><option>BB</option></select>
   </div>
-  <div class="param-cell"><label>Игроков</label>
+  <div class="param-cell"><label>Игроков за столом</label>
     <select id="players"><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option></select>
   </div>
-  <div class="param-cell"><label>Стек (BB)</label><input id="stack" type="number" value="100" inputmode="numeric"></div>
+  <div class="param-cell"><label>Мой стек (BB)</label><input id="stack" type="number" value="100" inputmode="numeric"></div>
+  <div class="param-cell"><label>Банк (BB)</label><input id="pot" type="number" value="1.5" inputmode="numeric"></div>
+  <div class="param-cell"><label>Ставка ко мне (BB)</label><input id="bet" type="number" value="0" inputmode="numeric"></div>
+  <div class="param-cell"><label>Мой вложенный (BB)</label><input id="invested" type="number" value="0" inputmode="numeric"></div>
   <div class="param-cell"><label>Формат</label>
-    <select id="gameStage"><option selected value="cash">Кэш</option><option value="early">Турнир</option><option value="bubble">Пузырь</option><option value="ft">Финальный стол</option></select>
+    <select id="gameStage"><option selected value="cash">Кэш</option><option value="early">Турнир начало</option><option value="bubble">Пузырь</option><option value="ft">Финальный стол</option></select>
+  </div>
+  <div class="param-cell"><label>Действие оппонента</label>
+    <select id="oppAction">
+      <option value="none">Нет действия</option>
+      <option value="limp">Лимп</option>
+      <option value="raise">Рейз</option>
+      <option value="3bet">3-бет</option>
+      <option value="4bet">4-бет</option>
+      <option value="allin">Олл-ин</option>
+      <option value="check">Чек</option>
+      <option value="bet">Бет</option>
+      <option value="call">Колл</option>
+    </select>
   </div>
 </div>
 
+<!-- OPPONENTS -->
+<div class="sec"><div class="sec-lbl">Оппоненты</div></div>
+<div class="opp-grid">
+  <div class="opp-cell"><label>Стиль оппонента</label>
+    <select id="oppStyle">
+      <option value="unknown">Неизвестен</option>
+      <option value="tight">Тайт (осторожный)</option>
+      <option value="loose">Луз (широкий)</option>
+      <option value="aggressive">Агрессивный (LAG)</option>
+      <option value="passive">Пассивный (Calling station)</option>
+      <option value="fish">Фиш (новичок)</option>
+      <option value="reg">Рег (профи)</option>
+    </select>
+  </div>
+  <div class="opp-cell"><label>Стек оппонента (BB)</label>
+    <input id="oppStack" type="number" value="100" inputmode="numeric">
+  </div>
+  <div class="opp-cell"><label>Активных оппонентов в руке</label>
+    <select id="oppInHand">
+      <option value="1" selected>1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4+</option>
+    </select>
+  </div>
+  <div class="opp-cell"><label>Позиция оппонента</label>
+    <select id="oppPos">
+      <option value="unknown">Неизвестна</option>
+      <option value="UTG">UTG (ранняя)</option>
+      <option value="MP">MP (средняя)</option>
+      <option value="CO">CO</option>
+      <option value="BTN">BTN (баттон)</option>
+      <option value="SB">SB</option>
+      <option value="BB">BB</option>
+    </select>
+  </div>
+</div>
+
+<!-- MODAL -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <div class="modal-title">Выбери карту</div>
@@ -192,12 +261,97 @@
     </div>
   </div>
 </div>
-
 <div style="height:40px"></div>
 
 <script>
 const PROXY = 'https://cold-king-654b.ioncondrea0.workers.dev';
 
+// ── GTO PREFLOP CHARTS (based on solver data)
+const GTO = {
+  // Format: 'HAND': { UTG, MP, HJ, CO, BTN, SB, BB }
+  // Actions: R=Raise, C=Call, F=Fold, R3=3bet, RC=Raise or Call
+  preflop: {
+    // Premium hands - always raise from any position
+    'AA': {UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'R3'},
+    'KK': {UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'R3'},
+    'QQ': {UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'R3'},
+    'JJ': {UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'TT': {UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'AKs':{UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'R3'},
+    'AKo':{UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'R3'},
+    // Strong hands
+    '99': {UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    '88': {UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'RC',BB:'RC'},
+    '77': {UTG:'F',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'RC',BB:'RC'},
+    '66': {UTG:'F',MP:'F','UTG+1':'F',HJ:'R',CO:'R',BTN:'R',SB:'RC',BB:'RC'},
+    '55': {UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'RC',BB:'RC'},
+    '44': {UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'F',BB:'RC'},
+    '33': {UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'F',BB:'RC'},
+    '22': {UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'F',BB:'RC'},
+    'AQs':{UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'R3'},
+    'AJs':{UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'ATs':{UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A9s':{UTG:'F',MP:'F','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A8s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A7s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A6s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A5s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A4s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A3s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'R',BB:'RC'},
+    'A2s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'R',BB:'RC'},
+    'AQo':{UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'AJo':{UTG:'F',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'ATo':{UTG:'F',MP:'F','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'A9o':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'KQs':{UTG:'R',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'KJs':{UTG:'F',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'KTs':{UTG:'F',MP:'F','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'K9s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'KQo':{UTG:'F',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'KJo':{UTG:'F',MP:'F','UTG+1':'F',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'KTo':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'QJs':{UTG:'F',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'QTs':{UTG:'F',MP:'F','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'Q9s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'QJo':{UTG:'F',MP:'F','UTG+1':'F',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'JTs':{UTG:'F',MP:'R','UTG+1':'R',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'J9s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'JTo':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'RC',BB:'RC'},
+    'T9s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'R',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    'T8s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    '98s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'R',BTN:'R',SB:'R',BB:'RC'},
+    '87s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'R',BB:'RC'},
+    '76s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'R',BB:'RC'},
+    '65s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'R',BB:'RC'},
+    '54s':{UTG:'F',MP:'F','UTG+1':'F',HJ:'F',CO:'F',BTN:'R',SB:'F',BB:'RC'},
+  }
+};
+
+// ── GET GTO ACTION
+function getGTOAction(card1, card2, position) {
+  if (!card1 || !card2) return null;
+  const r1 = card1.rank, r2 = card2.rank, s1 = card1.suit, s2 = card2.suit;
+  const RANK_ORDER = 'AKQJT98765432';
+  
+  // Sort ranks
+  let high = r1, low = r2;
+  if (RANK_ORDER.indexOf(r1) > RANK_ORDER.indexOf(r2)) { high = r2; low = r1; }
+  
+  const suited = s1 === s2;
+  const pocket = high === low;
+  
+  let handKey = '';
+  if (pocket) handKey = high + low;
+  else handKey = high + low + (suited ? 's' : 'o');
+  
+  const chart = GTO.preflop[handKey];
+  if (!chart) return null;
+  
+  const action = chart[position];
+  return { hand: handKey, action, suited, pocket };
+}
+
+// ── STATE
 const S = {
   street:'preflop', hole:[null,null], board:[],
   boardSlots:{preflop:0,flop:3,turn:4,river:5},
@@ -232,7 +386,7 @@ async function startCam() {
     document.getElementById('camPlaceholder').style.display = 'none';
     document.getElementById('camWrap').style.display = 'block';
     toast('📷 Камера включена — нажми АВТО');
-  } catch(e) { showAdviceText('❌ Камера: ' + e.message); }
+  } catch(e) { setAdvice('ОШИБКА', 'badge-wait', '❌ Камера: ' + e.message); }
 }
 
 function toggleAuto() {
@@ -289,39 +443,99 @@ async function runScan() {
 
 async function doAnalyze(b64Image) {
   showLoading();
-  const pot   = document.getElementById('pot').value   || 6;
-  const bet   = document.getElementById('bet').value   || 0;
-  const pos   = document.getElementById('pos').value;
-  const plrs  = document.getElementById('players').value;
-  const stack = document.getElementById('stack').value || 100;
-  const stage = document.getElementById('gameStage').value;
-  const manualHole  = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
-  const manualBoard = S.board.map(c=>c.rank+c.suit).join(' ');
 
-  const prompt = `Ты покерный тренер Texas Hold'em No-Limit.
-${b64Image ? 'На изображении покерный стол. Распознай карты игрока и борд.' : ''}
-${manualHole ? 'Карты игрока: ' + manualHole : ''}
-${manualBoard ? 'Борд: ' + manualBoard : ''}
-Параметры: стрит=${S.street}, позиция=${pos}, игроков=${plrs}, банк=${pot}BB, ставка=${bet}BB, стек=${stack}BB, формат=${stage}.
+  const pos        = document.getElementById('pos').value;
+  const players    = document.getElementById('players').value;
+  const stack      = document.getElementById('stack').value || 100;
+  const pot        = document.getElementById('pot').value || 1.5;
+  const bet        = document.getElementById('bet').value || 0;
+  const invested   = document.getElementById('invested').value || 0;
+  const stage      = document.getElementById('gameStage').value;
+  const oppAction  = document.getElementById('oppAction').value;
+  const oppStyle   = document.getElementById('oppStyle').value;
+  const oppStack   = document.getElementById('oppStack').value || 100;
+  const oppInHand  = document.getElementById('oppInHand').value;
+  const oppPos     = document.getElementById('oppPos').value;
 
-Дай совет: что делать (FOLD/CALL/RAISE/CHECK) и почему. Объяснение на русском языке, кратко 2-3 предложения. Начни ответ с одного слова: FOLD, CALL, RAISE или CHECK.`;
+  const myCards = S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
+  const boardCards = S.board.map(c=>c.rank+c.suit).join(' ');
+
+  // ── GTO CHECK (preflop only)
+  let gtoHint = '';
+  let isGTO = false;
+  if (S.street === 'preflop' && S.hole[0] && S.hole[1]) {
+    const gto = getGTOAction(S.hole[0], S.hole[1], pos);
+    if (gto) {
+      const actionMap = { R:'RAISE', C:'CALL', F:'FOLD', R3:'3-BET (RAISE)', RC:'RAISE или CALL', '3bet':'3-BET' };
+      gtoHint = `\nGTO решение для ${gto.hand} с позиции ${pos}: ${actionMap[gto.action] || gto.action}`;
+      isGTO = true;
+    }
+  }
+
+  // ── SPR
+  const spr = pot > 0 ? (Math.min(Number(stack), Number(oppStack)) / Number(pot)).toFixed(1) : '∞';
+
+  // ── POT ODDS
+  const potOdds = bet > 0 ? ((Number(bet) / (Number(pot) + Number(bet))) * 100).toFixed(0) + '%' : 'нет ставки';
+
+  const prompt = `Ты профессиональный GTO покерный тренер (Texas Hold'em No-Limit). Давай точные, стабильные советы.
+
+СИТУАЦИЯ:
+- Мои карты: ${myCards || 'неизвестны'}
+- Борд: ${boardCards || 'префлоп'}
+- Стрит: ${S.street}
+- Позиция: ${pos} из ${players} игроков
+- Мой стек: ${stack} BB
+- Банк: ${pot} BB
+- Ставка ко мне: ${bet} BB
+- Мой вложенный: ${invested} BB
+- SPR (стек/банк): ${spr}
+- Пот-оддс: ${potOdds}
+- Формат: ${stage}
+
+ОППОНЕНТЫ (${oppInHand} активных):
+- Действие оппонента: ${oppAction}
+- Стиль оппонента: ${oppStyle}
+- Стек оппонента: ${oppStack} BB
+- Позиция оппонента: ${oppPos}
+${gtoHint}
+
+ПРАВИЛА ПРИНЯТИЯ РЕШЕНИЙ:
+1. AA/KK/QQ/JJ/AK — всегда рейз префлоп, никогда не фолд против обычного рейза
+2. Против 3-бета с AA/KK/QQ — всегда ререйз или колл
+3. AQ/AJ — рейз с большинства позиций, колл против умеренного рейза
+4. Малые пары (22-66) — сет-майнинг, колл если SPR > 10
+5. Учитывай стиль оппонента: против фиша играй шире, против рега — тайтнее
+6. При стеке < 20 BB — пуш или фолд стратегия
+7. Пот-оддс: если шансы на улучшение > пот-оддс — колл оправдан
+
+${b64Image ? 'Изображение покерного стола прилагается для анализа карт.' : ''}
+
+Начни ответ с одного слова: FOLD, CALL, RAISE или CHECK.
+Затем объясни решение на русском языке (2-3 предложения), учитывая все параметры выше.`;
 
   try {
     const raw = await callAI(prompt, b64Image);
-    if (!raw || raw.trim().length === 0) throw new Error('Пустой ответ');
+    if (!raw || raw.trim().length === 0) throw new Error('Пустой ответ от AI');
 
-    // Extract action from first word
     const firstWord = raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
     const actions = ['FOLD','CALL','RAISE','CHECK'];
-    const action = actions.find(a => firstWord.includes(a)) || 
+    const action = actions.find(a => firstWord.includes(a)) ||
                    actions.find(a => raw.toUpperCase().includes(a)) || '?';
 
-    showAdvice(action, raw);
+    const MAP = {FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
+    const cls = MAP[action] || 'badge-check';
+    const labels = {FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
+
+    document.getElementById('actionBadge').className = 'action-badge ' + cls;
+    document.getElementById('actionBadge').textContent = labels[action] || action;
+    document.getElementById('adviceText').className = 'advice-text';
+    document.getElementById('adviceText').textContent = raw;
+    document.getElementById('gtoTag').style.display = isGTO ? 'block' : 'none';
+
   } catch(e) {
     console.error(e);
-    showAdviceText('❌ ' + e.message);
-    document.getElementById('actionBadge').className = 'action-badge badge-wait';
-    document.getElementById('actionBadge').textContent = 'ОШИБКА';
+    setAdvice('ОШИБКА', 'badge-wait', '❌ ' + e.message);
   }
 }
 
@@ -330,24 +544,12 @@ function showLoading() {
   document.getElementById('actionBadge').textContent = '...';
   document.getElementById('adviceText').className = 'advice-text loading';
   document.getElementById('adviceText').innerHTML = '<div class="dots"><span></span><span></span><span></span></div>&nbsp;Анализирую...';
-  document.getElementById('equityMini').style.display = 'none';
+  document.getElementById('gtoTag').style.display = 'none';
 }
 
-function showAdvice(action, text) {
-  const MAP = {
-    FOLD:{cls:'badge-fold',label:'✕ FOLD'},
-    CALL:{cls:'badge-call',label:'✓ CALL'},
-    RAISE:{cls:'badge-raise',label:'↑ RAISE'},
-    CHECK:{cls:'badge-check',label:'— CHECK'}
-  };
-  const a = MAP[action] || {cls:'badge-check',label:'?'};
-  document.getElementById('actionBadge').className = 'action-badge ' + a.cls;
-  document.getElementById('actionBadge').textContent = a.label;
-  document.getElementById('adviceText').className = 'advice-text';
-  document.getElementById('adviceText').textContent = text;
-}
-
-function showAdviceText(text) {
+function setAdvice(label, cls, text) {
+  document.getElementById('actionBadge').className = 'action-badge ' + cls;
+  document.getElementById('actionBadge').textContent = label;
   document.getElementById('adviceText').className = 'advice-text';
   document.getElementById('adviceText').textContent = text;
 }
@@ -366,7 +568,7 @@ function setStreet(s,el) {
   document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   S.board=S.board.slice(0,S.boardSlots[s]);
-  document.getElementById('boardManual').style.display=s==='preflop'?'none':'block';
+  document.getElementById('boardSec').style.display=s==='preflop'?'none':'block';
   renderCards();
 }
 
@@ -374,14 +576,14 @@ function renderCards() {
   const hr=document.getElementById('holeRow'); hr.innerHTML='';
   for(let i=0;i<2;i++){
     const c=S.hole[i],el=document.createElement('div');
-    if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;}
+    if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:10px">${c.suit}</div>`;}
     else{el.className='card-slot empty';el.textContent='+';}
     el.onclick=()=>openPicker('hole',i); hr.appendChild(el);
   }
   const slots=S.boardSlots[S.street],br=document.getElementById('boardRow'); br.innerHTML='';
   for(let i=0;i<slots;i++){
     const c=S.board[i],el=document.createElement('div');
-    if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:11px">${c.suit}</div>`;}
+    if(c){el.className=`card-slot ${c.red?'red':'black'}`;el.innerHTML=`<div>${c.rank}</div><div style="font-size:10px">${c.suit}</div>`;}
     else{el.className='card-slot empty';el.textContent='+';}
     el.onclick=()=>openPicker('board',i); br.appendChild(el);
   }
