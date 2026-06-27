@@ -258,7 +258,7 @@ async function callClaude(prompt,image){
 
 async function startCam(){
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:640},height:{ideal:480}}});
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
     S.stream=stream;
     document.getElementById('videoEl').srcObject=stream;
     document.getElementById('camPlaceholder').style.display='none';
@@ -305,7 +305,7 @@ async function runScan(){
   const canvas=document.getElementById('canvasEl');
   canvas.width=vid.videoWidth||640;canvas.height=vid.videoHeight||480;
   canvas.getContext('2d').drawImage(vid,0,0);
-  const b64=canvas.toDataURL('image/jpeg',0.4).split(',')[1];
+  const b64=canvas.toDataURL('image/jpeg',0.85).split(',')[1];
   await doAnalyze(b64);
   document.getElementById('camStatus').textContent='СЛЕЖУ ЗА СТОЛОМ';
   S.analyzing=false;
