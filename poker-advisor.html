@@ -717,6 +717,16 @@ FOLD (или CALL/RAISE/CHECK)
       }
     }
 
+    // Определяем стрит из борда
+    const detBoard=infoMatch?.[2]?.trim()||'';
+    let detStreet=S.street;
+    if(detBoard&&detBoard!=='—'&&detBoard!=='нет'&&detBoard.toLowerCase()!=='нет'){
+      const boardCards=detBoard.split(' ').filter(Boolean);
+      if(boardCards.length>=5)detStreet='river';
+      else if(boardCards.length===4)detStreet='turn';
+      else if(boardCards.length>=3)detStreet='flop';
+    }
+
     // Пробуем скрипт с обновлёнными данными
     const detPos=infoMatch?.[3]?.trim()||ctx.pos;
     const detStack=infoMatch?.[6]?.trim()||stack;
@@ -725,7 +735,7 @@ FOLD (или CALL/RAISE/CHECK)
     const updatedHandKey=getHandKey(S.hole[0],S.hole[1]);
     const updatedCtx={
       pos:detPos,
-      street:S.street,
+      street:detStreet,
       handKey:updatedHandKey,
       stack:detStack?parseFloat(detStack):null,
       pot:infoMatch?.[4]?parseFloat(infoMatch[4]):null,
@@ -734,6 +744,7 @@ FOLD (или CALL/RAISE/CHECK)
       mtt:S.mtt
     };
     const scriptDecision2=makeScriptDecision(updatedCtx);
+    console.log('Script check:', JSON.stringify(updatedCtx), '→', scriptDecision2);
     if(scriptDecision2){
       showDecision(scriptDecision2,updatedCtx);
     }else{
