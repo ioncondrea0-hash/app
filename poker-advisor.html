@@ -6,18 +6,12 @@
 <title>PokerEye AI</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
-  :root {
-    --bg:#070e0b;--surface:#101a15;--surface2:#172118;
-    --felt:#0d3b2e;--gold:#c9a84c;--neon:#00ffa3;
-    --danger:#ff4757;--warn:#ffa502;--muted:#4a7060;
-    --text:#e0f0e8;--border:rgba(201,168,76,0.18);
-  }
+  :root{--bg:#070e0b;--surface:#101a15;--surface2:#172118;--felt:#0d3b2e;--gold:#c9a84c;--neon:#00ffa3;--danger:#ff4757;--warn:#ffa502;--muted:#4a7060;--text:#e0f0e8;--border:rgba(201,168,76,0.18)}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh}
   header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
-  .logo{font-size:17px;font-weight:700}
-  .logo span{color:var(--gold)}.logo em{color:var(--neon);font-style:normal}
-  .auto-toggle{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);transition:all .2s;-webkit-user-select:none;user-select:none}
+  .logo{font-size:17px;font-weight:700}.logo span{color:var(--gold)}.logo em{color:var(--neon);font-style:normal}
+  .auto-toggle{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);-webkit-user-select:none;user-select:none}
   .auto-toggle.active{border-color:var(--neon);color:var(--neon);background:rgba(0,255,163,0.08)}
   .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0}
   .auto-toggle.active .pulse-dot{background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 1.2s ease-in-out infinite}
@@ -42,18 +36,15 @@
   .countdown-svg{width:42px;height:42px;transform:rotate(-90deg)}
   .countdown-circle{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
   .countdown-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
-  .pos-row{display:flex;gap:5px;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
-  .pos-btn{flex:1;padding:7px 2px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'JetBrains Mono',monospace;-webkit-user-select:none;user-select:none}
-  .pos-btn.active{background:rgba(0,255,163,0.12);border-color:var(--neon);color:var(--neon)}
   .mtt-row{display:flex;gap:5px;padding:6px 10px;background:var(--surface2);border-bottom:1px solid var(--border)}
   .mtt-btn{flex:1;padding:6px 2px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none}
   .mtt-btn.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
-  .info-bar{display:none;flex-wrap:wrap;gap:5px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
+  .info-bar{display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
   .info-chip{display:flex;align-items:center;gap:3px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:3px 7px}
   .info-chip .lbl{color:var(--muted);font-size:9px;margin-right:2px}
   .advice-card{margin:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
   .action-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
-  .action-badge{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:8px 16px;border-radius:10px;letter-spacing:1px;min-width:100px;text-align:center}
+  .action-badge{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:8px 16px;border-radius:10px;letter-spacing:1px;min-width:110px;text-align:center}
   .badge-fold{background:rgba(255,71,87,.15);color:var(--danger);border:2px solid var(--danger)}
   .badge-call{background:rgba(255,165,2,.15);color:var(--warn);border:2px solid var(--warn)}
   .badge-raise{background:rgba(0,255,163,.12);color:var(--neon);border:2px solid var(--neon)}
@@ -133,9 +124,6 @@
   </div>
 </div>
 
-
-
-<!-- MTT STAGE -->
 <div class="mtt-row">
   <div class="mtt-btn active" onclick="setMTT('early',this)">🟢 Начало</div>
   <div class="mtt-btn" onclick="setMTT('mid',this)">🟡 Середина</div>
@@ -143,8 +131,7 @@
   <div class="mtt-btn" onclick="setMTT('ft',this)">🏆 Финал</div>
 </div>
 
-<!-- INFO BAR -->
-<div class="info-bar" id="infoBar" style="display:flex">
+<div class="info-bar" id="infoBar">
   <div class="info-chip"><span class="lbl">КАРТЫ</span><span id="infoCards">—</span></div>
   <div class="info-chip"><span class="lbl">БОРД</span><span id="infoBoard">—</span></div>
   <div class="info-chip" style="border-color:var(--neon)"><span class="lbl">МОЯ ПОЗ</span><span id="infoPos" style="color:var(--neon)">—</span></div>
@@ -154,22 +141,19 @@
   <div class="info-chip"><span class="lbl">ОПП</span><span id="infoOpp">—</span></div>
 </div>
 
-<!-- ADVICE -->
 <div class="advice-card">
   <div class="action-bar">
     <div class="action-badge badge-wait" id="actionBadge">ОЖИДАНИЕ</div>
     <div style="flex:1"></div>
   </div>
   <div class="advice-text" id="adviceText">
-    Выбери позицию и стадию МТТ → включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong>
+    Выбери стадию МТТ → включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong>
   </div>
 </div>
 
-<!-- MANUAL -->
 <div class="manual-wrap">
   <div class="manual-header" onclick="toggleManual()">
-    <span>✏️ Ввести вручную</span>
-    <span>▼</span>
+    <span>✏️ Ввести вручную</span><span>▼</span>
   </div>
   <div class="manual-body" id="manualBody">
     <div class="street-row">
@@ -190,17 +174,16 @@
       <div class="mp"><label>Ставка (BB)</label><input id="bet" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Мой стек (BB)</label><input id="stack" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Стек оппонента</label><input id="oppStack" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Оппонентов</label>
-        <select id="oppCount"><option value="">Авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
-      </div>
       <div class="mp"><label>Действие оппонента</label>
-        <select id="oppAction"><option value="">Авто</option><option>лимп</option><option>рейз</option><option>3-бет</option><option>4-бет</option><option>олл-ин</option><option>чек</option><option>бет</option></select>
+        <select id="oppAction"><option value="">авто</option><option>лимп</option><option>рейз</option><option>3-бет</option><option>4-бет</option><option>олл-ин</option><option>чек</option><option>бет</option></select>
+      </div>
+      <div class="mp"><label>Оппонентов</label>
+        <select id="oppCount"><option value="">авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <div class="modal-title">Выбери карту</div>
@@ -228,202 +211,42 @@
 <div style="height:40px"></div>
 
 <script>
-const PROXY = 'https://cold-king-654b.ioncondrea0.workers.dev';
+const PROXY='https://cold-king-654b.ioncondrea0.workers.dev';
 
-const MTT_KB = {
-  early: `СТАДИЯ: Начало МТТ (стеки 50-100BB+). Цель: накопить фишки.
-
-ОТКРЫТИЕ РУК — ТОЛЬКО РЕЙЗОМ (никогда лимп!):
-- BTN/CO: рейз 2-2.5BB
-- MP/HJ: рейз 2.5BB
-- UTG: рейз 3BB
-- SB: рейз 3BB (никогда не лимпить с SB!)
-- За каждого лимпера до тебя: +1BB к рейзу
-
-ПРЕФЛОП ДИАПАЗОНЫ:
-- UTG: AA-77, AKo-AJs, AQo, KQs
-- MP: AA-66, AKo-ATs, AJo+, KQs-KTs, QJs, JTs
-- CO: AA-55, AKo-A9s, ATo+, KQo-KJo, QJo, T9s-87s
-- BTN: AA-22, AKo-A2s, KQo-K9o, QJo+, JTo, 98s-54s
-- SB: AA-22, AKo-A2s, широко против BB
-
-3-БЕТ (размеры):
-- В позиции BTN/CO: 3x рейза (рейз 3BB → 3бет 9BB)
-- Вне позиции BB/SB: 4x рейза (рейз 3BB → 3бет 12BB)
-- Для значения: AA/KK/QQ/JJ/AKs/AKo
-- Блеф 3бет: A5s-A2s, KQs с позиции
-
-СКВИЗ (рейз + коллеры):
-- Размер: рейз × 4 + по 2BB за каждого коллера
-- Например рейз 3BB + 2 коллера = сквиз 16BB
-
-ПРОТИВ 3-БЕТА: только AA/KK/QQ/JJ/AKs продолжают — остальное FOLD
-ПРОТИВ 4-БЕТА: только AA/KK — остальное FOLD
-
-C-BET (ставка продолжения на флопе):
-- Сухой борд 1 оппонент: c-bet 33% банка (блеф или слабая рука)
-- Влажный борд 1 оппонент: c-bet 50-60% банка (нужна рука)
-- 2+ оппонентов: c-bet только с сильной рукой 50% банка
-- НЕ делай c-bet: 3+ оппонентов, очень влажный борд без руки
-
-ТЕКСТУРА БОРДА (board texture):
-- Сухой борд (К72 разномастный): больше блефов, c-bet 33%
-- Влажный борд (JT9 одномастный): меньше блефов, защищай сильные руки
-- Парный борд (КК7): осторожно — у кого-то может быть трипс
-- Борд с тузом (А52): если рейзил префлоп — c-bet всегда (в твоём диапазоне много тузов)
-
-БЛЕФЫ И ПСИХОЛОГИЯ БЛЕФА:
-- Блефуй только на бордах которые попадают в ТВОЙ диапазон
-  Пример: рейзил с UTG → блефуй на АКJ (у UTG много таких рук), НЕ блефуй на 456
-- Размер блефа = такой же как вэлью бет (иначе оппонент читает тебя)
-- Полублеф (есть аут): флеш-дро 9 аутов, стрит-дро 8 аутов — бет/рейз агрессивно
-- Чистый блеф: только в позиции, оппонент показал слабость, размер 60-75% банка
-- НЕ блефуй если оппонент коллировал 2 улицы — он не фолдит
-- НЕ блефуй против колл-стейшн (пассивный игрок который всё коллирует)
-
-ПСИХОЛОГИЯ ОППОНЕНТОВ И ПАТТЕРНЫ СТАВОК (актуально 2025):
-
-ТАЙМИНГ ТЕЛЛИ (скорость действий):
-- Быстрый бет/рейз → обычно сильная рука (уже решил что делать)
-- Быстрый колл → средняя рука (хочет увидеть следующую карту, не хочет ни фолдить ни рейзить)
-- Долгая пауза → потом большой бет → часто блеф (обдумывает как убедить)
-- Долгая пауза → потом колл → обычно сильная рука (обдумывает как извлечь максимум)
-- Мгновенный чек → слабость (уже решил чекнуть до своей очереди)
-
-РАЗМЕР СТАВОК КАК ТЕЛЛ:
-- Минбет (минимальная ставка) → слабость или ловушка → рейз или фолд, не колл
-- Маленький бет (20-30% банка) → слабая рука или дро → рейз чтобы взять банк или узнать где ты
-- Стандартный бет (50-70% банка) → сбалансированный диапазон
-- Овербет (100%+ банка) → или орехи (натс) или блеф — редко средняя рука
-- Уменьшающийся размер по улицам (бет флоп > тёрн > маленький ривер) → блеф теряет уверенность
-- Увеличивающийся размер по улицам → вэлью рука набирает силу
-
-ИСТОРИЯ СТАВОК (story tells):
-- Каждая ставка рассказывает историю — она должна быть логичной
-- Рейз префлоп → чек флоп → рейз тёрн на страшной карте → часто блеф (история не сходится)
-- Чек флоп → колл тёрн → большой рейз ривер → часто натс или блеф (поляризован)
-- Оппонент рейзил префлоп → обычно делает c-bet → если чекает флоп = промахнулся
-- Если история не сходится = блеф или очень сильная рука
-
-ТИПЫ ИГРОКОВ И СТРАТЕГИЯ ПРОТИВ НИХ:
-- КОЛЛ-СТЕЙШН (всё коллирует): вэлью бет широко даже с тонкими руками, НИКАКОГО блефа
-- НИТ (играет только премиум): воруй блайнды широко, фолдируй против его рейза, его рейз = AA-QQ
-- ЛАГ/МАНЬЯК (агрессивный широко): трапируй сильные руки, не блефуй, колл-даун шире
-- ФИШ/НОВИЧОК (случайная игра): вэлью бет максимально, не пытайся блефовать
-- РЕГ (опытный): сбалансированная игра, эксплуатируй малейшие отклонения
-
-ПУЗЫРЬ — ПСИХОЛОГИЯ (актуально):
-- Короткий стек на пузыре: боится вылететь → фолдирует хорошие руки → атакуй его
-- Средний стек на пузыре: самая сложная позиция → играет очень осторожно → давление работает
-- Большой стек на пузыре: может атаковать всех → средние стеки избегают конфликта с ним
-- Игроки на пузыре играют чтобы НЕ проиграть, а не чтобы выиграть → используй это
-
-ПРОФИЛИРОВАНИЕ ЗА СТОЛОМ:
-- Наблюдай с первой раздачи даже когда не в руке
-- Нит: редко входит в банки, фолдирует под давлением
-- Маньяк: часто рейзит, его рейз не значит силу
-- Если оппонент только проиграл большой банк → тилт → играет шире и агрессивнее
-- Если оппонент долго сидит тайтом → его рейз = настоящая сила
-
-ФИНАЛЬНЫЙ СТОЛ — ДИНАМИКА:
-- Большие стеки слева от тебя = проблема (будут 3-бетить твои открытия)
-- Короткий стек за столом = другие ждут пока он вылетит → давление на средние стеки работает
-- Хедз-ап: агрессия ключ, играй очень широко, давление постоянно
-
-ВОРОВСТВО БЛАЙНДОВ И ДАВЛЕНИЕ:
-
-КОГДА ВОРОВАТЬ (даже с мусорными картами):
-- BTN/CO/SB, блайнды тайтные (давно не играли) → рейз 2-2.5BB любыми 2 картами
-- Блайнд только проиграл большой пот → осторожничает или на тилте → атакуй
-- Блайнд короткий стек на пузыре → боится вылететь → воруй агрессивно
-- Блайнд пассивный (всегда фолдирует на рейз) → воруй постоянно
-- Все сфолдировали до тебя → с BTN/SB рейзь широко даже с 72o
-
-КОГДА НЕ ВОРОВАТЬ:
-- Блайнд агрессивный (часто 3-бетит) → воруй только с руками для колла 3-бета
-- Блайнд большой стек → может защищаться широко
-- За тобой игроки с большими стеками → риск сквиза
-
-ДАВЛЕНИЕ ПО ТИПУ ОППОНЕНТА:
-- Тайтный нит: воруй широко, c-bet любой борд, фолдируй против его рейза
-- Пассивный: вэлью бет широко, не блефуй, изолируй его лимпы рейзом 4-5BB
-- Короткий стек < 20BB: атакуй его блайнды, не давай удвоиться с мусором
-- Большой стек рядом: избегай конфликтов без сильной руки
-- Тилтующий (только проиграл): вэлью бет широко, он платит с чем угодно
-
-ИЗОЛЯЦИОННЫЙ РЕЙЗ (против лимперов):
-- Оппонент лимпнул → рейзь 4-5BB для игры хедз-ап против слабого
-- Работает с A9+, KJ+, пары 77+
-- Цель: убрать других и играть против слабой руки`,
-
-  mid: `СТАДИЯ: Середина МТТ (стеки 20-50BB). ICM важен.
-ПУШ/ФОЛД при стеке < 15BB:
-- 15BB: AA-22, AKo-A2s, KQo-K9s
-- 10BB: AA-22, AKo-A7s, KQo-KJs
-- 7BB: почти любые 2 карты в поздней позиции
-ПРОТИВ ПУША: колл только AA-TT, AKo-AQs
-НЕ иди в монету без сильного преимущества!`,
-
-  bubble: `СТАДИЯ: ПУЗЫРЬ — КРИТИЧНО! Попасть в мани важнее всего.
-ПРАВИЛА:
-- Никогда не рискуй всем стеком без AA/KK
-- С большим стеком: атакуй всех, особенно средние стеки
-- С коротким стеком (< 15BB): пуш или фолд ТОЛЬКО
-- Не колл олл-ин без AA/KK/QQ/AK на пузыре
-- Избегай сложных постфлоп ситуаций`,
-
-  ft: `СТАДИЯ: ФИНАЛЬНЫЙ СТОЛ. ICM критически важен!
-Большой стек: давление на всех, атакуй средние стеки
-Средний стек: тайтнее обычного, жди хороших спотов
-Короткий стек (< 10BB): пуш или фолд немедленно, не жди
-Хедз-ап: играй очень широко, агрессия ключ`
-};
-
-const S = {
-  street:'preflop', hole:[null,null], board:[],
+const S={
+  street:'preflop',hole:[null,null],board:[],
   boardSlots:{preflop:0,flop:3,turn:4,river:5},
-  autoMode:false, analyzing:false, stream:null,
-  cdInterval:null, INTERVAL:5,
+  autoMode:false,analyzing:false,stream:null,
+  cdInterval:null,INTERVAL:5,
   picker:{type:null,idx:null,suit:null,rank:null},
-  pos:'BTN', mtt:'early'
+  mtt:'early'
 };
 const RED=['♥','♦'];
 const CIRC=2*Math.PI*18;
 
-function setPos(p,el){
-  S.pos=p;
-  document.querySelectorAll('.pos-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function setMTT(m,el){
-  S.mtt=m;
-  document.querySelectorAll('.mtt-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
+// SHORT FOCUSED PROMPTS per stage
+const STAGE_RULES={
+  early:'Начало МТТ: открытие ТОЛЬКО рейзом (BTN/CO=2.5BB,MP/HJ=2.5BB,UTG=3BB,SB=3BB). 3бет в позиции=3х,вне=4х. Против 3бета только AA/KK/QQ/JJ/AKs. Воруй блайнды с мусором если блайнды тайтные. C-bet сухой=33%,влажный=60%.',
+  mid:'Середина МТТ: стек<15BB=пуш или фолд. Пуш диапазон 15BB=AA-22,AK-A2s,KQo-K9s. Колл пуша только TT+,AQs+. ICM важен.',
+  bubble:'ПУЗЫРЬ: выживание важнее EV! Без AA/KK не рискуй всем стеком. Большой стек=атакуй средние стеки. Короткий стек=пуш или фолд. Средние стеки фолдируют широко.',
+  ft:'Финальный стол: ICM критичен. Большой стек давит на средние. Короткий стек<10BB=пуш немедленно. Хедз-ап=агрессия.'
+};
 
 async function callClaude(prompt,image){
   const body={prompt};
   if(image)body.image=image;
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000); // 25 sec timeout
-
-  try {
-    const resp=await fetch(PROXY,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body),
-      signal: controller.signal
-    });
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),25000);
+  try{
+    const resp=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});
     clearTimeout(timeout);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const data=await resp.json();
     if(data.error)throw new Error(data.error);
     return data.text||'';
-  } catch(e) {
+  }catch(e){
     clearTimeout(timeout);
-    if(e.name === 'AbortError') throw new Error('Таймаут — попробуй ещё раз');
+    if(e.name==='AbortError')throw new Error('Таймаут — попробуй ещё раз');
     throw e;
   }
 }
@@ -459,33 +282,25 @@ function toggleAuto(){
 }
 
 function startCountdown(){
-  let rem=S.INTERVAL;
-  updateCD(rem);runScan();
-  S.cdInterval=setInterval(()=>{
-    rem--;
-    if(rem<=0){rem=S.INTERVAL;if(!S.analyzing)runScan();}
-    updateCD(rem);
-  },1000);
+  let rem=S.INTERVAL;updateCD(rem);runScan();
+  S.cdInterval=setInterval(()=>{rem--;if(rem<=0){rem=S.INTERVAL;if(!S.analyzing)runScan();}updateCD(rem);},1000);
 }
 
 function updateCD(sec){
   const offset=CIRC*(1-sec/S.INTERVAL);
   const el=document.getElementById('cdCircle');
-  el.style.strokeDasharray=CIRC;
-  el.style.strokeDashoffset=offset;
+  el.style.strokeDasharray=CIRC;el.style.strokeDashoffset=offset;
   document.getElementById('cdNum').textContent=sec;
 }
 
 async function runScan(){
-  if(S.analyzing)return;
-  S.analyzing=true;
+  if(S.analyzing)return;S.analyzing=true;
   document.getElementById('camStatus').textContent='АНАЛИЗИРУЮ...';
   const vid=document.getElementById('videoEl');
   const canvas=document.getElementById('canvasEl');
-  canvas.width=vid.videoWidth||640;
-  canvas.height=vid.videoHeight||480;
+  canvas.width=vid.videoWidth||640;canvas.height=vid.videoHeight||480;
   canvas.getContext('2d').drawImage(vid,0,0);
-  const b64=canvas.toDataURL('image/jpeg',0.6).split(',')[1];
+  const b64=canvas.toDataURL('image/jpeg',0.4).split(',')[1];
   await doAnalyze(b64);
   document.getElementById('camStatus').textContent='СЛЕЖУ ЗА СТОЛОМ';
   S.analyzing=false;
@@ -493,132 +308,30 @@ async function runScan(){
 
 async function doAnalyze(b64Image){
   showLoading();
-  const manualHole=S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
-  const manualBoard=S.board.map(c=>c.rank+c.suit).join(' ');
+  const hole=S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
+  const board=S.board.map(c=>c.rank+c.suit).join(' ');
   const pot=document.getElementById('pot').value;
   const bet=document.getElementById('bet').value;
   const stack=document.getElementById('stack').value;
-  const oppStack=document.getElementById('oppStack').value;
-  const oppCount=document.getElementById('oppCount').value;
   const oppAction=document.getElementById('oppAction').value;
-  const kb=MTT_KB[S.mtt];
+  const rules=STAGE_RULES[S.mtt];
 
-  const prompt=`Ты профессиональный МТТ покерный тренер (Texas Hold'em No-Limit).
+  const prompt=`Ты МТТ покерный тренер. ${rules}
 
-═══ МТТ СТРАТЕГИЯ ═══
-${kb}
+${b64Image?`ФОТО СТОЛА. Определи:
+1. Карты HERO (внизу экрана)
+2. Борд (центр)  
+3. Банк и ставки оппонентов
+4. ПОЗИЦИЯ: найди золотой диск с буквой D (НЕ фишки!). Зоны экрана: верх-центр=З1,верх-право=З2,право-центр=З3,низ-право=З4,лево-центр=З5,верх-лево=З6. Для 6 игроков: D в З4=SB,З3=BB,З2=UTG,З1=MP,З6=HJ,З5=CO,у HERO=BTN. Посчитай игроков и используй нужную таблицу.`:''}
+${hole?'Карты: '+hole:''}${board?' Борд: '+board:''}${pot?' Банк: '+pot+'BB':''}${bet?' Ставка: '+bet+'BB':''}${stack?' Стек: '+stack+'BB':''}${oppAction?' Оппонент: '+oppAction:''}
 
-═══ СИТУАЦИЯ ═══
-МОЯ ПОЗИЦИЯ: ${S.pos}
-${b64Image?`
-Изучи изображение покерного стола:
-- Мои карты (внизу экрана, HERO)
-- Борд (центр стола)
-- Банк (число в центре)
-- Ставки оппонентов (числа у их фишек)
-- Стеки игроков
+Если карты не видны → только "КАРТЫ НЕ ВИДНЫ".
 
-ОПРЕДЕЛЕНИЕ ПОЗИЦИИ — ЗОНАЛЬНАЯ СИСТЕМА:
-
-HERO всегда внизу по центру. Раздели экран на зоны:
-```
-[З6]  [З1]  [З2]
-[З5]          [З3]
-[З4]  [HERO] 
-```
-Для 8-9 игроков добавляются зоны З7 (вверху между З6 и З1), З8 (внизу слева от HERO), З9 (внизу справа от HERO).
-
-ШАГ 1: Посчитай сколько игроков за столом включая HERO.
-
-ШАГ 2: Найди жетон D (золотой круглый с буквой D = BTN). Определи в какой зоне он находится.
-
-ШАГ 3: По таблице найди мою позицию:
-
-2 ИГРОКА:
-- D в З3 → я BB | D у HERO → я BTN
-
-3 ИГРОКА:
-- D в З3 → я SB | D в З1/З2 → я BB | D у HERO → я BTN
-
-4 ИГРОКА:
-- D в З3 → я SB | D в З1 → я BB | D в З5 → я UTG | D у HERO → я BTN
-
-5 ИГРОКОВ:
-- D в З3 → я SB | D в З2 → я BB | D в З1 → я UTG | D в З5 → я CO | D у HERO → я BTN
-
-6 ИГРОКОВ:
-- D в З4 → я SB | D в З3 → я BB | D в З2 → я UTG | D в З1 → я MP | D в З6 → я HJ | D в З5 → я CO | D у HERO → я BTN
-
-7 ИГРОКОВ:
-- D в З4 → я SB | D в З3 → я BB | D в З2 → я UTG | D в З1 → я UTG+1 | D в З6 → я MP | D в З5 → я HJ | D в З7(низ лево) → я CO | D у HERO → я BTN
-
-8 ИГРОКОВ:
-- D в З5 → я SB | D в З4 → я BB | D в З3 → я UTG | D в З2 → я UTG+1 | D в З1 → я MP | D в З7(верх лево) → я HJ | D в З6 → я CO | D у HERO → я BTN
-
-9 ИГРОКОВ:
-- D в З5 → я SB | D в З4 → я BB | D в З3 → я UTG | D в З2 → я UTG+1 | D в З1 → я MP | D в З7(верх лево) → я HJ | D в З6 → я CO | D в З8(низ лево) → я BTN соседний | D у HERO → я BTN
-
-ВАЖНО — КАК ОТЛИЧИТЬ ЖЕТОН D ОТ ФИШЕК:
-- Жетон D = плоский круглый диск, ярко-жёлтый/золотой, с большой буквой "D" по центру, ОДИН на столе
-- Фишки = цилиндрические столбики, стопкой, без буквы, их много у каждого игрока
-- Жетон D всегда ЯРЧЕ и ЖЕЛТЕЕ обычных фишек
-- Если видишь жёлтое без буквы D = это фишки, игнорируй для определения позиции
-- Жетон D всегда один и стоит отдельно от стопки фишек
-
-Если жетон D не виден — используй жетоны 0.5BB (SB) и 1BB (BB) для определения позиции.
-Если ничего не видно → позиция НЕИЗВЕСТНО.
-Позиция = ТОЛЬКО одно слово: BTN/CO/HJ/MP/UTG/UTG+1/SB/BB`:''}
-
-${manualHole?'✅ Мои карты: '+manualHole:''}
-${manualBoard?'✅ Борд: '+manualBoard:''}
-${pot?'✅ Банк: '+pot+' BB':''}
-${bet?'✅ Ставка: '+bet+' BB':''}
-${stack?'✅ Мой стек: '+stack+' BB':''}
-${oppStack?'✅ Стек оппонента: '+oppStack+' BB':''}
-${oppCount?'✅ Оппонентов: '+oppCount:''}
-${oppAction?'✅ Действие оппонента: '+oppAction:''}
-
-═══ ЗАДАЧА ═══
-Если карты не видны — напиши ТОЛЬКО: КАРТЫ НЕ ВИДНЫ
-
-Иначе дай точный совет с учётом:
-1. Стадии турнира и ICM
-2. Моей позиции (${S.pos})
-3. Силы руки vs диапазона оппонента
-4. Размера стека
-5. Действий оппонентов
-
-Первое слово: FOLD, CALL, RAISE или CHECK
-Если RAISE — на второй строке напиши: РАЗМЕР: X.XBB (например РАЗМЕР: 2.5BB или РАЗМЕР: 9BB)
-Затем объяснение на русском.
-Последняя строка ОБЯЗАТЕЛЬНО в таком формате (позиция ТОЛЬКО словом BTN/SB/BB/UTG/MP/HJ/CO):
-[К:карты|Б:борд|П:BTN|БК:банк|СТ:ставка|СК:стек|О:действие]
-
-РАЗМЕРЫ СТАВОК (указывай конкретно):
-
-ПРЕФЛОП ОТКРЫТИЕ:
-- BTN/CO: рейз 2-2.5BB
-- MP/HJ: рейз 2.5BB
-- UTG/UTG+1: рейз 3BB
-- SB vs BB: рейз 3BB
-- При лимперах: +1BB за каждого лимпера (например 3 лимпера = рейз 5-6BB)
-
-3-БЕТ (ответ на рейз):
-- В позиции (BTN/CO): 3бет = 3x рейза оппонента
-- Вне позиции (BB/SB): 3бет = 4x рейза оппонента
-- Например оппонент рейзнул 3BB → твой 3бет = 9BB (в позиции) или 12BB (вне позиции)
-
-СКВИЗ (3бет против рейза + коллов):
-- Базовый сквиз = рейз оппонента × 4 + по 1BB за каждого коллера
-- Например: рейз 3BB + 2 коллера = сквиз примерно 14-16BB
-
-ПОСТФЛОП:
-- C-bet сухой борд: 33% банка
-- C-bet влажный борд: 50-60% банка
-- Вэлью бет: 66-75% банка
-- Овербет (нат рука): 100-120% банка
-
-При совете RAISE всегда указывай конкретный размер в BB!`;
+Ответ (кратко):
+FOLD/CALL/RAISE/CHECK
+(если RAISE) РАЗМЕР: X.XBB
+1-2 предложения на русском.
+[К:...|Б:...|П:позиция|БК:...|СТ:...|СК:...|О:...]`;
 
   try{
     const raw=await callClaude(prompt,b64Image);
@@ -627,44 +340,38 @@ ${oppAction?'✅ Действие оппонента: '+oppAction:''}
       setAdvice('?','badge-wait','🃏 Карты не видны — наведи камеру или введи вручную.');
       return;
     }
-    const first=raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
+    const lines=raw.trim().split('\n');
+    const first=lines[0].trim().split(/[\s,.!:]/)[0].toUpperCase();
     const ACTIONS=['FOLD','CALL','RAISE','CHECK'];
     const action=ACTIONS.find(a=>first.includes(a))||ACTIONS.find(a=>raw.toUpperCase().includes(a))||'?';
     const MAP={FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
+    const LABELS={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
 
-    // Extract raise size for badge
-    let badgeLabel = {FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'}[action]||action;
+    let badge=LABELS[action]||action;
     if(action==='RAISE'){
-      const sizeMatch = raw.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i) ||
-                        raw.match(/рейз\s+до\s+([\d.]+)\s*BB/i) ||
-                        raw.match(/рейз\s+([\d.]+)\s*BB/i) ||
-                        raw.match(/3-бет\s+до\s+([\d.]+)/i) ||
-                        raw.match(/сквиз\s+([\d.]+)/i);
-      if(sizeMatch) badgeLabel = '↑ ' + sizeMatch[1] + 'BB';
+      const sm=raw.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i)||raw.match(/рейз\s+([\d.]+)\s*BB/i)||raw.match(/до\s+([\d.]+)\s*BB/i);
+      if(sm)badge='↑ '+sm[1]+'BB';
     }
+
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
-    document.getElementById('actionBadge').textContent=badgeLabel;
+    document.getElementById('actionBadge').textContent=badge;
+
     const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
     if(infoMatch){
-      document.getElementById('infoBar').style.display='flex';
       document.getElementById('infoCards').textContent=infoMatch[1]?.trim()||'—';
       document.getElementById('infoBoard').textContent=infoMatch[2]?.trim()||'—';
-      const detectedPos=infoMatch[3]?.trim()||'';
+      const pos=infoMatch[3]?.trim()||'';
       const validPos=['BTN','SB','BB','UTG','UTG+1','MP','HJ','CO'];
-      if(validPos.includes(detectedPos)){
-        document.getElementById('infoPos').textContent=detectedPos;
-        S.pos=detectedPos;
-      } else {
-        document.getElementById('infoPos').textContent=S.pos;
-      }
+      document.getElementById('infoPos').textContent=validPos.includes(pos)?pos:'—';
       document.getElementById('infoPot').textContent=infoMatch[4]?.trim()||'—';
       document.getElementById('infoBet').textContent=infoMatch[5]?.trim()||'—';
       document.getElementById('infoStack').textContent=infoMatch[6]?.trim()||'—';
       document.getElementById('infoOpp').textContent=infoMatch[7]?.trim()||'—';
     }
-    const cleanText=raw.replace(/\[К:.*?\]/gi,'').trim();
+
+    const clean=raw.replace(/\[К:.*?\]/gi,'').replace(/РАЗМЕР:.*BB/gi,'').trim();
     document.getElementById('adviceText').className='advice-text';
-    document.getElementById('adviceText').textContent=cleanText;
+    document.getElementById('adviceText').textContent=clean;
   }catch(e){
     console.error(e);
     setAdvice('ОШИБКА','badge-wait','❌ '+e.message);
@@ -677,25 +384,20 @@ function showLoading(){
   document.getElementById('adviceText').className='advice-text loading';
   document.getElementById('adviceText').innerHTML='<div class="dots"><span></span><span></span><span></span></div>&nbsp;Claude анализирует...';
 }
-
-function setAdvice(label,cls,text){
-  document.getElementById('actionBadge').className='action-badge '+cls;
-  document.getElementById('actionBadge').textContent=label;
+function setAdvice(l,c,t){
+  document.getElementById('actionBadge').className='action-badge '+c;
+  document.getElementById('actionBadge').textContent=l;
   document.getElementById('adviceText').className='advice-text';
-  document.getElementById('adviceText').textContent=text;
+  document.getElementById('adviceText').textContent=t;
 }
-
+function setMTT(m,el){S.mtt=m;document.querySelectorAll('.mtt-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
 function toggleManual(){document.getElementById('manualBody').classList.toggle('open');}
-
 function setStreet(s,el){
-  S.street=s;
-  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
+  S.street=s;document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
   S.board=S.board.slice(0,S.boardSlots[s]);
   document.getElementById('boardSec').style.display=s==='preflop'?'none':'block';
   renderCards();
 }
-
 function renderCards(){
   const hr=document.getElementById('holeRow');hr.innerHTML='';
   for(let i=0;i<2;i++){
@@ -712,13 +414,7 @@ function renderCards(){
     el.onclick=()=>openPicker('board',i);br.appendChild(el);
   }
 }
-
-function openPicker(t,i){
-  S.picker={type:t,idx:i,suit:null,rank:null};
-  document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));
-  document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('modalBg').classList.add('open');
-}
+function openPicker(t,i){S.picker={type:t,idx:i,suit:null,rank:null};document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));document.getElementById('modalBg').classList.add('open');}
 function closeModal(){document.getElementById('modalBg').classList.remove('open');}
 function pickSuit(el){document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.suit=el.dataset.s;}
 function pickRank(el){document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.rank=el.textContent;}
@@ -731,7 +427,6 @@ function confirmCard(){
 }
 document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
-
 renderCards();
 </script>
 </body>
