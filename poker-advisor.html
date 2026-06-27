@@ -328,7 +328,33 @@ C-BET (ставка продолжения на флопе):
 ФИНАЛЬНЫЙ СТОЛ — ДИНАМИКА:
 - Большие стеки слева от тебя = проблема (будут 3-бетить твои открытия)
 - Короткий стек за столом = другие ждут пока он вылетит → давление на средние стеки работает
-- Хедз-ап: агрессия ключ, играй очень широко, давление постоянно`,
+- Хедз-ап: агрессия ключ, играй очень широко, давление постоянно
+
+ВОРОВСТВО БЛАЙНДОВ И ДАВЛЕНИЕ:
+
+КОГДА ВОРОВАТЬ (даже с мусорными картами):
+- BTN/CO/SB, блайнды тайтные (давно не играли) → рейз 2-2.5BB любыми 2 картами
+- Блайнд только проиграл большой пот → осторожничает или на тилте → атакуй
+- Блайнд короткий стек на пузыре → боится вылететь → воруй агрессивно
+- Блайнд пассивный (всегда фолдирует на рейз) → воруй постоянно
+- Все сфолдировали до тебя → с BTN/SB рейзь широко даже с 72o
+
+КОГДА НЕ ВОРОВАТЬ:
+- Блайнд агрессивный (часто 3-бетит) → воруй только с руками для колла 3-бета
+- Блайнд большой стек → может защищаться широко
+- За тобой игроки с большими стеками → риск сквиза
+
+ДАВЛЕНИЕ ПО ТИПУ ОППОНЕНТА:
+- Тайтный нит: воруй широко, c-bet любой борд, фолдируй против его рейза
+- Пассивный: вэлью бет широко, не блефуй, изолируй его лимпы рейзом 4-5BB
+- Короткий стек < 20BB: атакуй его блайнды, не давай удвоиться с мусором
+- Большой стек рядом: избегай конфликтов без сильной руки
+- Тилтующий (только проиграл): вэлью бет широко, он платит с чем угодно
+
+ИЗОЛЯЦИОННЫЙ РЕЙЗ (против лимперов):
+- Оппонент лимпнул → рейзь 4-5BB для игры хедз-ап против слабого
+- Работает с A9+, KJ+, пары 77+
+- Цель: убрать других и играть против слабой руки`,
 
   mid: `СТАДИЯ: Середина МТТ (стеки 20-50BB). ICM важен.
 ПУШ/ФОЛД при стеке < 15BB:
@@ -379,11 +405,27 @@ function setMTT(m,el){
 async function callClaude(prompt,image){
   const body={prompt};
   if(image)body.image=image;
-  const resp=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!resp.ok)throw new Error('HTTP '+resp.status);
-  const data=await resp.json();
-  if(data.error)throw new Error(data.error);
-  return data.text||'';
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000); // 25 sec timeout
+
+  try {
+    const resp=await fetch(PROXY,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const data=await resp.json();
+    if(data.error)throw new Error(data.error);
+    return data.text||'';
+  } catch(e) {
+    clearTimeout(timeout);
+    if(e.name === 'AbortError') throw new Error('Таймаут — попробуй ещё раз');
+    throw e;
+  }
 }
 
 async function startCam(){
