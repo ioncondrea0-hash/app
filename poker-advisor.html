@@ -236,14 +236,41 @@ async function callClaude(prompt,image){
   const body={prompt};
   if(image)body.image=image;
   const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),25000);
+  const timeout=setTimeout(()=>controller.abort(),30000);
   try{
-    const resp=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});
+    const resp=await fetch(PROXY,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+      signal:controller.signal
+    });
     clearTimeout(timeout);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
-    const data=await resp.json();
-    if(data.error)throw new Error(data.error);
-    return data.text||'';
+
+    // Handle streaming response
+    const reader=resp.body.getReader();
+    const decoder=new TextDecoder();
+    let fullText='';
+
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      const chunk=decoder.decode(value);
+      const lines=chunk.split('\n');
+      for(const line of lines){
+        if(line.trim()){
+          try{
+            const parsed=JSON.parse(line);
+            if(parsed.full){
+              fullText=parsed.full;
+              // Update UI in real time
+              updateAdviceRealtime(fullText);
+            }
+          }catch(e){}
+        }
+      }
+    }
+    return fullText;
   }catch(e){
     clearTimeout(timeout);
     if(e.name==='AbortError')throw new Error('Таймаут — попробуй ещё раз');
@@ -253,7 +280,7 @@ async function callClaude(prompt,image){
 
 async function startCam(){
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}}});
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:640},height:{ideal:480}}});
     S.stream=stream;
     document.getElementById('videoEl').srcObject=stream;
     document.getElementById('camPlaceholder').style.display='none';
@@ -376,6 +403,27 @@ FOLD/CALL/RAISE/CHECK
     console.error(e);
     setAdvice('ОШИБКА','badge-wait','❌ '+e.message);
   }
+}
+
+function updateAdviceRealtime(raw){
+  if(!raw||raw.length<2)return;
+  const first=raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
+  const ACTIONS=['FOLD','CALL','RAISE','CHECK'];
+  const action=ACTIONS.find(a=>first.includes(a))||ACTIONS.find(a=>raw.toUpperCase().includes(a));
+  if(action){
+    const MAP={FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
+    const LABELS={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
+    let badge=LABELS[action];
+    if(action==='RAISE'){
+      const sm=raw.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i)||raw.match(/рейз\s+([\d.]+)\s*BB/i);
+      if(sm)badge='↑ '+sm[1]+'BB';
+    }
+    document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
+    document.getElementById('actionBadge').textContent=badge;
+  }
+  const clean=raw.replace(/\[К:.*?\]/gi,'').replace(/РАЗМЕР:.*BB/gi,'').trim();
+  document.getElementById('adviceText').className='advice-text';
+  document.getElementById('adviceText').textContent=clean;
 }
 
 function showLoading(){
