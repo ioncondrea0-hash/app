@@ -407,23 +407,27 @@ FOLD/CALL/RAISE/CHECK
 
 function updateAdviceRealtime(raw){
   if(!raw||raw.length<2)return;
-  const first=raw.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
+  // Clean markdown
+  const cleaned=raw.replace(/#{1,3}\s*/g,'').replace(/\*\*/g,'').replace(/\*/g,'').trim();
+  const first=cleaned.split(/[\s\n,.!:]/)[0].toUpperCase();
   const ACTIONS=['FOLD','CALL','RAISE','CHECK'];
-  const action=ACTIONS.find(a=>first.includes(a))||ACTIONS.find(a=>raw.toUpperCase().includes(a));
+  const action=ACTIONS.find(a=>first.includes(a))||ACTIONS.find(a=>cleaned.toUpperCase().includes(a));
   if(action){
     const MAP={FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
     const LABELS={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
     let badge=LABELS[action];
     if(action==='RAISE'){
-      const sm=raw.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i)||raw.match(/рейз\s+([\d.]+)\s*BB/i);
+      const sm=cleaned.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i)||cleaned.match(/рейз\s+([\d.]+)\s*BB/i)||cleaned.match(/([\d.]+)\s*BB/i);
       if(sm)badge='↑ '+sm[1]+'BB';
     }
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
     document.getElementById('actionBadge').textContent=badge;
   }
-  const clean=raw.replace(/\[К:.*?\]/gi,'').replace(/РАЗМЕР:.*BB/gi,'').trim();
-  document.getElementById('adviceText').className='advice-text';
-  document.getElementById('adviceText').textContent=clean;
+  const clean=cleaned.replace(/\[К:.*?\]/gi,'').replace(/РАЗМЕР:.*BB/gi,'').trim();
+  if(clean.length>3){
+    document.getElementById('adviceText').className='advice-text';
+    document.getElementById('adviceText').textContent=clean;
+  }
 }
 
 function showLoading(){
