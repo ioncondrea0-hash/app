@@ -144,10 +144,10 @@
 </div>
 
 <!-- INFO BAR -->
-<div class="info-bar" id="infoBar">
+<div class="info-bar" id="infoBar" style="display:flex">
   <div class="info-chip"><span class="lbl">КАРТЫ</span><span id="infoCards">—</span></div>
   <div class="info-chip"><span class="lbl">БОРД</span><span id="infoBoard">—</span></div>
-  <div class="info-chip"><span class="lbl">ПОЗ</span><span id="infoPos">—</span></div>
+  <div class="info-chip" style="border-color:var(--neon)"><span class="lbl">МОЯ ПОЗ</span><span id="infoPos" style="color:var(--neon)">—</span></div>
   <div class="info-chip"><span class="lbl">БАНК</span><span id="infoPot">—</span></div>
   <div class="info-chip"><span class="lbl">СТАВКА</span><span id="infoBet">—</span></div>
   <div class="info-chip"><span class="lbl">СТЕК</span><span id="infoStack">—</span></div>
@@ -438,7 +438,9 @@ ${oppAction?'✅ Действие оппонента: '+oppAction:''}
 
 Первое слово: FOLD, CALL, RAISE или CHECK
 Затем 2-3 предложения на русском.
-Последняя строка: [К:карты|Б:борд|БК:банк|СТ:ставка|СК:стек|О:действие]`;
+Последняя строка: [К:карты|Б:борд|П:позиция_словом(BTN/SB/BB/UTG/CO/HJ/MP)|БК:банк_число|СТ:ставка_число|СК:стек_число|О:действие_оппонента]
+
+ВАЖНО: Позиция должна быть ТОЛЬКО одним из: BTN, SB, BB, UTG, UTG+1, MP, HJ, CO — никаких чисел!`;
 
   try{
     const raw=await callClaude(prompt,b64Image);
@@ -454,27 +456,23 @@ ${oppAction?'✅ Действие оппонента: '+oppAction:''}
     const LABELS={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
     document.getElementById('actionBadge').textContent=LABELS[action]||action;
-    const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
+    const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
     if(infoMatch){
       document.getElementById('infoBar').style.display='flex';
       document.getElementById('infoCards').textContent=infoMatch[1]?.trim()||'—';
       document.getElementById('infoBoard').textContent=infoMatch[2]?.trim()||'—';
-    // Update position button if Claude detected it
-    const detectedPos = infoMatch?.[3]?.trim();
-    if(detectedPos && detectedPos !== '—'){
-      document.getElementById('infoPos').textContent = detectedPos;
-      // Highlight the detected position button
-      document.querySelectorAll('.pos-btn').forEach(b=>{
-        b.classList.toggle('active', b.textContent === detectedPos);
-      });
-      S.pos = detectedPos;
-    } else {
-      document.getElementById('infoPos').textContent = S.pos;
-    }
-      document.getElementById('infoPot').textContent=infoMatch[3]?.trim()||'—';
-      document.getElementById('infoBet').textContent=infoMatch[4]?.trim()||'—';
-      document.getElementById('infoStack').textContent=infoMatch[5]?.trim()||'—';
-      document.getElementById('infoOpp').textContent=infoMatch[6]?.trim()||'—';
+      const detectedPos=infoMatch[3]?.trim()||'';
+      const validPos=['BTN','SB','BB','UTG','UTG+1','MP','HJ','CO'];
+      if(validPos.includes(detectedPos)){
+        document.getElementById('infoPos').textContent=detectedPos;
+        S.pos=detectedPos;
+      } else {
+        document.getElementById('infoPos').textContent=S.pos;
+      }
+      document.getElementById('infoPot').textContent=infoMatch[4]?.trim()||'—';
+      document.getElementById('infoBet').textContent=infoMatch[5]?.trim()||'—';
+      document.getElementById('infoStack').textContent=infoMatch[6]?.trim()||'—';
+      document.getElementById('infoOpp').textContent=infoMatch[7]?.trim()||'—';
     }
     const cleanText=raw.replace(/\[К:.*?\]/gi,'').trim();
     document.getElementById('adviceText').className='advice-text';
