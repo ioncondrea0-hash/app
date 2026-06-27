@@ -690,13 +690,51 @@ FOLD (или CALL/RAISE/CHECK)
       document.getElementById('infoOpp').textContent=infoMatch[7]?.trim()||'—';
     }
 
-    // Если скрипт нашёл решение для префлопа — показываем его
-    // Иначе показываем Claude
-    const pos=infoMatch?.[3]?.trim()||ctx.pos;
-    const updatedCtx={...ctx,pos};
-    const scriptDecision2=makeScriptDecision(updatedCtx);
+    // Обновляем позицию и карты из ответа Claude
+    const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
+    if(infoMatch){
+      document.getElementById('infoCards').textContent=infoMatch[1]?.trim()||'—';
+      document.getElementById('infoBoard').textContent=infoMatch[2]?.trim()||'—';
+      const detPos=infoMatch[3]?.trim()||'';
+      const validPos=['BTN','SB','BB','UTG','UTG+1','MP','HJ','CO'];
+      if(validPos.includes(detPos)) document.getElementById('infoPos').textContent=detPos;
+      document.getElementById('infoPot').textContent=infoMatch[4]?.trim()||'—';
+      document.getElementById('infoBet').textContent=infoMatch[5]?.trim()||'—';
+      document.getElementById('infoStack').textContent=infoMatch[6]?.trim()||'—';
+      document.getElementById('infoOpp').textContent=infoMatch[7]?.trim()||'—';
+    }
 
-    if(scriptDecision2&&S.street==='preflop'){
+    // Обновляем карты из распознавания если не введены вручную
+    const detCards=infoMatch?.[1]?.trim()||'';
+    if(detCards&&detCards!=='—'&&!hole){
+      const parts=detCards.split(' ');
+      if(parts.length>=2){
+        parts.slice(0,2).forEach((code,i)=>{
+          const c=parseCardCode(code);
+          if(c)S.hole[i]=c;
+        });
+        renderCards();
+      }
+    }
+
+    // Пробуем скрипт с обновлёнными данными
+    const detPos=infoMatch?.[3]?.trim()||ctx.pos;
+    const detStack=infoMatch?.[6]?.trim()||stack;
+    const detBet=infoMatch?.[5]?.trim()||bet;
+    const detOpp=infoMatch?.[7]?.trim()||oppAction;
+    const updatedHandKey=getHandKey(S.hole[0],S.hole[1]);
+    const updatedCtx={
+      pos:detPos,
+      street:S.street,
+      handKey:updatedHandKey,
+      stack:detStack?parseFloat(detStack):null,
+      pot:infoMatch?.[4]?parseFloat(infoMatch[4]):null,
+      bet:detBet?parseFloat(detBet):null,
+      oppAction:detOpp||oppAction,
+      mtt:S.mtt
+    };
+    const scriptDecision2=makeScriptDecision(updatedCtx);
+    if(scriptDecision2){
       showDecision(scriptDecision2,updatedCtx);
     }else{
       const clean=raw.replace(/\[К:.*?\]/gi,'').replace(/РАЗМЕР:.*BB/gi,'').trim();
@@ -746,6 +784,15 @@ function setAdvice(label,cls,text){
   document.getElementById('actionBadge').textContent=label;
   document.getElementById('adviceText').className='advice-text';
   document.getElementById('adviceText').textContent=text;
+}
+
+function parseCardCode(code){
+  if(!code||code.length<2)return null;
+  const r=code[0].toUpperCase();
+  const sMap={h:'♥',d:'♦',c:'♣',s:'♠','♥':'♥','♦':'♦','♣':'♣','♠':'♠'};
+  const s=sMap[code[1].toLowerCase()]||sMap[code[1]];
+  if(!'AKQJT98765432'.includes(r)||!s)return null;
+  return{rank:r,suit:s,red:RED.includes(s)};
 }
 
 function setMTT(m,el){S.mtt=m;document.querySelectorAll('.mtt-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
