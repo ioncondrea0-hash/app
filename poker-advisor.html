@@ -334,16 +334,13 @@ ${hole?'Карты: '+hole:''}${board?' Борд: '+board:''}${pot?' Банк: '
 
 БЕЗ markdown! БЕЗ символов # * ** — только простой текст!
 
-Ответ СТРОГО в таком формате (обязательно все 4 части):
+Ответ СТРОГО в таком формате:
 FOLD
-1-2 предложения объяснения.
-[К:Ah Kd|Б:нет|П:BTN|БК:2.5|СТ:0|СК:45|О:нет]
+1-2 предложения объяснения на русском.
+[К:карты|Б:борд или нет|П:позиция|БК:банк|СТ:ставка|СК:стек|О:действие_оппонента]
 
-Если RAISE то:
-RAISE
-РАЗМЕР: 2.5BB
-1-2 предложения.
-[К:...|Б:...|П:...|БК:...|СТ:...|СК:...|О:...]`;
+Пример: [К:Ah Kd|Б:нет|П:BTN|БК:2.5|СТ:0|СК:45|О:нет]
+ОБЯЗАТЕЛЬНО используй именно эти русские буквы К,Б,П,БК,СТ,СК,О в последней строке!`;
 
   try{
     const raw=await callClaude(prompt,b64Image);
@@ -368,7 +365,9 @@ RAISE
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
     document.getElementById('actionBadge').textContent=badge;
 
-    const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
+    const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i)
+      || raw.match(/\[C:(.*?)\|B:(.*?)\|P:(.*?)\|POT:(.*?)\|BET:(.*?)\|STK:(.*?)\|O:(.*?)\]/i)
+      || raw.match(/\[Cards:(.*?)\|Board:(.*?)\|Pos:(.*?)\|Pot:(.*?)\|Bet:(.*?)\|Stack:(.*?)\|Opp:(.*?)\]/i);
     if(infoMatch){
       document.getElementById('infoCards').textContent=infoMatch[1]?.trim()||'—';
       document.getElementById('infoBoard').textContent=infoMatch[2]?.trim()||'—';
