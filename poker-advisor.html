@@ -461,7 +461,8 @@ ${oppAction?'✅ Действие оппонента: '+oppAction:''}
 5. Действий оппонентов
 
 Первое слово: FOLD, CALL, RAISE или CHECK
-Затем 2-3 предложения на русском.
+Если RAISE — на второй строке напиши: РАЗМЕР: X.XBB (например РАЗМЕР: 2.5BB или РАЗМЕР: 9BB)
+Затем объяснение на русском.
 Последняя строка ОБЯЗАТЕЛЬНО в таком формате (позиция ТОЛЬКО словом BTN/SB/BB/UTG/MP/HJ/CO):
 [К:карты|Б:борд|П:BTN|БК:банк|СТ:ставка|СК:стек|О:действие]
 
@@ -506,12 +507,11 @@ ${oppAction?'✅ Действие оппонента: '+oppAction:''}
     // Extract raise size for badge
     let badgeLabel = {FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'}[action]||action;
     if(action==='RAISE'){
-      const sizeMatch = raw.match(/рейз\s+до\s+([\d.]+)\s*BB/i) ||
+      const sizeMatch = raw.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i) ||
+                        raw.match(/рейз\s+до\s+([\d.]+)\s*BB/i) ||
                         raw.match(/рейз\s+([\d.]+)\s*BB/i) ||
-                        raw.match(/до\s+([\d.]+)\s*BB/i) ||
                         raw.match(/3-бет\s+до\s+([\d.]+)/i) ||
-                        raw.match(/сквиз\s+до\s+([\d.]+)/i) ||
-                        raw.match(/([\d.]+)\s*BB/i);
+                        raw.match(/сквиз\s+([\d.]+)/i);
       if(sizeMatch) badgeLabel = '↑ ' + sizeMatch[1] + 'BB';
     }
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
