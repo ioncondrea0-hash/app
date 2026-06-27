@@ -232,15 +232,48 @@ const PROXY = 'https://cold-king-654b.ioncondrea0.workers.dev';
 
 const MTT_KB = {
   early: `СТАДИЯ: Начало МТТ (стеки 50-100BB+). Цель: накопить фишки.
+
+ОТКРЫТИЕ РУК — ТОЛЬКО РЕЙЗОМ (никогда лимп!):
+- BTN/CO: рейз 2-2.5BB
+- MP/HJ: рейз 2.5BB
+- UTG: рейз 3BB
+- SB: рейз 3BB (никогда не лимпить с SB!)
+- За каждого лимпера до тебя: +1BB к рейзу
+
 ПРЕФЛОП ДИАПАЗОНЫ:
 - UTG: AA-77, AKo-AJs, AQo, KQs
 - MP: AA-66, AKo-ATs, AJo+, KQs-KTs, QJs, JTs
 - CO: AA-55, AKo-A9s, ATo+, KQo-KJo, QJo, T9s-87s
 - BTN: AA-22, AKo-A2s, KQo-K9o, QJo+, JTo, 98s-54s
-- SB: AA-22, AKo-A2s, широко
-- BB: защита широко
-ПРОТИВ 3-БЕТА: продолжать только AA/KK/QQ/JJ/AKs — остальное FOLD
-ПРОТИВ 4-БЕТА: только AA/KK — остальное FOLD`,
+- SB: AA-22, AKo-A2s, широко против BB
+
+3-БЕТ (размеры):
+- В позиции BTN/CO: 3x рейза (рейз 3BB → 3бет 9BB)
+- Вне позиции BB/SB: 4x рейза (рейз 3BB → 3бет 12BB)
+- Для значения: AA/KK/QQ/JJ/AKs/AKo
+- Блеф 3бет: A5s-A2s, KQs с позиции
+
+СКВИЗ (рейз + коллеры):
+- Размер: рейз × 4 + по 2BB за каждого коллера
+- Например рейз 3BB + 2 коллера = сквиз 16BB
+
+ПРОТИВ 3-БЕТА: только AA/KK/QQ/JJ/AKs продолжают — остальное FOLD
+ПРОТИВ 4-БЕТА: только AA/KK — остальное FOLD
+
+C-BET (ставка продолжения на флопе):
+- Сухой борд 1 оппонент: c-bet 33% банка (блеф или слабая рука)
+- Влажный борд 1 оппонент: c-bet 50-60% банка (нужна рука)
+- 2+ оппонентов: c-bet только с сильной рукой 50% банка
+- НЕ делай c-bet: 3+ оппонентов, очень влажный борд без руки
+
+БЛЕФЫ:
+- Полублеф (есть дро): бет/рейз агрессивно — флеш-дро 9 аутов, стрит-дро 8 аутов
+- Чистый блеф: только в позиции, сухой борд, оппонент показал слабость, размер 60-75% банка
+- Не блефуй если оппонент коллировал 2 улицы
+
+ЗАЩИТА РУКИ:
+- Влажный борд + топ пара: бет 70-80% банка — не давай дро бесплатные карты
+- Сет на влажном борде: рейз или большой бет для защиты`,
 
   mid: `СТАДИЯ: Середина МТТ (стеки 20-50BB). ICM важен.
 ПУШ/ФОЛД при стеке < 15BB:
@@ -469,9 +502,20 @@ ${oppAction?'✅ Действие оппонента: '+oppAction:''}
     const ACTIONS=['FOLD','CALL','RAISE','CHECK'];
     const action=ACTIONS.find(a=>first.includes(a))||ACTIONS.find(a=>raw.toUpperCase().includes(a))||'?';
     const MAP={FOLD:'badge-fold',CALL:'badge-call',RAISE:'badge-raise',CHECK:'badge-check'};
-    const LABELS={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
+
+    // Extract raise size for badge
+    let badgeLabel = {FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'}[action]||action;
+    if(action==='RAISE'){
+      const sizeMatch = raw.match(/рейз\s+до\s+([\d.]+)\s*BB/i) ||
+                        raw.match(/рейз\s+([\d.]+)\s*BB/i) ||
+                        raw.match(/до\s+([\d.]+)\s*BB/i) ||
+                        raw.match(/3-бет\s+до\s+([\d.]+)/i) ||
+                        raw.match(/сквиз\s+до\s+([\d.]+)/i) ||
+                        raw.match(/([\d.]+)\s*BB/i);
+      if(sizeMatch) badgeLabel = '↑ ' + sizeMatch[1] + 'BB';
+    }
     document.getElementById('actionBadge').className='action-badge '+(MAP[action]||'badge-check');
-    document.getElementById('actionBadge').textContent=LABELS[action]||action;
+    document.getElementById('actionBadge').textContent=badgeLabel;
     const infoMatch=raw.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
     if(infoMatch){
       document.getElementById('infoBar').style.display='flex';
