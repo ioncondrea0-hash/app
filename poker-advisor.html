@@ -246,31 +246,9 @@ async function callClaude(prompt,image){
     });
     clearTimeout(timeout);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
-
-    // Handle streaming response
-    const reader=resp.body.getReader();
-    const decoder=new TextDecoder();
-    let fullText='';
-
-    while(true){
-      const{done,value}=await reader.read();
-      if(done)break;
-      const chunk=decoder.decode(value);
-      const lines=chunk.split('\n');
-      for(const line of lines){
-        if(line.trim()){
-          try{
-            const parsed=JSON.parse(line);
-            if(parsed.full){
-              fullText=parsed.full;
-              // Update UI in real time
-              updateAdviceRealtime(fullText);
-            }
-          }catch(e){}
-        }
-      }
-    }
-    return fullText;
+    const data=await resp.json();
+    if(data.error)throw new Error(data.error);
+    return data.text||'';
   }catch(e){
     clearTimeout(timeout);
     if(e.name==='AbortError')throw new Error('Таймаут — попробуй ещё раз');
