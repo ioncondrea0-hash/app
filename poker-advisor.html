@@ -483,11 +483,35 @@ async function analyze(b64){
   }
 
   try{
-    const recP='Покерный стол на фото. Выдай ТОЛЬКО одну строку:\n[К:карты_HERO|Б:борд_или_нет|П:позиция|БК:банк|СТ:ставка|СК:стек|О:действие_оппонента]\n\nПозиция: D=BTN. Считай от D до HERO по часовой: 0=BTN,1=CO,2=HJ,3=MP,4=UTG+1,5+=UTG. Или 0.5BB=SB,1BB=BB у HERO.\nЕсли карты не видны — только: КАРТЫ НЕ ВИДНЫ';
+    const recP=`На фото покерный стол. Ответь ОДНОЙ строкой в точном формате:
+[C:cards|B:board|P:position|POT:pot|BET:bet|STK:stack|O:action]
+
+HERO внизу экрана. Position: жетон D=BTN, считай игроков по часовой до HERO (1=CO,2=HJ,3=MP,4=UTG). Жетон 0.5BB у HERO=SB, 1BB=BB.
+Если карты не видны: NO CARDS
+
+Example: [C:Ah Kd|B:none|P:BTN|POT:10|BET:2.5|STK:45|O:none]`;
+
     const rec=await apiCall(recP,b64);
-    if(!rec||rec.includes('КАРТЫ НЕ ВИДНЫ')){showErr('🃏 Карты не видны');return;}
-    const m=rec.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
-    if(!m){showErr('❌ Не распознал — попробуй ещё раз');return;}
+    if(!rec||rec.includes('NO CARDS')||rec.includes('КАРТЫ НЕ ВИДНЫ')){showErr('🃏 Карты не видны');return;}
+    
+    // Match English or Russian keys, with or without brackets
+    const m=rec.match(/\[?C:(.*?)\|B:(.*?)\|P:(.*?)\|POT:(.*?)\|BET:(.*?)\|STK:(.*?)\|O:(.*?)[\]$]/i)
+           ||rec.match(/\[?К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)[\]$\n]/i)
+           ||rec.match(/C:(.*?)\|B:(.*?)\|P:(.*?)\|POT:(.*?)\|BET:(.*?)\|STK:(.*?)\|O:([^\]\n]*)/i)
+           ||rec.match(/К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:([^\]\n]*)/i);
+
+    if(!m){
+      // Fallback — Claude анализирует напрямую
+      const sn={early:'Начало МТТ',mid:'Середина МТТ',bubble:'Пузырь',ft:'Финальный стол'};
+      const anlP=`MTT poker coach. Stage: ${sn[S.mtt]}.\n${rec}\n\nNo markdown! Answer:\nFOLD/CALL/RAISE/CHECK\nSIZE: X.XBB (if RAISE)\n1-2 sentences in Russian.`;
+      const anl=await apiCall(anlP,null);
+      const first=anl.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
+      const ACTS=['FOLD','CALL','RAISE','CHECK'];
+      const action=ACTS.find(a=>first.includes(a))||ACTS.find(a=>anl.toUpperCase().includes(a))||'?';
+      let size=null;const sm2=anl.match(/SIZE:\s*([\d.]+)\s*BB/i)||anl.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i);if(sm2)size=parseFloat(sm2[1]);
+      showDec({action,size,reason:anl.replace(/SIZE:[\d.\s]*BB/gi,'').replace(/РАЗМЕР:[\d.\s]*BB/gi,'').trim(),src:'ai'});
+      return;
+    }
     document.getElementById('iC').textContent=m[1]?.trim()||'—';
     document.getElementById('iB').textContent=m[2]?.trim()||'—';
     const dp=m[3]?.trim()||'';
