@@ -166,34 +166,32 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 </div>
 <div class="sec">
   <div class="sechdr" onclick="tog('manb')">
-    <span style="font-size:11px;font-weight:600;color:var(--muted)">✏️ Ввести вручную</span>
+    <span style="font-size:11px;font-weight:600;color:var(--muted)">🃏 Моя рука и позиция</span>
     <span style="color:var(--muted)">▼</span>
   </div>
   <div class="secbody" id="manb">
-    <div class="strow">
-      <div class="stb on" onclick="setSt('preflop',this)">Префлоп</div>
-      <div class="stb" onclick="setSt('flop',this)">Флоп</div>
-      <div class="stb" onclick="setSt('turn',this)">Тёрн</div>
-      <div class="stb" onclick="setSt('river',this)">Ривер</div>
+    <div class="slbl">Позиция</div>
+    <div class="strow" style="margin-bottom:10px">
+      <div class="stb" onclick="setPos('UTG',this)">UTG</div>
+      <div class="stb" onclick="setPos('MP',this)">MP</div>
+      <div class="stb" onclick="setPos('HJ',this)">HJ</div>
+      <div class="stb" onclick="setPos('CO',this)">CO</div>
+      <div class="stb" onclick="setPos('BTN',this)">BTN</div>
+      <div class="stb" onclick="setPos('SB',this)">SB</div>
+      <div class="stb" onclick="setPos('BB',this)">BB</div>
     </div>
     <div class="slbl">Моя рука</div>
     <div class="crow" id="hrow"></div>
     <div id="bsec" style="display:none"><div class="slbl">Борд</div><div class="crow" id="brow"></div></div>
-    <div class="slbl" style="margin-top:6px">Параметры</div>
-    <div class="g3" style="gap:5px">
-      <div class="mp"><label>Банк (BB)</label><input id="pot" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Ставка (BB)</label><input id="bet" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Стек (BB)</label><input id="stk" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Стек оппонента</label><input id="ostk" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Действие оппонента</label>
-        <select id="oact"><option value="">авто</option><option>лимп</option><option>рейз</option><option>3-бет</option><option>4-бет</option><option>олл-ин</option><option>чек</option><option>бет</option></select>
-      </div>
-      <div class="mp"><label>Оппонентов</label>
-        <select id="ocnt"><option value="">авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
-      </div>
-    </div>
   </div>
 </div>
+<!-- hidden inputs kept for compatibility -->
+<input id="pot" type="hidden" value="">
+<input id="bet" type="hidden" value="">
+<input id="stk" type="hidden" value="">
+<input id="ostk" type="hidden" value="">
+<select id="oact" style="display:none"><option value="">авто</option></select>
+<select id="ocnt" style="display:none"><option value="">авто</option></select>
 <div class="sec">
   <div class="sechdr" onclick="tog('edb')">
     <span style="font-size:11px;font-weight:600;color:var(--gold)">⚙️ Редактор правил</span>
@@ -498,29 +496,39 @@ async function scan(){
   S.analyzing=false;
 }
 
+// Выбор позиции вручную
+function setPos(p,el){
+  document.getElementById('iP').textContent=p;
+  document.querySelectorAll('#manb .strow .stb').forEach(b=>b.classList.remove('on'));
+  if(el)el.classList.add('on');
+  toast('Позиция: '+p);
+  if(S.hole[0]&&S.hole[1]&&S.street==='preflop'){S.analyzing=false;analyze(null);}
+}
+
 async function analyze(b64){
   showLoad();
   const hole=S.hole.filter(Boolean).map(c=>c.rank+c.suit).join(' ');
-  const board=S.board.map(c=>c.rank+c.suit).join(' ');
-  const pot=document.getElementById('pot').value;
-  const bet=document.getElementById('bet').value;
-  const stack=document.getElementById('stk').value;
-  const opp=document.getElementById('oact').value;
-  const limpers=document.getElementById('ocnt').value?parseInt(document.getElementById('ocnt').value):1;
   const key=hk(S.hole[0],S.hole[1]);
 
-  // Ручной ввод БЕЗ камеры
+  // Ручной ввод БЕЗ камеры — только скрипт на префлопе
   if(!b64&&key){
     const pos=document.getElementById('iP').textContent||'';
-    const ctx={pos,street:S.street,key,stack:stack?parseFloat(stack):null,bet:bet?parseFloat(bet):null,opp,mtt:S.mtt,limpers};
     if(S.street==='preflop'){
+      // Данные берём из iBar (распознанные ранее камерой)
+      const camBet=document.getElementById('iBt').textContent;
+      const camStack=document.getElementById('iSt').textContent;
+      const camOpp=document.getElementById('iO').textContent;
+      const detBet=camBet&&camBet!=='—'?parseFloat(camBet):null;
+      const detStack=camStack&&camStack!=='—'?parseFloat(camStack):null;
+      const detOpp=camOpp&&camOpp!=='—'?camOpp:'';
+      const ctx={pos,street:'preflop',key,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers:1};
       const d=decide(ctx);
       if(d){showDec(d);return;}
-      showErr('⚡ Укажи позицию чтобы скрипт сработал');return;
+      showErr('⚡ Укажи позицию');return;
     }
-    // Постфлоп без камеры — идём к AI с контекстом
+    // Постфлоп без камеры — AI
   }
-  // С камерой: распознаём стол → преflop скрипт → постфлоп AI
+  // С камерой: распознаём → преflop скрипт → постфлоп AI
 
   try{
     // STEP 1: Read the screen — buttons first, then table data
@@ -629,18 +637,30 @@ If no cards visible: NO CARDS`;
     const detBet=facingBet?(rawBet&&rawBet!=='?'?parseFloat(rawBet):2.5):(noBet?0:(rawBet?parseFloat(rawBet):null));
     const updKey=hk(S.hole[0],S.hole[1]);
 
-    // МАРШРУТИЗАЦИЯ: префлоп → скрипт, постфлоп → всегда AI
+    // МАРШРУТИЗАЦИЯ: префлоп → ТОЛЬКО скрипт, постфлоп → ТОЛЬКО AI
     if(dst==='preflop'&&updKey){
-      const ctx2={pos:detPos||'',street:'preflop',key:updKey,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers};
+      if(!detPos){
+        // Позиция не распознана — просим пользователя выбрать вручную
+        showErr('⚡ Позиция не распознана — выбери вручную в разделе «Моя рука»');
+        S.analyzing=false;return;
+      }
+      const ctx2={pos:detPos,street:'preflop',key:updKey,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers:1};
       const d2=decide(ctx2);
       if(d2){
-        if(facingBet&&d2.action==='CHECK'){/* кнопки говорят что стоит ставка — идём к AI */}
-        else{d2.dbg='СКРИПТ | key:'+updKey+' pos:'+(detPos||'?')+' opp:'+(detOpp||'нет');showDec(d2);return;}
-      } else {
-        // Логируем почему скрипт вернул null
-        console.warn('Script→null: key='+updKey+' pos='+(detPos||'?')+' opp='+(detOpp||'нет')+' → going to AI');
+        if(facingBet&&d2.action==='CHECK'){
+          // Кнопки CFR но скрипт говорит CHECK — принудительно CALL
+          d2.action='CALL';d2.reason='Ставка перед HERO — колл с '+updKey;
+        }
+        d2.dbg='⚡СКРИПТ | '+updKey+' '+detPos+' opp:'+(detOpp||'нет')+' bet:'+(detBet||0)+'BB';
+        showDec(d2);return;// ВЫХОД — AI не вызываем
       }
+      // Скрипт вернул null — не должно случаться если позиция известна, но на всякий случай логируем
+      console.warn('Script→null на префлопе: key='+updKey+' pos='+detPos+' opp='+(detOpp||'нет'));
+      // На префлопе НЕ идём к AI — показываем ошибку
+      showErr('⚡ Скрипт: неизвестная ситуация на префлопе ('+updKey+' '+detPos+')');
+      S.analyzing=false;return;
     }
+    // ТОЛЬКО постфлоп попадает сюда → AI
     // Постфлоп и непокрытые префлоп-случаи → AI
     const sn={early:'Начало МТТ',mid:'Середина МТТ',bubble:'Пузырь',ft:'Финальный стол'};
     const stritName={preflop:'Префлоп',flop:'Флоп',turn:'Тёрн',river:'Ривер'};
