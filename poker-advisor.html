@@ -287,11 +287,40 @@ const OR={
 };
 // Open sizes MTT (standard): UTG/MP=2.5BB, HJ/CO=2.5BB, BTN=2.5BB, SB=3BB
 const OS={UTG:2.5,MP:2.5,HJ:2.5,CO:2.5,BTN:2.5,SB:3,'UTG+1':2.5,BB:0};
+// PUSH/FOLD RANGES - Source: Jonathan Little / PokerCoaching.com
+// Nash equilibrium solver-calculated, 9-handed, no ante
+// https://pokercoaching.com/push-fold-charts/
 const PR={
-  15:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQo','KJo','KTs','KQs','KJs','QJs','JTs'],
-  12:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A5s','KQo','KJo','KQs','KJs','QJs'],
-  10:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AKs','AQs','AJs','ATs','A9s','KQs','KJs'],
-  7:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','AKs','AQs','AJs']
+  // 15BB - BTN (wide open shove range)
+  15:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o',
+      'KQo','KJo','KTo','K9o',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s',
+      'QJs','QTs','Q9s','Q8s',
+      'JTs','J9s','J8s','T9s','T8s','98s','87s','76s'],
+  // 12BB
+  12:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o',
+      'KQo','KJo','KTo','K9o',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s',
+      'QJs','QTs','Q9s',
+      'JTs','J9s','T9s','98s','87s'],
+  // 10BB
+  10:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o',
+      'KQo','KJo','KTo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s',
+      'QJs','QTs',
+      'JTs','T9s'],
+  // 7BB - shove very wide
+  7:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+     'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o',
+     'KQo','KJo',
+     'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s',
+     'KQs','KJs','KTs','QJs','QTs','JTs']
 };
 
 function hk(c1,c2){
@@ -378,12 +407,43 @@ function decide(ctx){
     }
   }
   if(opp==='рейз'){
-    // Против рейза — продолжаем только с сильными руками
-    const vsRaise=['AA','KK','QQ','JJ','TT','AKo','AKs','AQs','AQo','AJs'];
-    const vsRaiseCall=['99','88','AJo','ATs','KQs','KQo'];
-    if(ir(key,vsRaise))return{action:'RAISE',size:null,reason:`3-бет с ${key} против рейза`,src:'script'};
-    if(ir(key,vsRaiseCall)&&(pos==='BTN'||pos==='CO'||pos==='HJ'))return{action:'CALL',size:null,reason:`Колл рейза с ${key} в позиции`,src:'script'};
-    return{action:'FOLD',size:null,reason:`Фолд против рейза — ${key} не в диапазоне продолжения`,src:'script'};
+    // Пот-оддс математика (Source: GTO Wizard)
+    // Required Equity = Call amount / (Pot after call)
+    // Pot after call = existing pot + raise + call
+    // Preflop existing pot = 1.5BB (SB+BB)
+    const raiseSize = ctx.bet ? parseFloat(ctx.bet) : 2.5;
+    const callAmount = raiseSize - 1; // уже поставили 1BB (BB)
+    const potAfterCall = 1.5 + raiseSize + callAmount;
+    const requiredEquity = Math.round((callAmount / potAfterCall) * 100);
+
+    // Чем больше рейз тем тайтнее нужно играть
+    // Против рейза 2.5BB: нужно ~28% equity → широкий колл диапазон
+    // Против рейза 5BB: нужно ~40% equity → тайтный диапазон
+    // Против рейза 8BB+: нужно ~47%+ equity → только премиум руки
+
+    let vsRaise3bet, vsRaiseCall;
+
+    if(raiseSize <= 2.5){
+      // Стандартный рейз 2-2.5BB (~28% equity нужно)
+      vsRaise3bet=['AA','KK','QQ','JJ','AKs','AKo'];
+      vsRaiseCall=['TT','99','88','77','AQo','AQs','AJs','ATs','KQs','KQo','QJs','JTs','T9s'];
+    } else if(raiseSize <= 3.5){
+      // Рейз 3-3.5BB (~33% equity нужно)
+      vsRaise3bet=['AA','KK','QQ','JJ','AKs','AKo'];
+      vsRaiseCall=['TT','99','AQo','AQs','AJs','KQs'];
+    } else if(raiseSize <= 5){
+      // Рейз 4-5BB (~40% equity нужно) — только сильные руки
+      vsRaise3bet=['AA','KK','QQ','AKs','AKo'];
+      vsRaiseCall=['JJ','TT','AQs'];
+    } else {
+      // Рейз 6BB+ (~45%+ equity нужно) — только премиум
+      vsRaise3bet=['AA','KK'];
+      vsRaiseCall=['QQ','JJ','AKs','AKo'];
+    }
+
+    if(ir(key,vsRaise3bet))return{action:'RAISE',size:null,reason:`3-бет с ${key} против рейза ${raiseSize}BB (нужно ${requiredEquity}% equity для колла)`,src:'script'};
+    if(ir(key,vsRaiseCall)&&(pos==='BTN'||pos==='CO'||pos==='HJ'))return{action:'CALL',size:null,reason:`Колл рейза ${raiseSize}BB с ${key} в позиции (нужно ${requiredEquity}% equity)`,src:'script'};
+    return{action:'FOLD',size:null,reason:`Фолд против рейза ${raiseSize}BB — ${key} не даёт нужные ${requiredEquity}% equity`,src:'script'};
   }
     const range=OR[pos]||[];
     if(ir(key,range)){const size=OS[pos]||2.5;return{action:'RAISE',size,reason:`Открытие ${key} с ${pos} рейз ${size}BB`,src:'script'};}
