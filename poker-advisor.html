@@ -254,53 +254,109 @@ const CIRC=2*Math.PI*18;
 const RO='AKQJT98765432';
 const VP=['BTN','SB','BB','UTG','UTG+1','MP','HJ','CO'];
 
-// GTO OPENING RANGES - PokerCoaching.com / Jonathan Little (MTT 75BB, solver-based 2025)
-// UTG: ~13% | UTG+1: ~15% | MP(LJ): ~18% | HJ: ~21% | CO: ~27% | BTN: ~51% | SB: raise ~40%
-const OR={
+// ════════ ДИАПАЗОНЫ ОТКРЫТИЯ ПО СТЕКУ (MTT, С АНТЕ) ════════
+// Источник: реконструкция по принципам GTO Wizard MTT (chip EV, с анте).
+// НЕ дословный экспорт солвера — списки восстановлены по опубликованным
+// процентам и описаниям (UTG ~13-15%, поздние позиции с анте шире).
+// Логика стека (Вариант 1):
+//   40bb+      → OR40 (рейз, широкий)
+//   25-40bb    → OR25 (рейз, чуть тайтнее — ~35bb поджимается)
+//   15-25bb    → опен-ШОВ (см. PR ниже), не мини-рейз
+//   <=15bb     → пуш/фолд (PR)
+
+// --- 40bb+ : широкие открытия, есть место играть постфлоп ---
+const OR40={
   UTG:['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','KQo',
-       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s',
-       'KQs','KJs','KTs','K9s','QJs','QTs','J9s','T9s','98s'],
+       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+       'KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s','98s'],
   'UTG+1':['AA','KK','QQ','JJ','TT','99','88','77','66','55',
-            'AKo','AQo','AJo','ATo','KQo',
-            'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-            'KQs','KJs','KTs','K9s','QJs','QTs','Q9s','JTs','J9s','T9s','98s','87s','76s'],
+           'AKo','AQo','AJo','ATo','KQo','KJo',
+           'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+           'KQs','KJs','KTs','K9s','QJs','QTs','Q9s','JTs','J9s','T9s','98s','87s','76s'],
   MP:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44',
-      'AKo','AQo','AJo','ATo','KQo','KJo',
+      'AKo','AQo','AJo','ATo','KQo','KJo','KTo',
       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
       'KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','T8s','98s','87s','76s','65s'],
   HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-      'AKo','AQo','AJo','ATo','KQo','KJo',
-      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-      'KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','Q8s',
-      'JTs','J9s','J8s','T9s','T8s','98s','87s','76s','65s','54s'],
-  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-      'AKo','AQo','AJo','ATo','A9o','KQo','KJo',
+      'AKo','AQo','AJo','ATo','A9o','KQo','KJo','KTo','QJo',
       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
       'KQs','KJs','KTs','K9s','K8s','K7s','QJs','QTs','Q9s','Q8s',
-      'JTs','J9s','J8s','T9s','T8s','T7s','98s','97s','86s','75s','64s','54s','43s'],
-  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-       'AKo','AQo','AJo','ATo','A9o','A8o','A7o','KQo','KJo','KTo','K9o','QJo','QTo','Q8o','JTo','J9o','T9o','98o','87o',
-       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-       'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s',
-       'QJs','QTs','Q9s','Q8s','Q7s','Q6s',
-       'JTs','J9s','J8s','J7s','J6s',
-       'T9s','T8s','T7s','T6s',
-       '98s','97s','96s','87s','86s','85s','76s','75s','65s','64s','53s','43s'],
-  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','KTo','K9o','K8o','QJo','QTo','Q9o','JTo','J9o','T9o','T8o','98o','87o',
+      'JTs','J9s','J8s','T9s','T8s','98s','97s','87s','76s','65s','54s'],
+  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','KQo','KJo','KTo','K9o','QJo','QTo','JTo',
       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s',
-      'QJs','QTs','Q9s','Q8s','Q7s',
-      'JTs','J9s','J8s','J7s','J6s',
-      'T9s','T8s','T7s','T6s',
-      '98s','97s','96s','87s','86s','85s','76s','75s','65s','64s','54s','43s'],
+      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','QJs','QTs','Q9s','Q8s','Q7s',
+      'JTs','J9s','J8s','J7s','T9s','T8s','T7s','98s','97s','87s','86s','76s','75s','65s','54s'],
+  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+       'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o',
+       'KQo','KJo','KTo','K9o','K8o','K7o','QJo','QTo','Q9o','Q8o','JTo','J9o','J8o','T9o','T8o','98o','87o',
+       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+       'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s',
+       'QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s',
+       'JTs','J9s','J8s','J7s','J6s','T9s','T8s','T7s','T6s',
+       '98s','97s','96s','87s','86s','85s','76s','75s','74s','65s','64s','54s','53s','43s'],
+  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o',
+      'KQo','KJo','KTo','K9o','K8o','K7o','QJo','QTo','Q9o','Q8o','JTo','J9o','J8o','T9o','T8o','98o','87o','76o',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s',
+      'QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s',
+      'JTs','J9s','J8s','J7s','J6s','T9s','T8s','T7s','T6s',
+      '98s','97s','96s','87s','86s','85s','76s','75s','65s','64s','54s','53s','43s'],
   BB:[]
 };
+
+// --- 25-40bb : тайтнее, осторожнее со спекулятивными руками ---
+const OR25={
+  UTG:['AA','KK','QQ','JJ','TT','99','88','77','AKo','AQo','AJo','KQo',
+       'AKs','AQs','AJs','ATs','A9s','A5s','A4s','KQs','KJs','KTs','QJs','JTs'],
+  'UTG+1':['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','KQo',
+           'AKs','AQs','AJs','ATs','A9s','A8s','A5s','A4s','KQs','KJs','KTs','QJs','QTs','JTs','T9s'],
+  MP:['AA','KK','QQ','JJ','TT','99','88','77','66','55','AKo','AQo','AJo','ATo','KQo','KJo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A5s','A4s','KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s','98s'],
+  HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','AKo','AQo','AJo','ATo','KQo','KJo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','K9s','QJs','QTs','Q9s','JTs','J9s','T9s','98s','87s'],
+  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','KQo','KJo','KTo','QJo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','J8s','T9s','T8s','98s','87s','76s','65s'],
+  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+       'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A5o','KQo','KJo','KTo','K9o','QJo','QTo','Q9o','JTo','J9o','T9o','98o',
+       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+       'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','QJs','QTs','Q9s',
+       'JTs','J9s','J8s','T9s','T8s','98s','97s','87s','86s','76s','65s','54s'],
+  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','KTo','K9o','QJo','QTo','Q9o','JTo','J9o','T9o','98o',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','QJs','QTs','Q9s','Q8s',
+      'JTs','J9s','J8s','J7s','T9s','T8s','T7s','98s','97s','87s','86s','76s','65s','54s'],
+  BB:[]
+};
+
+// Совместимость со старым кодом: OR = широкий чарт по умолчанию
+const OR=OR40;
 // Open sizes: UTG/MP smaller (less squeeze risk), BTN/SB bigger (discourage BB calls)
 const OS={UTG:2.2,'UTG+1':2.2,MP:2.3,HJ:2.5,CO:2.5,BTN:2.5,SB:3,BB:0};
 
-// PUSH/FOLD - Jonathan Little / PokerCoaching.com (Nash equilibrium, no ante)
+// ════════ ПУШ / ОПЕН-ШОВ ДИАПАЗОНЫ (С АНТЕ) ════════
+// Источник: реконструкция по принципам GTO Wizard MTT (с анте).
+// С анте дальние позиции шовят заметно шире (BTN на 20bb ~40-55%).
+// Зона 15-25bb: открытие = ШОВ целиком, не мини-рейз (Вариант 1).
+// Эти списки = диапазоны для late position (CO/BTN/SB).
+// Из ранних позиций на коротком стеке играем заметно уже (см. decide()).
 const PR={
+  25:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o',
+      'KQo','KJo','KTo','K9o','QJo','QTo','JTo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s',
+      'QJs','QTs','Q9s','Q8s','JTs','J9s','J8s','T9s','T8s','98s','97s','87s','76s','65s'],
+  20:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o',
+      'KQo','KJo','KTo','K9o','K8o','QJo','QTo','Q9o','JTo','J9o','T9o',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s',
+      'QJs','QTs','Q9s','Q8s','Q7s','JTs','J9s','J8s','J7s','T9s','T8s','T7s','98s','97s','96s','87s','86s','76s','75s','65s','54s'],
   15:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','QJs','QTs','Q9s','Q8s','JTs','J9s','J8s','T9s','T8s','98s','87s','76s'],
   12:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','98s','87s'],
   10:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','KQo','KJo','KTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s'],
@@ -324,14 +380,18 @@ function pc(code){
 function no(raw){
   if(!raw)return'';
   const r=raw.toLowerCase();
-  if(r.includes('3-бет')||r.includes('3бет'))return'3-бет';
-  if(r.includes('4-бет')||r.includes('4бет'))return'4-бет';
-  if(r.includes('олл')||r.includes('all-in'))return'олл-ин';
-  if(r.includes('лимп'))return'лимп';
-  if(r.includes('рейз'))return'рейз';
-  if(r.includes('чек'))return'чек';
-  if(r.includes('бет'))return'бет';
+  // порядок важен: спецслучаи раньше общих
+  if(r.includes('3-бет')||r.includes('3бет')||r.includes('3bet')||r.includes('3-bet'))return'3-бет';
+  if(r.includes('4-бет')||r.includes('4бет')||r.includes('4bet')||r.includes('4-bet'))return'4-бет';
+  if(r.includes('олл')||r.includes('all-in')||r.includes('allin')||r.includes('all in')||r.includes('shove')||r.includes('jam'))return'олл-ин';
+  if(r.includes('лимп')||r.includes('limp'))return'лимп';
+  if(r.includes('рейз')||r.includes('raise'))return'рейз';
+  // call оппонента трактуем как лимп (добор в банк без рейза)
+  if(r.includes('колл')||r.includes('call'))return'лимп';
+  if(r.includes('чек')||r.includes('check'))return'чек';
+  if(r.includes('бет')||r.includes('bet'))return'бет';
   if(r.includes('фолд')||r.includes('fold'))return'';
+  if(r.includes('нет')||r.includes('none')||r.includes('no '))return'';
   return'';
 }
 
@@ -368,11 +428,46 @@ function decide(ctx){
   for(const r of rules){if(matchR(r,ctx))return{action:r.action,size:r.size?parseFloat(r.size):null,reason:'[Правило] '+(r.reason||r.action),src:'script'};}
   // Постфлоп → только AI
   if(street!=='preflop')return null;
-  // Push/fold short stack
-  if(stack&&stack<=15){
+
+  // ── ЛИЧНОЕ ПРАВИЛО (ЭКСПЛОЙТ, НЕ GTO): лимп-трап AA/KK ──
+  // Включается ТОЛЬКО если: оппонент ещё не действовал (мы первые),
+  // позиция ранняя (UTG/UTG+1/MP), стек в зоне ~18-25bb.
+  // Идея: лимпаем премиум, чтобы спровоцировать рейз сзади и переставить.
+  // Когда сзади придёт рейз — сработает ветка "vs рейз" и выдаст RAISE.
+  // ВНИМАНИЕ: солверы так не играют, это приём против агрессивного стола.
+  if((!opp||opp==='')&&(key==='AA'||key==='KK')
+     &&(pos==='UTG'||pos==='UTG+1'||pos==='MP')
+     &&stack&&parseFloat(stack)>=18&&parseFloat(stack)<=25){
+    return{action:'CHECK',size:null,
+      reason:'Лимп-трап '+key+' ('+pos+', '+parseFloat(stack)+'BB) — эксплойт, НЕ GTO. Лимп чтобы переставить рейз сзади',
+      src:'script'};
+  }
+  // ── ОПЕН-ШОВ / ПУШ-ФОЛД зона: стек <= 25bb (Вариант 1) ──
+  // 15-25bb и ниже: открытие = шов целиком, не мини-рейз.
+  // Ранние позиции шовят уже, чем поздние (списки PR = для late position).
+  if(stack&&stack<=25){
     const n=parseFloat(stack);
-    const range=n>=13?PR[15]:n>=10?PR[12]:n>=7?PR[10]:PR[7];
-    return ir(key,range)?{action:'RAISE',size:n,reason:'Пуш '+key+' стек '+n+'BB',src:'script'}:{action:'FOLD',size:null,reason:'Фолд — '+key+' не в пуш диапазоне '+n+'BB',src:'script'};
+    // выбор базового диапазона по стеку
+    let base;
+    if(n>=22)base=PR[25];
+    else if(n>=17)base=PR[20];
+    else if(n>=13)base=PR[15];
+    else if(n>=10)base=PR[12];
+    else if(n>=7)base=PR[10];
+    else base=PR[7];
+    // позиционная коррекция: из ранних позиций шовим заметно уже
+    let range=base;
+    if(n>15){ // в зоне 15-25 позиция важна; на <=15 диапазоны уже сами по себе тайтные
+      if(pos==='UTG'||pos==='UTG+1'){
+        range=base.filter(h=>['AA','KK','QQ','JJ','TT','99','88','77','66','AKs','AQs','AJs','ATs','KQs','AKo','AQo','AJo'].includes(h));
+      }else if(pos==='MP'||pos==='HJ'){
+        range=base.filter(h=>!['Q7s','Q8s','J7s','J8s','T7s','96s','86s','75s','54s','K2s','K3s','K4s','Q9o','J9o','T9o','K8o','97s'].includes(h));
+      }
+      // CO/BTN/SB используют полный base
+    }
+    return ir(key,range)
+      ?{action:'RAISE',size:n,reason:'Опен-шов '+key+' с '+pos+' (стек '+n+'BB, с анте)',src:'script'}
+      :{action:'FOLD',size:null,reason:'Фолд — '+key+' не в шов-диапазоне '+pos+' при '+n+'BB',src:'script'};
   }
   // vs 4-bet
   if(opp==='4-бет'){
@@ -401,6 +496,12 @@ function decide(ctx){
     else{r3b=['AA','KK'];rcall=['QQ','JJ','AKs','AKo'];}
     if(ir(key,r3b))return{action:'RAISE',size:null,reason:'3-бет с '+key+' против рейза '+rs+'BB (нужно '+eq+'% equity)',src:'script'};
     if(ir(key,rcall)&&(pos==='BTN'||pos==='CO'||pos==='HJ'))return{action:'CALL',size:null,reason:'Колл рейза '+rs+'BB с '+key+' (нужно '+eq+'% equity)',src:'script'};
+    // Слабые связки/одногапперы — добор ТОЛЬКО если рейз дешёвый (<=2bb) и мы в позиции.
+    // Спекулятивная рука стоит входа лишь по дешёвым имплайд-оддсам. Дороже 2bb — фолд.
+    const speculative=['76s','87s','98s','65s','54s','97s','86s','75s','64s','T8s','J9s','J8s','Q9s','T9s','JTs','QTs','KTs'];
+    if(rs<=2&&ir(key,speculative)&&(pos==='BTN'||pos==='CO')){
+      return{action:'CALL',size:null,reason:'Дешёвый колл '+key+' против мин-рейза '+rs+'BB (имплайд-оддсы, в позиции)',src:'script'};
+    }
     return{action:'FOLD',size:null,reason:'Фолд — '+key+' не даёт '+eq+'% equity против рейза '+rs+'BB',src:'script'};
   }
   // vs limp - isolation
@@ -410,15 +511,27 @@ function decide(ctx){
       const sz=parseFloat(OS[pos]||2.5)+lp;
       return{action:'RAISE',size:sz,reason:'Изоляция '+lp+' лимпера с '+key+' — рейз '+sz+'BB',src:'script'};
     }
+    // Не изолируем: за лимпером дёшево заходим спекулятивной рукой, иначе фолд/чек.
+    const overlimp=['76s','87s','98s','65s','54s','97s','86s','75s','64s','T8s','J9s','J8s','Q9s','T9s','JTs','QTs','KTs','22','33','44','55','66'];
+    if(ir(key,overlimp))return{action:'CALL',size:null,reason:'Оверлимп '+key+' за лимпером (дёшево, имплайд-оддсы)',src:'script'};
+    if(pos==='BB')return{action:'CHECK',size:null,reason:'BB — чек, видим флоп бесплатно',src:'script'};
+    return{action:'FOLD',size:null,reason:'Фолд — '+key+' слаб для входа против лимпа',src:'script'};
   }
-  // open raise
+  // open raise (сюда попадаем только если стек > 25bb)
   if(!opp||opp===''){
-    const range=OR[pos]||[];
-    if(ir(key,range)){const sz=OS[pos]||2.5;return{action:'RAISE',size:sz,reason:'Открытие '+key+' с '+pos+' рейз '+sz+'BB',src:'script'};}
+    const n=stack?parseFloat(stack):50;
+    // выбор чарта по глубине стека
+    const chart=n>=40?OR40:OR25;
+    const tag=n>=40?'40bb+':'25-40bb';
+    const range=chart[pos]||[];
+    if(ir(key,range)){const sz=OS[pos]||2.5;return{action:'RAISE',size:sz,reason:'Открытие '+key+' с '+pos+' рейз '+sz+'BB ('+tag+')',src:'script'};}
     if(pos==='BB')return{action:'CHECK',size:null,reason:'BB — чек (опция)',src:'script'};
-    return{action:'FOLD',size:null,reason:key+' не в диапазоне открытия с '+pos,src:'script'};
+    return{action:'FOLD',size:null,reason:key+' не в диапазоне открытия '+pos+' ('+tag+')',src:'script'};
   }
-  return null;
+  // FALLBACK: скрипт закрывает ВСЕ префлоп-ситуации сам, без ухода на AI.
+  // Если дошли сюда — действие оппонента нестандартное (напр. "бет"/"чек" на префлопе).
+  if(pos==='BB'&&(!opp||opp==='чек'))return{action:'CHECK',size:null,reason:'BB — чек',src:'script'};
+  return{action:'FOLD',size:null,reason:'Фолд (нет подходящего действия для '+key+' '+pos+(opp?' vs '+opp:'')+')',src:'script'};
 }
 
 // STATE
