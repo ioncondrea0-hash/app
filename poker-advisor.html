@@ -11,68 +11,68 @@
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh}
 header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
 .logo{font-size:17px;font-weight:700}.logo span{color:var(--gold)}.logo em{color:var(--neon);font-style:normal}
-.auto-toggle{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);-webkit-user-select:none;user-select:none}
-.auto-toggle.active{border-color:var(--neon);color:var(--neon);background:rgba(0,255,163,0.08)}
-.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0}
-.auto-toggle.active .pulse-dot{background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 1.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
-.start-cam-btn{width:100%;padding:24px;background:var(--surface);border:2px dashed var(--border);color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
-.start-cam-btn span{font-size:36px}
-.cam-wrap{position:relative;width:100%;background:#000;overflow:hidden}
-#videoEl{width:100%;display:block;max-height:45vh;object-fit:cover}
-#canvasEl{display:none}
-.cam-overlay{position:absolute;inset:0;pointer-events:none}
-.bracket{position:absolute;width:26px;height:26px;border-color:var(--neon);border-style:solid;opacity:.85}
-.bracket.tl{top:10px;left:10px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
-.bracket.tr{top:10px;right:10px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
-.bracket.bl{bottom:10px;left:10px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
-.bracket.br{bottom:10px;right:10px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-.scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0;top:0}
-.scanline.on{opacity:1;animation:scan 2s linear infinite}
-@keyframes scan{0%{top:5%}100%{top:95%}}
-.cam-status{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--gold);background:rgba(0,0,0,.65);padding:3px 10px;border-radius:10px;white-space:nowrap}
-.cd-wrap{position:absolute;bottom:10px;right:10px;width:42px;height:42px;display:none}
-.cd-wrap.on{display:block}
-.cd-svg{width:42px;height:42px;transform:rotate(-90deg)}
-.cd-circle{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
-.cd-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
-.mtt-row{display:flex;gap:5px;padding:6px 10px;background:var(--surface2);border-bottom:1px solid var(--border)}
-.mtt-btn{flex:1;padding:6px 2px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none}
-.mtt-btn.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
-.info-bar{display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
-.chip{display:flex;align-items:center;gap:3px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:3px 7px}
-.chip .lbl{color:var(--muted);font-size:9px;margin-right:2px}
-.chip.hl{border-color:var(--neon)}.chip.hl span:last-child{color:var(--neon)}
-.advice-card{margin:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.action-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
-.badge{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:8px 16px;border-radius:10px;min-width:110px;text-align:center}
+.atog{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);-webkit-user-select:none;user-select:none}
+.atog.on{border-color:var(--neon);color:var(--neon);background:rgba(0,255,163,0.08)}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.atog.on .pdot{background:var(--neon);animation:pu 1.2s ease-in-out infinite}
+@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.camph{width:100%;padding:24px;background:var(--surface);border:2px dashed var(--border);color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
+.camph span{font-size:36px}
+.camw{position:relative;width:100%;background:#000;overflow:hidden}
+#vid{width:100%;display:block;max-height:45vh;object-fit:cover}
+#cvs{display:none}
+.camo{position:absolute;inset:0;pointer-events:none}
+.br{position:absolute;width:26px;height:26px;border-color:var(--neon);border-style:solid;opacity:.85}
+.br.tl{top:10px;left:10px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.br.tr{top:10px;right:10px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.br.bl{bottom:10px;left:10px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.br.br2{bottom:10px;right:10px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+.sl{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0;top:0}
+.sl.on{opacity:1;animation:sm 2s linear infinite}
+@keyframes sm{0%{top:5%}100%{top:95%}}
+.cst{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--gold);background:rgba(0,0,0,.65);padding:3px 10px;border-radius:10px;white-space:nowrap}
+.cdw{position:absolute;bottom:10px;right:10px;width:42px;height:42px;display:none}
+.cdw.on{display:block}
+.cdsvg{width:42px;height:42px;transform:rotate(-90deg)}
+.cdc{fill:none;stroke:var(--neon);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .9s linear}
+.cdn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--neon);font-family:'JetBrains Mono',monospace}
+.mttrow{display:flex;gap:5px;padding:6px 10px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.mb{flex:1;padding:6px 2px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none}
+.mb.on{background:var(--felt);border-color:var(--gold);color:var(--gold)}
+.ibar{display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--border)}
+.ic{display:flex;align-items:center;gap:3px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:3px 7px}
+.ic .lb{color:var(--muted);font-size:9px;margin-right:2px}
+.ic.hl{border-color:var(--neon)}.ic.hl span:last-child{color:var(--neon)}
+.acard{margin:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.abar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.bdg{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;padding:8px 16px;border-radius:10px;min-width:110px;text-align:center}
 .fold{background:rgba(255,71,87,.15);color:var(--danger);border:2px solid var(--danger)}
 .call{background:rgba(255,165,2,.15);color:var(--warn);border:2px solid var(--warn)}
 .raise{background:rgba(0,255,163,.12);color:var(--neon);border:2px solid var(--neon)}
 .check{background:rgba(255,255,255,.07);color:#ccc;border:2px solid #444}
 .wait{background:var(--surface2);color:var(--muted);border:2px dashed var(--border);font-size:12px}
-.src{font-size:9px;padding:3px 7px;border-radius:6px;font-family:'JetBrains Mono',monospace;display:none}
-.src.script{background:rgba(0,255,163,.1);color:var(--neon);border:1px solid var(--neon)}
-.src.ai{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--gold)}
-.advice-text{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text);min-height:70px}
-.advice-text.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
-.fb-row{display:none;gap:8px;padding:10px 14px;border-top:1px solid var(--border)}
-.fb{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);font-size:14px;cursor:pointer;-webkit-user-select:none;user-select:none}
-.fb.like.sel{background:rgba(0,255,163,.15);border-color:var(--neon)}
-.fb.dis.sel{background:rgba(255,71,87,.15);border-color:var(--danger)}
+.stag{font-size:9px;padding:3px 7px;border-radius:6px;font-family:'JetBrains Mono',monospace;display:none}
+.stag.sc{background:rgba(0,255,163,.1);color:var(--neon);border:1px solid var(--neon)}
+.stag.ai{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--gold)}
+.atxt{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--text);min-height:70px}
+.atxt.ld{color:var(--muted);display:flex;align-items:center;gap:10px}
+.fbrow{display:none;gap:8px;padding:10px 14px;border-top:1px solid var(--border)}
+.fbb{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);font-size:14px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.fbb.lk.sel{background:rgba(0,255,163,.15);border-color:var(--neon)}
+.fbb.ds.sel{background:rgba(255,71,87,.15);border-color:var(--danger)}
 .sec{margin:0 10px 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;-webkit-user-select:none;user-select:none}
-.sec-body{display:none;padding:0 12px 12px}
-.sec-body.open{display:block}
+.sechdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.secbody{display:none;padding:0 12px 12px}
+.secbody.op{display:block}
 .slbl{font-size:10px;letter-spacing:1.5px;color:var(--gold);font-family:'JetBrains Mono',monospace;padding:8px 0 6px;text-transform:uppercase}
-.cards-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.card-slot{width:38px;height:52px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;border:2px solid transparent;flex-shrink:0}
-.card-slot.red{background:#fff;color:#c0392b;border-color:#ddd}
-.card-slot.black{background:#fff;color:#111;border-color:#ddd}
-.card-slot.empty{background:var(--surface2);border:2px dashed var(--border);color:var(--muted);font-size:18px}
-.srow{display:flex;gap:5px;margin-bottom:8px}
-.stab{flex:1;padding:6px 2px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer}
-.stab.active{background:var(--felt);border-color:var(--gold);color:var(--gold)}
+.crow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.cs{width:38px;height:52px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;border:2px solid transparent;flex-shrink:0}
+.cs.red{background:#fff;color:#c0392b;border-color:#ddd}
+.cs.blk{background:#fff;color:#111;border-color:#ddd}
+.cs.emp{background:var(--surface2);border:2px dashed var(--border);color:var(--muted);font-size:18px}
+.strow{display:flex;gap:5px;margin-bottom:8px}
+.stb{flex:1;padding:6px 2px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer}
+.stb.on{background:var(--felt);border-color:var(--gold);color:var(--gold)}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
 .mp{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 8px}
@@ -81,180 +81,167 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .mp select option,.rf select option{background:#111}
 .rf{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 9px}
 .rf label{font-size:9px;color:var(--muted);display:block;margin-bottom:3px}
-.add-btn{width:100%;padding:10px;background:var(--gold);color:#000;border:none;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px}
+.abtn{width:100%;padding:10px;background:var(--gold);color:#000;border:none;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px}
 .rlist{max-height:180px;overflow-y:auto}
-.ritem{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;font-size:11px;font-family:'JetBrains Mono',monospace}
-.ritem .rt{flex:1;color:var(--text)}
+.ri{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;font-size:11px;font-family:'JetBrains Mono',monospace}
+.ri .rt{flex:1;color:var(--text)}
 .rdel{color:var(--danger);cursor:pointer;padding:2px 6px;font-size:14px}
 .dots{display:inline-flex;gap:4px}
-.dots span{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dot .8s ease-in-out infinite}
+.dots span{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dt .8s ease-in-out infinite}
 .dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
-@keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--gold);color:var(--text);padding:8px 16px;border-radius:20px;font-size:12px;z-index:999;white-space:nowrap;pointer-events:none;animation:tin .25s ease}
-@keyframes tin{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:200;align-items:flex-end}
-.modal-bg.open{display:flex}
+@keyframes dt{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--gold);color:var(--text);padding:8px 16px;border-radius:20px;font-size:12px;z-index:999;white-space:nowrap;pointer-events:none;animation:ti .25s ease}
+@keyframes ti{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+.modalbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:200;align-items:flex-end}
+.modalbg.op{display:flex}
 .modal{width:100%;background:var(--surface);border-radius:20px 20px 0 0;padding:16px 14px 36px}
-.modal-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:10px;text-align:center}
-.suit-row{display:flex;gap:6px;margin-bottom:8px}
-.suit-btn{flex:1;padding:9px;border-radius:10px;font-size:20px;text-align:center;background:var(--surface2);border:2px solid var(--border);cursor:pointer}
-.suit-btn.sel{border-color:var(--gold);background:var(--felt)}
-.rank-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
-.rank-btn{padding:8px 2px;text-align:center;border-radius:8px;font-size:12px;font-weight:700;background:var(--surface2);border:2px solid var(--border);cursor:pointer;color:var(--text)}
-.rank-btn.sel{border-color:var(--neon);background:rgba(0,255,163,.1);color:var(--neon)}
-.modal-btns{display:flex;gap:8px}
-.mbtn{flex:1;padding:12px;border-radius:10px;border:none;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
-.mbtn.ok{background:var(--gold);color:#000}
-.mbtn.cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.mt{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:10px;text-align:center}
+.srow2{display:flex;gap:6px;margin-bottom:8px}
+.sbt{flex:1;padding:9px;border-radius:10px;font-size:20px;text-align:center;background:var(--surface2);border:2px solid var(--border);cursor:pointer}
+.sbt.sel{border-color:var(--gold);background:var(--felt)}
+.rg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.rbt{padding:8px 2px;text-align:center;border-radius:8px;font-size:12px;font-weight:700;background:var(--surface2);border:2px solid var(--border);cursor:pointer;color:var(--text)}
+.rbt.sel{border-color:var(--neon);background:rgba(0,255,163,.1);color:var(--neon)}
+.mbtns{display:flex;gap:8px}
+.mbt{flex:1;padding:12px;border-radius:10px;border:none;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.mbt.ok{background:var(--gold);color:#000}
+.mbt.cn{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
 </style>
 </head>
 <body>
 <header>
   <div class="logo">Poker<span>Eye</span> <em>AI</em></div>
-  <div class="auto-toggle" id="autoToggle" onclick="toggleAuto()">
-    <div class="pulse-dot"></div>
-    <span id="autoLabel">АВТО</span>
+  <div class="atog" id="atog" onclick="toggleAuto()">
+    <div class="pdot"></div>
+    <span id="albl">АВТО</span>
   </div>
 </header>
-<div id="camPlaceholder" class="start-cam-btn" onclick="startCam()">
-  <span>📷</span>Включить камеру
-</div>
-<div class="cam-wrap" id="camWrap" style="display:none">
-  <video id="videoEl" autoplay playsinline muted></video>
-  <canvas id="canvasEl"></canvas>
-  <div class="cam-overlay">
-    <div class="bracket tl"></div><div class="bracket tr"></div>
-    <div class="bracket bl"></div><div class="bracket br"></div>
-    <div class="scanline" id="scanLine"></div>
-    <div class="cam-status" id="camStatus">НАВЕДИ НА СТОЛ</div>
+<div id="camph" class="camph" onclick="startCam()"><span>📷</span>Включить камеру</div>
+<div class="camw" id="camw" style="display:none">
+  <video id="vid" autoplay playsinline muted></video>
+  <canvas id="cvs"></canvas>
+  <div class="camo">
+    <div class="br tl"></div><div class="br tr"></div>
+    <div class="br bl"></div><div class="br br2"></div>
+    <div class="sl" id="sl"></div>
+    <div class="cst" id="cst">НАВЕДИ НА СТОЛ</div>
   </div>
-  <div class="cd-wrap" id="cdWrap">
-    <svg class="cd-svg" viewBox="0 0 44 44">
+  <div class="cdw" id="cdw">
+    <svg class="cdsvg" viewBox="0 0 44 44">
       <circle cx="22" cy="22" r="18" fill="none" stroke="#172118" stroke-width="3"/>
-      <circle class="cd-circle" id="cdCircle" cx="22" cy="22" r="18"/>
+      <circle class="cdc" id="cdc" cx="22" cy="22" r="18"/>
     </svg>
-    <div class="cd-num" id="cdNum">5</div>
+    <div class="cdn" id="cdn">5</div>
   </div>
 </div>
-<div class="mtt-row">
-  <div class="mtt-btn active" onclick="setMTT('early',this)">🟢 Начало</div>
-  <div class="mtt-btn" onclick="setMTT('mid',this)">🟡 Середина</div>
-  <div class="mtt-btn" onclick="setMTT('bubble',this)">🔴 Пузырь</div>
-  <div class="mtt-btn" onclick="setMTT('ft',this)">🏆 Финал</div>
+<div class="mttrow">
+  <div class="mb on" onclick="setMTT('early',this)">🟢 Начало</div>
+  <div class="mb" onclick="setMTT('mid',this)">🟡 Середина</div>
+  <div class="mb" onclick="setMTT('bubble',this)">🔴 Пузырь</div>
+  <div class="mb" onclick="setMTT('ft',this)">🏆 Финал</div>
 </div>
-<div class="info-bar">
-  <div class="chip"><span class="lbl">КАРТЫ</span><span id="iCards">—</span></div>
-  <div class="chip"><span class="lbl">БОРД</span><span id="iBoard">—</span></div>
-  <div class="chip hl"><span class="lbl">ПОЗ</span><span id="iPos">—</span></div>
-  <div class="chip"><span class="lbl">БАНК</span><span id="iPot">—</span></div>
-  <div class="chip"><span class="lbl">СТАВКА</span><span id="iBet">—</span></div>
-  <div class="chip"><span class="lbl">СТЕК</span><span id="iStack">—</span></div>
-  <div class="chip"><span class="lbl">ОПП</span><span id="iOpp">—</span></div>
+<div class="ibar">
+  <div class="ic"><span class="lb">КАРТЫ</span><span id="iC">—</span></div>
+  <div class="ic"><span class="lb">БОРД</span><span id="iB">—</span></div>
+  <div class="ic hl"><span class="lb">ПОЗ</span><span id="iP">—</span></div>
+  <div class="ic"><span class="lb">БАНК</span><span id="iPt">—</span></div>
+  <div class="ic"><span class="lb">СТАВКА</span><span id="iBt">—</span></div>
+  <div class="ic"><span class="lb">СТЕК</span><span id="iSt">—</span></div>
+  <div class="ic"><span class="lb">ОПП</span><span id="iO">—</span></div>
 </div>
-<div class="advice-card">
-  <div class="action-bar">
-    <div class="badge wait" id="badge">ОЖИДАНИЕ</div>
+<div class="acard">
+  <div class="abar">
+    <div class="bdg wait" id="bdg">ОЖИДАНИЕ</div>
     <div style="flex:1"></div>
-    <div class="src" id="src"></div>
+    <div class="stag" id="stag"></div>
   </div>
-  <div class="advice-text" id="advText">
-    Выбери стадию МТТ → включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong>
-  </div>
-  <div class="fb-row" id="fbRow">
-    <button class="fb like" onclick="doFeedback(true)">👍 Правильно</button>
-    <button class="fb dis" onclick="doFeedback(false)">👎 Неправильно</button>
+  <div class="atxt" id="atxt">Выбери стадию МТТ → включи камеру → нажми <strong style="color:var(--gold)">АВТО</strong></div>
+  <div class="fbrow" id="fbrow">
+    <button class="fbb lk" onclick="doFB(true)">👍 Правильно</button>
+    <button class="fbb ds" onclick="doFB(false)">👎 Неправильно</button>
   </div>
 </div>
 <div class="sec">
-  <div class="sec-hdr" onclick="tog('manBody')">
+  <div class="sechdr" onclick="tog('manb')">
     <span style="font-size:11px;font-weight:600;color:var(--muted)">✏️ Ввести вручную</span>
     <span style="color:var(--muted)">▼</span>
   </div>
-  <div class="sec-body" id="manBody">
-    <div class="srow">
-      <div class="stab active" onclick="setStreet('preflop',this)">Префлоп</div>
-      <div class="stab" onclick="setStreet('flop',this)">Флоп</div>
-      <div class="stab" onclick="setStreet('turn',this)">Тёрн</div>
-      <div class="stab" onclick="setStreet('river',this)">Ривер</div>
+  <div class="secbody" id="manb">
+    <div class="strow">
+      <div class="stb on" onclick="setSt('preflop',this)">Префлоп</div>
+      <div class="stb" onclick="setSt('flop',this)">Флоп</div>
+      <div class="stb" onclick="setSt('turn',this)">Тёрн</div>
+      <div class="stb" onclick="setSt('river',this)">Ривер</div>
     </div>
     <div class="slbl">Моя рука</div>
-    <div class="cards-row" id="holeRow"></div>
-    <div id="boardSec" style="display:none">
-      <div class="slbl">Борд</div>
-      <div class="cards-row" id="boardRow"></div>
-    </div>
+    <div class="crow" id="hrow"></div>
+    <div id="bsec" style="display:none"><div class="slbl">Борд</div><div class="crow" id="brow"></div></div>
     <div class="slbl" style="margin-top:6px">Параметры</div>
     <div class="g3" style="gap:5px">
       <div class="mp"><label>Банк (BB)</label><input id="pot" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Ставка (BB)</label><input id="bet" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Стек (BB)</label><input id="stack" type="number" placeholder="авто" inputmode="numeric"></div>
-      <div class="mp"><label>Стек оппонента</label><input id="oppStack" type="number" placeholder="авто" inputmode="numeric"></div>
+      <div class="mp"><label>Стек (BB)</label><input id="stk" type="number" placeholder="авто" inputmode="numeric"></div>
+      <div class="mp"><label>Стек оппонента</label><input id="ostk" type="number" placeholder="авто" inputmode="numeric"></div>
       <div class="mp"><label>Действие оппонента</label>
-        <select id="oppAction"><option value="">авто</option><option>лимп</option><option>рейз</option><option>3-бет</option><option>4-бет</option><option>олл-ин</option><option>чек</option><option>бет</option></select>
+        <select id="oact"><option value="">авто</option><option>лимп</option><option>рейз</option><option>3-бет</option><option>4-бет</option><option>олл-ин</option><option>чек</option><option>бет</option></select>
       </div>
       <div class="mp"><label>Оппонентов</label>
-        <select id="oppCount"><option value="">авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
+        <select id="ocnt"><option value="">авто</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
       </div>
     </div>
   </div>
 </div>
 <div class="sec">
-  <div class="sec-hdr" onclick="tog('edBody')">
+  <div class="sechdr" onclick="tog('edb')">
     <span style="font-size:11px;font-weight:600;color:var(--gold)">⚙️ Редактор правил</span>
     <span style="color:var(--muted)">▼</span>
   </div>
-  <div class="sec-body" id="edBody">
+  <div class="secbody" id="edb">
     <div class="g2">
       <div class="rf"><label>Позиция</label>
-        <select id="rPos"><option value="any">Любая</option><option>UTG</option><option>MP</option><option>HJ</option><option>CO</option><option>BTN</option><option>SB</option><option>BB</option></select>
+        <select id="rP"><option value="any">Любая</option><option>UTG</option><option>MP</option><option>HJ</option><option>CO</option><option>BTN</option><option>SB</option><option>BB</option></select>
       </div>
       <div class="rf"><label>Стрит</label>
-        <select id="rStreet"><option value="any">Любой</option><option value="preflop">Префлоп</option><option value="flop">Флоп</option><option value="turn">Тёрн</option><option value="river">Ривер</option></select>
+        <select id="rSt"><option value="any">Любой</option><option value="preflop">Префлоп</option><option value="flop">Флоп</option><option value="turn">Тёрн</option><option value="river">Ривер</option></select>
       </div>
       <div class="rf"><label>Действие оппонента</label>
-        <select id="rOpp"><option value="any">Любое</option><option value="">Нет</option><option value="лимп">Лимп</option><option value="рейз">Рейз</option><option value="3-бет">3-бет</option><option value="4-бет">4-бет</option><option value="олл-ин">Олл-ин</option><option value="чек">Чек</option><option value="бет">Бет</option></select>
+        <select id="rO"><option value="any">Любое</option><option value="">Нет</option><option value="лимп">Лимп</option><option value="рейз">Рейз</option><option value="3-бет">3-бет</option><option value="4-бет">4-бет</option><option value="олл-ин">Олл-ин</option><option value="чек">Чек</option><option value="бет">Бет</option></select>
       </div>
       <div class="rf"><label>Стадия МТТ</label>
-        <select id="rMTT"><option value="any">Любая</option><option value="early">Начало</option><option value="mid">Середина</option><option value="bubble">Пузырь</option><option value="ft">Финал</option></select>
+        <select id="rM"><option value="any">Любая</option><option value="early">Начало</option><option value="mid">Середина</option><option value="bubble">Пузырь</option><option value="ft">Финал</option></select>
       </div>
-      <div class="rf"><label>Карты (напр: AKs или AA)</label>
-        <input id="rCards" placeholder="любые">
-      </div>
+      <div class="rf"><label>Карты (напр: AKs)</label><input id="rC" placeholder="любые"></div>
       <div class="rf"><label>Действие</label>
-        <select id="rAction"><option value="FOLD">FOLD</option><option value="CALL">CALL</option><option value="RAISE">RAISE</option><option value="CHECK">CHECK</option></select>
+        <select id="rA"><option value="FOLD">FOLD</option><option value="CALL">CALL</option><option value="RAISE">RAISE</option><option value="CHECK">CHECK</option></select>
       </div>
-      <div class="rf"><label>Размер рейза (BB)</label>
-        <input id="rSize" type="number" placeholder="2.5" inputmode="decimal">
-      </div>
-      <div class="rf"><label>Причина</label>
-        <input id="rReason" placeholder="напр: воровство">
-      </div>
+      <div class="rf"><label>Размер (BB)</label><input id="rSz" type="number" placeholder="2.5" inputmode="decimal"></div>
+      <div class="rf"><label>Причина</label><input id="rR" placeholder="напр: воровство"></div>
     </div>
-    <button class="add-btn" onclick="addRule()">+ Добавить правило</button>
-    <div class="rlist" id="rList"></div>
+    <button class="abtn" onclick="addRule()">+ Добавить правило</button>
+    <div class="rlist" id="rlist"></div>
   </div>
 </div>
-<div class="modal-bg" id="modalBg">
+<div class="modalbg" id="modalbg">
   <div class="modal">
-    <div class="modal-title">Выбери карту</div>
-    <div class="suit-row">
-      <div class="suit-btn" data-s="♠" onclick="pickSuit(this)">♠</div>
-      <div class="suit-btn" data-s="♥" onclick="pickSuit(this)" style="color:#c0392b">♥</div>
-      <div class="suit-btn" data-s="♦" onclick="pickSuit(this)" style="color:#c0392b">♦</div>
-      <div class="suit-btn" data-s="♣" onclick="pickSuit(this)">♣</div>
+    <div class="mt">Выбери карту</div>
+    <div class="srow2">
+      <div class="sbt" data-s="♠" onclick="pSuit(this)">♠</div>
+      <div class="sbt" data-s="♥" onclick="pSuit(this)" style="color:#c0392b">♥</div>
+      <div class="sbt" data-s="♦" onclick="pSuit(this)" style="color:#c0392b">♦</div>
+      <div class="sbt" data-s="♣" onclick="pSuit(this)">♣</div>
     </div>
-    <div class="rank-grid">
-      <div class="rank-btn" onclick="pickRank(this)">A</div><div class="rank-btn" onclick="pickRank(this)">K</div>
-      <div class="rank-btn" onclick="pickRank(this)">Q</div><div class="rank-btn" onclick="pickRank(this)">J</div>
-      <div class="rank-btn" onclick="pickRank(this)">T</div><div class="rank-btn" onclick="pickRank(this)">9</div>
-      <div class="rank-btn" onclick="pickRank(this)">8</div><div class="rank-btn" onclick="pickRank(this)">7</div>
-      <div class="rank-btn" onclick="pickRank(this)">6</div><div class="rank-btn" onclick="pickRank(this)">5</div>
-      <div class="rank-btn" onclick="pickRank(this)">4</div><div class="rank-btn" onclick="pickRank(this)">3</div>
-      <div class="rank-btn" onclick="pickRank(this)">2</div>
+    <div class="rg">
+      <div class="rbt" onclick="pRank(this)">A</div><div class="rbt" onclick="pRank(this)">K</div>
+      <div class="rbt" onclick="pRank(this)">Q</div><div class="rbt" onclick="pRank(this)">J</div>
+      <div class="rbt" onclick="pRank(this)">T</div><div class="rbt" onclick="pRank(this)">9</div>
+      <div class="rbt" onclick="pRank(this)">8</div><div class="rbt" onclick="pRank(this)">7</div>
+      <div class="rbt" onclick="pRank(this)">6</div><div class="rbt" onclick="pRank(this)">5</div>
+      <div class="rbt" onclick="pRank(this)">4</div><div class="rbt" onclick="pRank(this)">3</div>
+      <div class="rbt" onclick="pRank(this)">2</div>
     </div>
-    <div class="modal-btns">
-      <button class="mbtn cancel" onclick="closeModal()">Отмена</button>
-      <button class="mbtn ok" onclick="confirmCard()">✓ OK</button>
+    <div class="mbtns">
+      <button class="mbt cn" onclick="closeMod()">Отмена</button>
+      <button class="mbt ok" onclick="confCard()">✓ OK</button>
     </div>
   </div>
 </div>
@@ -266,61 +253,25 @@ const CIRC=2*Math.PI*18;
 const RO='AKQJT98765432';
 const VP=['BTN','SB','BB','UTG','UTG+1','MP','HJ','CO'];
 
-// GTO RANGES - Source: Jonathan Little / PokerCoaching.com (solver-generated, MTT 75BB)
-// https://pokercoaching.com/preflop-charts/
+// GTO OPENING RANGES - Jonathan Little / PokerCoaching.com (MTT 75BB)
 const OR={
-  // UTG: 13.7% – 66+,A3s+,K9s+,Q9s+,AJo+,KQo
   UTG:['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','KQo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','K9s','QJs','QTs','Q9s'],
-  // UTG+1: 16.3% – 66+,A3s+,K8s+,Q9s+,J9s+,T9s,98s,ATo+
   'UTG+1':['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','ATo','KQo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','98s'],
-  // HJ: 27.9% – 22+,A2s+,K4s+,Q8s+,J8s+,T7s+,97s+,87s,76s,65s,54s,A8o+,KTo+,QTo+,JTo
-  HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','KQo','KJo','KTo','QJo','QTo','JTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','QJs','QTs','Q9s','Q8s','JTs','J9s','J8s','T9s','T8s','T7s','98s','97s','87s','76s','65s','54s'],
-  // CO: 37.3% – 22+,A2s+,K2s+,Q5s+,J7s+,T6s+,96s+,86s+,75s+,65s,54s,A5o+,K9o+,Q9o+,J9o+,T9o
-  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','KTo','K9o','QJo','QTo','Q9o','JTo','J9o','T9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','JTs','J9s','J8s','J7s','T9s','T8s','T7s','T6s','98s','97s','96s','87s','86s','76s','75s','65s','54s'],
-  // BTN: 54.8% – 22+,A2s+,K2s+,Q2s+,J3s+,T3s+,95s+,85s+,74s+,64s+,53s+,43s,A2o+,K5o+,Q8o+,J8o+,T7o+,97o+,87o
-  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','QJo','QTo','Q9o','Q8o','JTo','J9o','J8o','T9o','T8o','T7o','98o','97o','87o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','98s','97s','96s','95s','87s','86s','85s','76s','75s','74s','65s','64s','54s','53s','43s'],
-  // SB: wide range 81.6%
-  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','K4o','K3o','K2o','QJo','QTo','Q9o','Q8o','Q7o','Q6o','Q5o','Q4o','Q3o','Q2o','JTo','J9o','J8o','J7o','J6o','T9o','T8o','T7o','T6o','98o','97o','96o','95o','87o','86o','85o','75o','76o','64o','54o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','J2s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','T2s','98s','97s','96s','95s','94s','93s','92s','87s','86s','85s','84s','83s','82s','76s','75s','74s','73s','72s','65s','64s','63s','62s','54s','53s','52s','43s','42s','32s'],
-  // MP = UTG+2: 19.2% – 44+,A2s+,K8s+,Q9s+,J9s+,T8s+,98s,76s,ATo+,KTo+
   MP:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','AKo','AQo','AJo','ATo','KQo','KJo','KTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','T8s','98s','76s'],
+  HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','KQo','KJo','KTo','QJo','QTo','JTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','QJs','QTs','Q9s','Q8s','JTs','J9s','J8s','T9s','T8s','T7s','98s','97s','87s','76s','65s','54s'],
+  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','KTo','K9o','QJo','QTo','Q9o','JTo','J9o','T9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','JTs','J9s','J8s','J7s','T9s','T8s','T7s','T6s','98s','97s','96s','87s','86s','76s','75s','65s','54s'],
+  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','QJo','QTo','Q9o','Q8o','JTo','J9o','J8o','T9o','T8o','T7o','98o','97o','87o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','98s','97s','96s','95s','87s','86s','85s','76s','75s','74s','65s','64s','54s','53s','43s'],
+  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','K4o','K3o','K2o','QJo','QTo','Q9o','Q8o','Q7o','Q6o','Q5o','Q4o','Q3o','Q2o','JTo','J9o','J8o','J7o','J6o','T9o','T8o','T7o','T6o','98o','97o','96o','95o','87o','86o','85o','75o','76o','64o','54o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','J2s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','T2s','98s','97s','96s','95s','94s','93s','92s','87s','86s','85s','84s','83s','82s','76s','75s','74s','73s','72s','65s','64s','63s','62s','54s','53s','52s','43s','42s','32s'],
   BB:[]
 };
-// Open sizes MTT (standard): UTG/MP=2.5BB, HJ/CO=2.5BB, BTN=2.5BB, SB=3BB
 const OS={UTG:2.5,MP:2.5,HJ:2.5,CO:2.5,BTN:2.5,SB:3,'UTG+1':2.5,BB:0};
-// PUSH/FOLD RANGES - Source: Jonathan Little / PokerCoaching.com
-// Nash equilibrium solver-calculated, 9-handed, no ante
-// https://pokercoaching.com/push-fold-charts/
+
+// PUSH/FOLD - Jonathan Little / PokerCoaching.com (Nash equilibrium, no ante)
 const PR={
-  // 15BB - BTN (wide open shove range)
-  15:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o',
-      'KQo','KJo','KTo','K9o',
-      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s',
-      'QJs','QTs','Q9s','Q8s',
-      'JTs','J9s','J8s','T9s','T8s','98s','87s','76s'],
-  // 12BB
-  12:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o',
-      'KQo','KJo','KTo','K9o',
-      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-      'KQs','KJs','KTs','K9s','K8s',
-      'QJs','QTs','Q9s',
-      'JTs','J9s','T9s','98s','87s'],
-  // 10BB
-  10:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o',
-      'KQo','KJo','KTo',
-      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-      'KQs','KJs','KTs','K9s',
-      'QJs','QTs',
-      'JTs','T9s'],
-  // 7BB - shove very wide
-  7:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-     'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o',
-     'KQo','KJo',
-     'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s',
-     'KQs','KJs','KTs','QJs','QTs','JTs']
+  15:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','QJs','QTs','Q9s','Q8s','JTs','J9s','J8s','T9s','T8s','98s','87s','76s'],
+  12:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','98s','87s'],
+  10:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','KQo','KJo','KTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s'],
+  7:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','QJs','QTs','JTs']
 };
 
 function hk(c1,c2){
@@ -329,7 +280,7 @@ function hk(c1,c2){
   if(RO.indexOf(r1)>RO.indexOf(r2)){[r1,r2]=[r2,r1];[s1,s2]=[s2,s1];}
   return r1===r2?r1+r2:r1+r2+(s1===s2?'s':'o');
 }
-function ir(key,range){return !!(key&&range.includes(key));}
+function ir(k,r){return!!(k&&r.includes(k));}
 function pc(code){
   if(!code||code.length<2)return null;
   const r=code[0].toUpperCase();
@@ -337,7 +288,7 @@ function pc(code){
   const s=sm[code[1].toLowerCase()];
   return('AKQJT98765432'.includes(r)&&s)?{rank:r,suit:s,red:RED.includes(s)}:null;
 }
-function normOpp(raw){
+function no(raw){
   if(!raw)return'';
   const r=raw.toLowerCase();
   if(r.includes('3-бет')||r.includes('3бет'))return'3-бет';
@@ -353,120 +304,103 @@ function normOpp(raw){
 
 // CUSTOM RULES
 let rules=[];
-function loadRules(){try{rules=JSON.parse(localStorage.getItem('pr')||'[]');}catch(e){rules=[];}renderRules();}
-function saveRules(){localStorage.setItem('pr',JSON.stringify(rules));}
+function loadR(){try{rules=JSON.parse(localStorage.getItem('pr2')||'[]');}catch(e){rules=[];}renderR();}
+function saveR(){localStorage.setItem('pr2',JSON.stringify(rules));}
 function addRule(){
-  const r={pos:document.getElementById('rPos').value,street:document.getElementById('rStreet').value,opp:document.getElementById('rOpp').value,mtt:document.getElementById('rMTT').value,cards:document.getElementById('rCards').value.trim()||'any',action:document.getElementById('rAction').value,size:document.getElementById('rSize').value||null,reason:document.getElementById('rReason').value.trim()||'',id:Date.now()};
-  rules.unshift(r);saveRules();renderRules();
+  const r={pos:document.getElementById('rP').value,st:document.getElementById('rSt').value,opp:document.getElementById('rO').value,mtt:document.getElementById('rM').value,cards:document.getElementById('rC').value.trim()||'any',action:document.getElementById('rA').value,size:document.getElementById('rSz').value||null,reason:document.getElementById('rR').value.trim()||'',id:Date.now()};
+  rules.unshift(r);saveR();renderR();
   toast('✅ Правило добавлено!');
-  ['rCards','rReason','rSize'].forEach(id=>document.getElementById(id).value='');
+  ['rC','rR','rSz'].forEach(id=>document.getElementById(id).value='');
 }
-function delRule(id){rules=rules.filter(r=>r.id!==id);saveRules();renderRules();}
-function renderRules(){
-  const el=document.getElementById('rList');
+function delR(id){rules=rules.filter(r=>r.id!==id);saveR();renderR();}
+function renderR(){
+  const el=document.getElementById('rlist');
   if(!rules.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Нет правил</div>';return;}
-  el.innerHTML=rules.map(r=>`<div class="ritem"><div class="rt">${r.pos!=='any'?r.pos:'*'}|${r.street!=='any'?r.street:'*'}|${r.cards}|${r.opp!=='any'?r.opp||'нет':'*'} → <strong style="color:var(--neon)">${r.action}${r.size?' '+r.size+'BB':''}</strong>${r.reason?' ('+r.reason+')':''}</div><span class="rdel" onclick="delRule(${r.id})">✕</span></div>`).join('');
+  el.innerHTML=rules.map(r=>'<div class="ri"><div class="rt">'+(r.pos!=='any'?r.pos:'*')+'|'+(r.st!=='any'?r.st:'*')+'|'+r.cards+'|'+(r.opp!=='any'?r.opp||'нет':'*')+' → <strong style="color:var(--neon)">'+r.action+(r.size?' '+r.size+'BB':'')+'</strong>'+(r.reason?' ('+r.reason+')':'')+'</div><span class="rdel" onclick="delR('+r.id+')">✕</span></div>').join('');
 }
-function matchRule(rule,ctx){
+function matchR(rule,ctx){
   if(rule.pos!=='any'&&rule.pos!==ctx.pos)return false;
-  if(rule.street!=='any'&&rule.street!==ctx.street)return false;
+  if(rule.st!=='any'&&rule.st!==ctx.street)return false;
   if(rule.mtt!=='any'&&rule.mtt!==ctx.mtt)return false;
   if(rule.opp!=='any'&&rule.opp!==ctx.opp)return false;
-  if(rule.cards!=='any'&&rule.cards!==''&&ctx.handKey&&rule.cards.toLowerCase()!==ctx.handKey.toLowerCase())return false;
+  if(rule.cards!=='any'&&rule.cards!==''&&ctx.key&&rule.cards.toLowerCase()!==ctx.key.toLowerCase())return false;
   return true;
 }
 
 // SCRIPT ENGINE
 function decide(ctx){
-  const{pos,street,handKey:key,stack,opp}=ctx;
+  const{pos,street,key,stack,opp,bet}=ctx;
   if(!key)return null;
-  for(const r of rules){if(matchRule(r,ctx))return{action:r.action,size:r.size?parseFloat(r.size):null,reason:`[Правило] ${r.reason||r.action}`,src:'script'};}
+  // Custom rules first
+  for(const r of rules){if(matchR(r,ctx))return{action:r.action,size:r.size?parseFloat(r.size):null,reason:'[Правило] '+(r.reason||r.action),src:'script'};}
   if(street!=='preflop')return null;
+  // Push/fold short stack
   if(stack&&stack<=15){
     const n=parseFloat(stack);
     const range=n>=13?PR[15]:n>=10?PR[12]:n>=7?PR[10]:PR[7];
-    return ir(key,range)?{action:'RAISE',size:n,reason:`Пуш ${key} со стеком ${n}BB`,src:'script'}:{action:'FOLD',size:null,reason:`Фолд — ${key} не в пуш диапазоне при стеке ${n}BB`,src:'script'};
+    return ir(key,range)?{action:'RAISE',size:n,reason:'Пуш '+key+' стек '+n+'BB',src:'script'}:{action:'FOLD',size:null,reason:'Фолд — '+key+' не в пуш диапазоне '+n+'BB',src:'script'};
   }
+  // vs 4-bet
   if(opp==='4-бет'){
-    return(key==='AA'||key==='KK')?{action:'RAISE',size:null,reason:`Олл-ин с ${key}`,src:'script'}:{action:'FOLD',size:null,reason:`Фолд против 4-бета — только AA/KK`,src:'script'};
+    return(key==='AA'||key==='KK')?{action:'RAISE',size:null,reason:'Олл-ин с '+key,src:'script'}:{action:'FOLD',size:null,reason:'Фолд против 4-бета — только AA/KK',src:'script'};
   }
+  // vs all-in
   if(opp==='олл-ин'){
-    return ir(key,['AA','KK','QQ','JJ','AKs','AKo'])?{action:'CALL',size:null,reason:`Колл олл-ина с ${key}`,src:'script'}:{action:'FOLD',size:null,reason:`Фолд против олл-ина`,src:'script'};
+    return ir(key,['AA','KK','QQ','JJ','AKs','AKo'])?{action:'CALL',size:null,reason:'Колл олл-ина с '+key,src:'script'}:{action:'FOLD',size:null,reason:'Фолд против олл-ина',src:'script'};
   }
+  // vs 3-bet
   if(opp==='3-бет'){
-    if(ir(key,['AA','KK','QQ','JJ','AKs','AKo']))return{action:'RAISE',size:null,reason:`4-бет с ${key}`,src:'script'};
-    if(ir(key,['TT','99','AQo','AQs'])&&(pos==='BTN'||pos==='CO'))return{action:'CALL',size:null,reason:`Колл 3-бета в позиции`,src:'script'};
-    return{action:'FOLD',size:null,reason:`Фолд против 3-бета`,src:'script'};
+    if(ir(key,['AA','KK','QQ','JJ','AKs','AKo']))return{action:'RAISE',size:null,reason:'4-бет с '+key,src:'script'};
+    if(ir(key,['TT','99','AQo','AQs'])&&(pos==='BTN'||pos==='CO'))return{action:'CALL',size:null,reason:'Колл 3-бета в позиции с '+key,src:'script'};
+    return{action:'FOLD',size:null,reason:'Фолд против 3-бета с '+key,src:'script'};
   }
+  // vs raise (pot odds formula - GTO Wizard)
+  if(opp==='рейз'){
+    const rs=bet?parseFloat(bet):2.5;
+    const call=rs-1;
+    const potAfter=1.5+rs+call;
+    const eq=Math.round((call/potAfter)*100);
+    let r3b,rcall;
+    if(rs<=2.5){r3b=['AA','KK','QQ','JJ','AKs','AKo'];rcall=['TT','99','88','77','AQo','AQs','AJs','ATs','KQs','KQo','QJs','JTs','T9s'];}
+    else if(rs<=3.5){r3b=['AA','KK','QQ','JJ','AKs','AKo'];rcall=['TT','99','AQo','AQs','AJs','KQs'];}
+    else if(rs<=5){r3b=['AA','KK','QQ','AKs','AKo'];rcall=['JJ','TT','AQs'];}
+    else{r3b=['AA','KK'];rcall=['QQ','JJ','AKs','AKo'];}
+    if(ir(key,r3b))return{action:'RAISE',size:null,reason:'3-бет с '+key+' против рейза '+rs+'BB (нужно '+eq+'% equity)',src:'script'};
+    if(ir(key,rcall)&&(pos==='BTN'||pos==='CO'||pos==='HJ'))return{action:'CALL',size:null,reason:'Колл рейза '+rs+'BB с '+key+' (нужно '+eq+'% equity)',src:'script'};
+    return{action:'FOLD',size:null,reason:'Фолд — '+key+' не даёт '+eq+'% equity против рейза '+rs+'BB',src:'script'};
+  }
+  // vs limp - isolation
   if(opp==='лимп'){
     if(ir(key,['AA','KK','QQ','JJ','TT','99','AKo','AQo','AJo','AKs','AQs','AJs','ATs','A9s','KQs','KJs','QJs'])){
-      // +1BB за каждого лимпера
-      const limpers=ctx.limpers||1;
-      const isoSize=3+limpers;
-      return{action:'RAISE',size:isoSize,reason:`Изоляция ${limpers} лимпера(ов) с ${key} — рейз ${isoSize}BB`,src:'script'};
+      const lp=ctx.limpers||1;
+      const sz=parseFloat(OS[pos]||2.5)+lp;
+      return{action:'RAISE',size:sz,reason:'Изоляция '+lp+' лимпера с '+key+' — рейз '+sz+'BB',src:'script'};
     }
   }
-  if(opp==='рейз'){
-    // Пот-оддс математика (Source: GTO Wizard)
-    // Required Equity = Call amount / (Pot after call)
-    // Pot after call = existing pot + raise + call
-    // Preflop existing pot = 1.5BB (SB+BB)
-    const raiseSize = ctx.bet ? parseFloat(ctx.bet) : 2.5;
-    const callAmount = raiseSize - 1; // уже поставили 1BB (BB)
-    const potAfterCall = 1.5 + raiseSize + callAmount;
-    const requiredEquity = Math.round((callAmount / potAfterCall) * 100);
-
-    // Чем больше рейз тем тайтнее нужно играть
-    // Против рейза 2.5BB: нужно ~28% equity → широкий колл диапазон
-    // Против рейза 5BB: нужно ~40% equity → тайтный диапазон
-    // Против рейза 8BB+: нужно ~47%+ equity → только премиум руки
-
-    let vsRaise3bet, vsRaiseCall;
-
-    if(raiseSize <= 2.5){
-      // Стандартный рейз 2-2.5BB (~28% equity нужно)
-      vsRaise3bet=['AA','KK','QQ','JJ','AKs','AKo'];
-      vsRaiseCall=['TT','99','88','77','AQo','AQs','AJs','ATs','KQs','KQo','QJs','JTs','T9s'];
-    } else if(raiseSize <= 3.5){
-      // Рейз 3-3.5BB (~33% equity нужно)
-      vsRaise3bet=['AA','KK','QQ','JJ','AKs','AKo'];
-      vsRaiseCall=['TT','99','AQo','AQs','AJs','KQs'];
-    } else if(raiseSize <= 5){
-      // Рейз 4-5BB (~40% equity нужно) — только сильные руки
-      vsRaise3bet=['AA','KK','QQ','AKs','AKo'];
-      vsRaiseCall=['JJ','TT','AQs'];
-    } else {
-      // Рейз 6BB+ (~45%+ equity нужно) — только премиум
-      vsRaise3bet=['AA','KK'];
-      vsRaiseCall=['QQ','JJ','AKs','AKo'];
-    }
-
-    if(ir(key,vsRaise3bet))return{action:'RAISE',size:null,reason:`3-бет с ${key} против рейза ${raiseSize}BB (нужно ${requiredEquity}% equity для колла)`,src:'script'};
-    if(ir(key,vsRaiseCall)&&(pos==='BTN'||pos==='CO'||pos==='HJ'))return{action:'CALL',size:null,reason:`Колл рейза ${raiseSize}BB с ${key} в позиции (нужно ${requiredEquity}% equity)`,src:'script'};
-    return{action:'FOLD',size:null,reason:`Фолд против рейза ${raiseSize}BB — ${key} не даёт нужные ${requiredEquity}% equity`,src:'script'};
-  }
+  // open raise
+  if(!opp||opp===''){
     const range=OR[pos]||[];
-    if(ir(key,range)){const size=OS[pos]||2.5;return{action:'RAISE',size,reason:`Открытие ${key} с ${pos} рейз ${size}BB`,src:'script'};}
-    if(pos==='BB')return{action:'CHECK',size:null,reason:`BB — чек`,src:'script'};
-    return{action:'FOLD',size:null,reason:`${key} не в диапазоне с ${pos}`,src:'script'};
+    if(ir(key,range)){const sz=OS[pos]||2.5;return{action:'RAISE',size:sz,reason:'Открытие '+key+' с '+pos+' рейз '+sz+'BB',src:'script'};}
+    if(pos==='BB')return{action:'CHECK',size:null,reason:'BB — чек',src:'script'};
+    return{action:'FOLD',size:null,reason:key+' не в диапазоне открытия с '+pos,src:'script'};
   }
   return null;
 }
 
 // STATE
-const S={street:'preflop',hole:[null,null],board:[],slots:{preflop:0,flop:3,turn:4,river:5},auto:false,analyzing:false,stream:null,timer:null,INT:5,picker:{t:null,i:null,suit:null,rank:null},mtt:'early',last:null};
+const S={street:'preflop',hole:[null,null],board:[],slots:{preflop:0,flop:3,turn:4,river:5},auto:false,analyzing:false,stream:null,timer:null,INT:5,pick:{t:null,i:null,suit:null,rank:null},mtt:'early',last:null};
 
-function doFeedback(ok){
+function doFB(ok){
   if(!S.last)return;
   const fb=JSON.parse(localStorage.getItem('pfb')||'[]');
-  fb.push({...S.last,ok,time:Date.now()});
+  fb.push({ok,action:S.last.action,time:Date.now()});
   localStorage.setItem('pfb',JSON.stringify(fb.slice(-100)));
-  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('sel'));
-  document.querySelector(ok?'.fb.like':'.fb.dis').classList.add('sel');
-  toast(ok?'👍 Правильно засчитано':'👎 Учтём');
+  document.querySelectorAll('.fbb').forEach(b=>b.classList.remove('sel'));
+  document.querySelector(ok?'.fbb.lk':'.fbb.ds').classList.add('sel');
+  toast(ok?'👍 Правильно':'👎 Учтём');
 }
 
-async function api(prompt,image){
+async function apiCall(prompt,image){
   const body={prompt};if(image)body.image=image;
   const ctrl=new AbortController();
   const t=setTimeout(()=>ctrl.abort(),30000);
@@ -484,9 +418,9 @@ async function startCam(){
   try{
     const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
     S.stream=s;
-    document.getElementById('videoEl').srcObject=s;
-    document.getElementById('camPlaceholder').style.display='none';
-    document.getElementById('camWrap').style.display='block';
+    document.getElementById('vid').srcObject=s;
+    document.getElementById('camph').style.display='none';
+    document.getElementById('camw').style.display='block';
     toast('📷 Камера включена');
   }catch(e){showErr('❌ '+e.message);}
 }
@@ -494,38 +428,37 @@ async function startCam(){
 function toggleAuto(){
   if(!S.stream){toast('Сначала включи камеру');return;}
   S.auto=!S.auto;
-  const btn=document.getElementById('autoToggle');
+  const btn=document.getElementById('atog');
   if(S.auto){
-    btn.classList.add('active');
-    document.getElementById('autoLabel').textContent='АВТО ВКЛ';
-    document.getElementById('scanLine').classList.add('on');
-    document.getElementById('cdWrap').classList.add('on');
+    btn.classList.add('on');
+    document.getElementById('albl').textContent='АВТО ВКЛ';
+    document.getElementById('sl').classList.add('on');
+    document.getElementById('cdw').classList.add('on');
     let rem=S.INT;updCD(rem);scan();
     S.timer=setInterval(()=>{rem--;if(rem<=0){rem=S.INT;if(!S.analyzing)scan();}updCD(rem);},1000);
   }else{
-    btn.classList.remove('active');
-    document.getElementById('autoLabel').textContent='АВТО';
-    document.getElementById('scanLine').classList.remove('on');
-    document.getElementById('cdWrap').classList.remove('on');
+    btn.classList.remove('on');
+    document.getElementById('albl').textContent='АВТО';
+    document.getElementById('sl').classList.remove('on');
+    document.getElementById('cdw').classList.remove('on');
     clearInterval(S.timer);
   }
 }
 
 function updCD(n){
-  const el=document.getElementById('cdCircle');
+  const el=document.getElementById('cdc');
   el.style.strokeDasharray=CIRC;el.style.strokeDashoffset=CIRC*(1-n/S.INT);
-  document.getElementById('cdNum').textContent=n;
+  document.getElementById('cdn').textContent=n;
 }
 
 async function scan(){
   if(S.analyzing)return;S.analyzing=true;
-  document.getElementById('camStatus').textContent='АНАЛИЗИРУЮ...';
-  const vid=document.getElementById('videoEl');
-  const cv=document.getElementById('canvasEl');
-  cv.width=vid.videoWidth||640;cv.height=vid.videoHeight||480;
-  cv.getContext('2d').drawImage(vid,0,0);
+  document.getElementById('cst').textContent='АНАЛИЗИРУЮ...';
+  const v=document.getElementById('vid'),cv=document.getElementById('cvs');
+  cv.width=v.videoWidth||640;cv.height=v.videoHeight||480;
+  cv.getContext('2d').drawImage(v,0,0);
   await analyze(cv.toDataURL('image/jpeg',0.85).split(',')[1]);
-  document.getElementById('camStatus').textContent='СЛЕЖУ ЗА СТОЛОМ';
+  document.getElementById('cst').textContent='СЛЕЖУ ЗА СТОЛОМ';
   S.analyzing=false;
 }
 
@@ -535,198 +468,121 @@ async function analyze(b64){
   const board=S.board.map(c=>c.rank+c.suit).join(' ');
   const pot=document.getElementById('pot').value;
   const bet=document.getElementById('bet').value;
-  const stack=document.getElementById('stack').value;
-  const opp=document.getElementById('oppAction').value;
+  const stack=document.getElementById('stk').value;
+  const opp=document.getElementById('oact').value;
+  const limpers=document.getElementById('ocnt').value?parseInt(document.getElementById('ocnt').value):1;
   const key=hk(S.hole[0],S.hole[1]);
 
-  // Без камеры — сразу скрипт
   if(!b64&&key){
-    const pos=document.getElementById('iPos').textContent||'';
-    const oppCountVal=document.getElementById('oppCount').value;
-    const limpers=oppCountVal?parseInt(oppCountVal):1;
-    const ctx={pos,street:S.street,handKey:key,stack:stack?parseFloat(stack):null,opp,mtt:S.mtt,limpers};
-    const d=decide(ctx);
-    if(d){showDecision(d);return;}
+    const pos=document.getElementById('iP').textContent||'';
+    const ctx={pos,street:S.street,key,stack:stack?parseFloat(stack):null,bet:bet?parseFloat(bet):null,opp,mtt:S.mtt,limpers};
+    const d=decide(ctx);if(d){showDec(d);return;}
   }
 
   try{
-    // ШАГ 1: Только распознавание (короткий промпт без анализа)
-    const recPrompt=`Покерный стол на фото. Выдай ТОЛЬКО одну строку:
-[К:карты_HERO|Б:борд_или_нет|П:позиция|БК:банк|СТ:ставка|СК:стек|О:действие_оппонента]
-
-Позиция: D=BTN. Считай от D до HERO по часовой: 0=BTN,1=CO,2=HJ,3=MP,4=UTG+1,5+=UTG. Или 0.5BB=SB,1BB=BB у HERO.
-Если карты не видны — только: КАРТЫ НЕ ВИДНЫ`;
-
-    const rec=await api(recPrompt,b64);
-
-    if(!rec||rec.includes('КАРТЫ НЕ ВИДНЫ')){
-      showErr('🃏 Карты не видны — наведи камеру или введи вручную');return;
-    }
-
+    const recP='Покерный стол на фото. Выдай ТОЛЬКО одну строку:\n[К:карты_HERO|Б:борд_или_нет|П:позиция|БК:банк|СТ:ставка|СК:стек|О:действие_оппонента]\n\nПозиция: D=BTN. Считай от D до HERO по часовой: 0=BTN,1=CO,2=HJ,3=MP,4=UTG+1,5+=UTG. Или 0.5BB=SB,1BB=BB у HERO.\nЕсли карты не видны — только: КАРТЫ НЕ ВИДНЫ';
+    const rec=await apiCall(recP,b64);
+    if(!rec||rec.includes('КАРТЫ НЕ ВИДНЫ')){showErr('🃏 Карты не видны');return;}
     const m=rec.match(/\[К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)\]/i);
-    if(!m){showErr('❌ Не удалось распознать — попробуй ещё раз');return;}
-
-    // Обновляем инфобар
-    document.getElementById('iCards').textContent=m[1]?.trim()||'—';
-    document.getElementById('iBoard').textContent=m[2]?.trim()||'—';
+    if(!m){showErr('❌ Не распознал — попробуй ещё раз');return;}
+    document.getElementById('iC').textContent=m[1]?.trim()||'—';
+    document.getElementById('iB').textContent=m[2]?.trim()||'—';
     const dp=m[3]?.trim()||'';
-    if(VP.includes(dp))document.getElementById('iPos').textContent=dp;
-    document.getElementById('iPot').textContent=m[4]?.trim()||'—';
-    document.getElementById('iBet').textContent=m[5]?.trim()||'—';
-    document.getElementById('iStack').textContent=m[6]?.trim()||'—';
-    document.getElementById('iOpp').textContent=m[7]?.trim()||'—';
-
-    // Обновляем карты в UI
+    if(VP.includes(dp))document.getElementById('iP').textContent=dp;
+    document.getElementById('iPt').textContent=m[4]?.trim()||'—';
+    document.getElementById('iBt').textContent=m[5]?.trim()||'—';
+    document.getElementById('iSt').textContent=m[6]?.trim()||'—';
+    document.getElementById('iO').textContent=m[7]?.trim()||'—';
     if(m[1]&&m[1].trim()!=='—'&&!hole){
-      m[1].trim().split(' ').slice(0,2).forEach((code,i)=>{
-        const c=pc(code);if(c)S.hole[i]=c;
-      });
-      renderCards();
+      m[1].trim().split(' ').slice(0,2).forEach((code,i)=>{const c=pc(code);if(c)S.hole[i]=c;});
+      renderC();
     }
-
-    // Определяем стрит
-    const detBoard=m[2]?.trim()||'';
-    let detStreet='preflop';
-    const dn=detBoard.toLowerCase();
-    if(detBoard&&detBoard!=='—'&&!dn.includes('нет')&&!dn.includes('no')&&!dn.includes('пре')){
-      const bc=detBoard.split(/[\s,]+/).filter(Boolean);
-      if(bc.length>=5)detStreet='river';
-      else if(bc.length===4)detStreet='turn';
-      else if(bc.length>=3)detStreet='flop';
+    const db=m[2]?.trim()||'';
+    let dst='preflop';
+    const dn=db.toLowerCase();
+    if(db&&db!=='—'&&!dn.includes('нет')&&!dn.includes('no')&&!dn.includes('пре')){
+      const bc=db.split(/[\s,]+/).filter(Boolean);
+      if(bc.length>=5)dst='river';else if(bc.length===4)dst='turn';else if(bc.length>=3)dst='flop';
     }
-
     const detPos=VP.includes(dp)?dp:'';
     const detStack=m[6]?parseFloat(m[6]):null;
-    const detOpp=normOpp(m[7]?.trim()||opp);
+    const detBet=m[5]?parseFloat(m[5]):null;
+    const detOpp=no(m[7]?.trim()||opp);
     const updKey=hk(S.hole[0],S.hole[1]);
-
-    // ШАГ 2: Префлоп — скрипт принимает решение
-    if(detStreet==='preflop'&&detPos&&updKey){
-      const oppCountVal=document.getElementById('oppCount').value;
-      const limpers=oppCountVal?parseInt(oppCountVal):1;
-      const ctx={pos:detPos,street:'preflop',handKey:updKey,stack:detStack,opp:detOpp,mtt:S.mtt,limpers};
-      const d=decide(ctx);
-      if(d){showDecision(d);return;}
+    if(dst==='preflop'&&detPos&&updKey){
+      const ctx2={pos:detPos,street:'preflop',key:updKey,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers};
+      const d2=decide(ctx2);if(d2){showDec(d2);return;}
     }
-
-    // ШАГ 3: Постфлоп или скрипт не нашёл — Claude анализирует (без картинки)
     const sn={early:'Начало МТТ',mid:'Середина МТТ',bubble:'Пузырь',ft:'Финальный стол'};
-    const anlPrompt=`МТТ покерный тренер. Стадия: ${sn[S.mtt]}.
-Карты HERO: ${m[1]?.trim()||hole||'неизвестно'}
-Борд: ${detBoard||'нет (префлоп)'}
-Позиция: ${detPos||'неизвестна'}
-Банк: ${m[4]?.trim()||pot||'?'}BB | Ставка: ${m[5]?.trim()||bet||'0'}BB
-Стек HERO: ${m[6]?.trim()||stack||'?'}BB
-Действие оппонента: ${detOpp||'нет'}
-Стрит: ${detStreet}
-
-БЕЗ markdown символов!
-Ответ:
-FOLD (или CALL/RAISE/CHECK)
-РАЗМЕР: X.XBB (только если RAISE)
-Объяснение 1-2 предложения на русском.`;
-
-    const anl=await api(anlPrompt,null);
+    const anlP='МТТ тренер. Стадия: '+sn[S.mtt]+'.\nКарты: '+(m[1]?.trim()||hole||'?')+'\nБорд: '+(db||'нет')+'\nПозиция: '+(detPos||'?')+'\nБанк: '+(m[4]?.trim()||pot||'?')+'BB | Ставка: '+(m[5]?.trim()||bet||'0')+'BB\nСтек: '+(m[6]?.trim()||stack||'?')+'BB\nОппонент: '+(detOpp||'нет')+'\n\nБЕЗ markdown!\nFOLD/CALL/RAISE/CHECK\nРАЗМЕР: X.XBB (только если RAISE)\n1-2 предложения на русском.';
+    const anl=await apiCall(anlP,null);
     const first=anl.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
     const ACTS=['FOLD','CALL','RAISE','CHECK'];
     const action=ACTS.find(a=>first.includes(a))||ACTS.find(a=>anl.toUpperCase().includes(a))||'?';
-    let size=null;
-    const sm2=anl.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i);
-    if(sm2)size=parseFloat(sm2[1]);
-    const clean=anl.replace(/РАЗМЕР:[\d.\s]*BB/gi,'').trim();
-    showDecision({action,size,reason:clean,src:'ai'});
-
-  }catch(e){
-    console.error(e);
-    showErr('❌ '+e.message);
-  }
+    let size=null;const sm2=anl.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i);if(sm2)size=parseFloat(sm2[1]);
+    showDec({action,size,reason:anl.replace(/РАЗМЕР:[\d.\s]*BB/gi,'').trim(),src:'ai'});
+  }catch(e){console.error(e);showErr('❌ '+e.message);}
 }
 
-function showDecision(d){
+// Fix: use dst not detStreet
+
+
+function showDec(d){
   const{action:a,size,reason,src}=d;
   const MC={FOLD:'fold',CALL:'call',RAISE:'raise',CHECK:'check'};
   const LB={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
-  let badge=LB[a]||a;
-  if(a==='RAISE'&&size)badge='↑ '+size+'BB';
-  const el=document.getElementById('badge');
-  el.className='badge '+(MC[a]||'wait');
-  el.textContent=badge;
-  document.getElementById('advText').className='advice-text';
-  document.getElementById('advText').textContent=reason||'';
-  const s=document.getElementById('src');
-  s.style.display='block';
-  s.className='src '+(src==='script'?'script':'ai');
-  s.textContent=src==='script'?'⚡ СКРИПТ':'🧠 AI';
-  const fr=document.getElementById('fbRow');
-  fr.style.display='flex';
-  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('sel'));
-  S.last={action:a,size,reason,src,time:Date.now()};
+  let badge=LB[a]||a;if(a==='RAISE'&&size)badge='↑ '+size+'BB';
+  const el=document.getElementById('bdg');el.className='bdg '+(MC[a]||'wait');el.textContent=badge;
+  document.getElementById('atxt').className='atxt';document.getElementById('atxt').textContent=reason||'';
+  const st=document.getElementById('stag');st.style.display='block';st.className='stag '+(src==='script'?'sc':'ai');st.textContent=src==='script'?'⚡ СКРИПТ':'🧠 AI';
+  document.getElementById('fbrow').style.display='flex';
+  document.querySelectorAll('.fbb').forEach(b=>b.classList.remove('sel'));
+  S.last={action:a,size,src,time:Date.now()};
 }
-
 function showLoad(){
-  document.getElementById('badge').className='badge wait';
-  document.getElementById('badge').textContent='...';
-  document.getElementById('advText').className='advice-text loading';
-  document.getElementById('advText').innerHTML='<div class="dots"><span></span><span></span><span></span></div>&nbsp;Анализирую...';
-  document.getElementById('src').style.display='none';
-  document.getElementById('fbRow').style.display='none';
+  document.getElementById('bdg').className='bdg wait';document.getElementById('bdg').textContent='...';
+  document.getElementById('atxt').className='atxt ld';document.getElementById('atxt').innerHTML='<div class="dots"><span></span><span></span><span></span></div>&nbsp;Анализирую...';
+  document.getElementById('stag').style.display='none';document.getElementById('fbrow').style.display='none';
 }
-
 function showErr(msg){
-  document.getElementById('badge').className='badge wait';
-  document.getElementById('badge').textContent='ERR';
-  document.getElementById('advText').className='advice-text';
-  document.getElementById('advText').textContent=msg;
+  document.getElementById('bdg').className='bdg wait';document.getElementById('bdg').textContent='ERR';
+  document.getElementById('atxt').className='atxt';document.getElementById('atxt').textContent=msg;
 }
-
-function setMTT(m,el){S.mtt=m;document.querySelectorAll('.mtt-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
-function tog(id){document.getElementById(id).classList.toggle('open');}
-function setStreet(s,el){
-  S.street=s;
-  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  S.board=S.board.slice(0,S.slots[s]);
-  document.getElementById('boardSec').style.display=s==='preflop'?'none':'block';
-  renderCards();
+function setMTT(m,el){S.mtt=m;document.querySelectorAll('.mb').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+function tog(id){document.getElementById(id).classList.toggle('op');}
+function setSt(s,el){
+  S.street=s;document.querySelectorAll('.stb').forEach(t=>t.classList.remove('on'));el.classList.add('on');
+  S.board=S.board.slice(0,S.slots[s]);document.getElementById('bsec').style.display=s==='preflop'?'none':'block';renderC();
 }
-function renderCards(){
-  const hr=document.getElementById('holeRow');hr.innerHTML='';
+function renderC(){
+  const hr=document.getElementById('hrow');hr.innerHTML='';
   for(let i=0;i<2;i++){
     const c=S.hole[i],el=document.createElement('div');
-    if(c){el.className='card-slot '+(c.red?'red':'black');el.innerHTML='<div>'+c.rank+'</div><div style="font-size:10px">'+c.suit+'</div>';}
-    else{el.className='card-slot empty';el.textContent='+';}
-    el.onclick=(()=>{const idx=i;return()=>openPicker('hole',idx);})();
-    hr.appendChild(el);
+    if(c){el.className='cs '+(c.red?'red':'blk');el.innerHTML='<div>'+c.rank+'</div><div style="font-size:10px">'+c.suit+'</div>';}
+    else{el.className='cs emp';el.textContent='+';}
+    el.onclick=(()=>{const idx=i;return()=>openP('hole',idx);})();hr.appendChild(el);
   }
-  const slots=S.slots[S.street],br=document.getElementById('boardRow');br.innerHTML='';
+  const slots=S.slots[S.street],br=document.getElementById('brow');br.innerHTML='';
   for(let i=0;i<slots;i++){
     const c=S.board[i],el=document.createElement('div');
-    if(c){el.className='card-slot '+(c.red?'red':'black');el.innerHTML='<div>'+c.rank+'</div><div style="font-size:10px">'+c.suit+'</div>';}
-    else{el.className='card-slot empty';el.textContent='+';}
-    el.onclick=(()=>{const idx=i;return()=>openPicker('board',idx);})();
-    br.appendChild(el);
+    if(c){el.className='cs '+(c.red?'red':'blk');el.innerHTML='<div>'+c.rank+'</div><div style="font-size:10px">'+c.suit+'</div>';}
+    else{el.className='cs emp';el.textContent='+';}
+    el.onclick=(()=>{const idx=i;return()=>openP('board',idx);})();br.appendChild(el);
   }
 }
-function openPicker(t,i){
-  S.picker={t,i,suit:null,rank:null};
-  document.querySelectorAll('.suit-btn,.rank-btn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('modalBg').classList.add('open');
+function openP(t,i){S.pick={t,i,suit:null,rank:null};document.querySelectorAll('.sbt,.rbt').forEach(b=>b.classList.remove('sel'));document.getElementById('modalbg').classList.add('op');}
+function closeMod(){document.getElementById('modalbg').classList.remove('op');}
+function pSuit(el){document.querySelectorAll('.sbt').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.pick.suit=el.dataset.s;}
+function pRank(el){document.querySelectorAll('.rbt').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.pick.rank=el.textContent;}
+function confCard(){
+  if(!S.pick.suit||!S.pick.rank){toast('Выбери масть и ранг');return;}
+  const c={rank:S.pick.rank,suit:S.pick.suit,red:RED.includes(S.pick.suit)};
+  if(S.pick.t==='hole')S.hole[S.pick.i]=c;else S.board[S.pick.i]=c;
+  renderC();closeMod();if(!S.auto){S.analyzing=false;analyze(null);}
 }
-function closeModal(){document.getElementById('modalBg').classList.remove('open');}
-function pickSuit(el){document.querySelectorAll('.suit-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.suit=el.dataset.s;}
-function pickRank(el){document.querySelectorAll('.rank-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.picker.rank=el.textContent;}
-function confirmCard(){
-  if(!S.picker.suit||!S.picker.rank){toast('Выбери масть и ранг');return;}
-  const c={rank:S.picker.rank,suit:S.picker.suit,red:RED.includes(S.picker.suit)};
-  if(S.picker.t==='hole')S.hole[S.picker.i]=c;else S.board[S.picker.i]=c;
-  renderCards();closeModal();
-  if(!S.auto){S.analyzing=false;analyze(null);}
-}
-document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
+document.getElementById('modalbg').addEventListener('click',e=>{if(e.target===document.getElementById('modalbg'))closeMod();});
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
-
-loadRules();
-renderCards();
+loadR();renderC();
 </script>
 </body>
 </html>
