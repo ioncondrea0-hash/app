@@ -509,11 +509,18 @@ async function analyze(b64){
   const limpers=document.getElementById('ocnt').value?parseInt(document.getElementById('ocnt').value):1;
   const key=hk(S.hole[0],S.hole[1]);
 
+  // Ручной ввод БЕЗ камеры
   if(!b64&&key){
     const pos=document.getElementById('iP').textContent||'';
     const ctx={pos,street:S.street,key,stack:stack?parseFloat(stack):null,bet:bet?parseFloat(bet):null,opp,mtt:S.mtt,limpers};
-    const d=decide(ctx);if(d){showDec(d);return;}
+    if(S.street==='preflop'){
+      const d=decide(ctx);
+      if(d){showDec(d);return;}
+      showErr('⚡ Укажи позицию чтобы скрипт сработал');return;
+    }
+    // Постфлоп без камеры — идём к AI с контекстом
   }
+  // С камерой: распознаём стол → преflop скрипт → постфлоп AI
 
   try{
     // STEP 1: Read the screen — buttons first, then table data
@@ -628,7 +635,10 @@ If no cards visible: NO CARDS`;
       const d2=decide(ctx2);
       if(d2){
         if(facingBet&&d2.action==='CHECK'){/* кнопки говорят что стоит ставка — идём к AI */}
-        else{showDec(d2);return;}
+        else{d2.dbg='СКРИПТ | key:'+updKey+' pos:'+(detPos||'?')+' opp:'+(detOpp||'нет');showDec(d2);return;}
+      } else {
+        // Логируем почему скрипт вернул null
+        console.warn('Script→null: key='+updKey+' pos='+(detPos||'?')+' opp='+(detOpp||'нет')+' → going to AI');
       }
     }
     // Постфлоп и непокрытые префлоп-случаи → AI
@@ -675,11 +685,15 @@ If no cards visible: NO CARDS`;
 
 
 function showDec(d){
-  const{action:a,size,reason,src}=d;
+  const{action:a,size,reason,src,dbg}=d;
   const MC={FOLD:'fold',CALL:'call',RAISE:'raise',CHECK:'check'};
   const LB={FOLD:'✕ FOLD',CALL:'✓ CALL',RAISE:'↑ RAISE',CHECK:'— CHECK'};
   let badge=LB[a]||a;if(a==='RAISE'&&size)badge='↑ '+size+'BB';
   const el=document.getElementById('bdg');el.className='bdg '+(MC[a]||'wait');el.textContent=badge;
+  // Debug строка
+  let dbgEl=document.getElementById('dbgline');
+  if(!dbgEl){dbgEl=document.createElement('div');dbgEl.id='dbgline';dbgEl.style='font-size:10px;color:#4a7060;padding:4px 14px;font-family:monospace';document.getElementById('atxt').parentNode.insertBefore(dbgEl,document.getElementById('atxt'));}
+  dbgEl.textContent='🔍 '+(dbg||'src:'+src);
   document.getElementById('atxt').className='atxt';document.getElementById('atxt').textContent=reason||'';
   const st=document.getElementById('stag');st.style.display='block';st.className='stag '+(src==='script'?'sc':'ai');st.textContent=src==='script'?'⚡ СКРИПТ':'🧠 AI';
   document.getElementById('fbrow').style.display='flex';
