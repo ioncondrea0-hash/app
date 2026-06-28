@@ -266,18 +266,27 @@ const CIRC=2*Math.PI*18;
 const RO='AKQJT98765432';
 const VP=['BTN','SB','BB','UTG','UTG+1','MP','HJ','CO'];
 
-// GTO RANGES
+// GTO RANGES - Source: Jonathan Little / PokerCoaching.com (solver-generated, MTT 75BB)
+// https://pokercoaching.com/preflop-charts/
 const OR={
-  UTG:['AA','KK','QQ','JJ','TT','99','88','77','AKo','AQo','AJo','AKs','AQs','AJs','ATs','KQs','KJs','QJs','JTs'],
-  MP:['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','ATo','AKs','AQs','AJs','ATs','A9s','KQs','KJs','KTs','QJs','QTs','JTs','T9s'],
-  HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','AKo','AQo','AJo','ATo','A9o','AKs','AQs','AJs','ATs','A9s','A8s','KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s','98s'],
-  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','AKo','AQo','AJo','ATo','A9o','A8o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','KQs','KJs','KTs','K9s','QJs','QTs','Q9s','JTs','J9s','T9s','98s','87s'],
-  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','T8s','98s','97s','87s','76s','65s'],
-  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s','98s','87s','76s'],
-  'UTG+1':['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','ATo','AKs','AQs','AJs','ATs','A9s','KQs','KJs','KTs','QJs','JTs','T9s'],
+  // UTG: 13.7% – 66+,A3s+,K9s+,Q9s+,AJo+,KQo
+  UTG:['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','KQo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','K9s','QJs','QTs','Q9s'],
+  // UTG+1: 16.3% – 66+,A3s+,K8s+,Q9s+,J9s+,T9s,98s,ATo+
+  'UTG+1':['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','ATo','KQo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','98s'],
+  // HJ: 27.9% – 22+,A2s+,K4s+,Q8s+,J8s+,T7s+,97s+,87s,76s,65s,54s,A8o+,KTo+,QTo+,JTo
+  HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','KQo','KJo','KTo','QJo','QTo','JTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','QJs','QTs','Q9s','Q8s','JTs','J9s','J8s','T9s','T8s','T7s','98s','97s','87s','76s','65s','54s'],
+  // CO: 37.3% – 22+,A2s+,K2s+,Q5s+,J7s+,T6s+,96s+,86s+,75s+,65s,54s,A5o+,K9o+,Q9o+,J9o+,T9o
+  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','KTo','K9o','QJo','QTo','Q9o','JTo','J9o','T9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','JTs','J9s','J8s','J7s','T9s','T8s','T7s','T6s','98s','97s','96s','87s','86s','76s','75s','65s','54s'],
+  // BTN: 54.8% – 22+,A2s+,K2s+,Q2s+,J3s+,T3s+,95s+,85s+,74s+,64s+,53s+,43s,A2o+,K5o+,Q8o+,J8o+,T7o+,97o+,87o
+  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','QJo','QTo','Q9o','Q8o','JTo','J9o','J8o','T9o','T8o','T7o','98o','97o','87o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','98s','97s','96s','95s','87s','86s','85s','76s','75s','74s','65s','64s','54s','53s','43s'],
+  // SB: wide range 81.6%
+  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','K4o','K3o','K2o','QJo','QTo','Q9o','Q8o','Q7o','Q6o','Q5o','Q4o','Q3o','Q2o','JTo','J9o','J8o','J7o','J6o','T9o','T8o','T7o','T6o','98o','97o','96o','95o','87o','86o','85o','75o','76o','64o','54o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','J2s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','T2s','98s','97s','96s','95s','94s','93s','92s','87s','86s','85s','84s','83s','82s','76s','75s','74s','73s','72s','65s','64s','63s','62s','54s','53s','52s','43s','42s','32s'],
+  // MP = UTG+2: 19.2% – 44+,A2s+,K8s+,Q9s+,J9s+,T8s+,98s,76s,ATo+,KTo+
+  MP:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','AKo','AQo','AJo','ATo','KQo','KJo','KTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','T8s','98s','76s'],
   BB:[]
 };
-const OS={UTG:3,MP:2.5,HJ:2.5,CO:2.5,BTN:2,SB:3,'UTG+1':2.5,BB:0};
+// Open sizes MTT (standard): UTG/MP=2.5BB, HJ/CO=2.5BB, BTN=2.5BB, SB=3BB
+const OS={UTG:2.5,MP:2.5,HJ:2.5,CO:2.5,BTN:2.5,SB:3,'UTG+1':2.5,BB:0};
 const PR={
   15:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQo','KJo','KTs','KQs','KJs','QJs','JTs'],
   12:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A5s','KQo','KJo','KQs','KJs','QJs'],
@@ -361,9 +370,21 @@ function decide(ctx){
     return{action:'FOLD',size:null,reason:`Фолд против 3-бета`,src:'script'};
   }
   if(opp==='лимп'){
-    if(ir(key,['AA','KK','QQ','JJ','TT','99','AKo','AQo','AJo','AKs','AQs','AJs','ATs','A9s','KQs','KJs','QJs']))return{action:'RAISE',size:4,reason:`Изоляция лимпера с ${key}`,src:'script'};
+    if(ir(key,['AA','KK','QQ','JJ','TT','99','AKo','AQo','AJo','AKs','AQs','AJs','ATs','A9s','KQs','KJs','QJs'])){
+      // +1BB за каждого лимпера
+      const limpers=ctx.limpers||1;
+      const isoSize=3+limpers;
+      return{action:'RAISE',size:isoSize,reason:`Изоляция ${limpers} лимпера(ов) с ${key} — рейз ${isoSize}BB`,src:'script'};
+    }
   }
-  if(!opp||opp===''){
+  if(opp==='рейз'){
+    // Против рейза — продолжаем только с сильными руками
+    const vsRaise=['AA','KK','QQ','JJ','TT','AKo','AKs','AQs','AQo','AJs'];
+    const vsRaiseCall=['99','88','AJo','ATs','KQs','KQo'];
+    if(ir(key,vsRaise))return{action:'RAISE',size:null,reason:`3-бет с ${key} против рейза`,src:'script'};
+    if(ir(key,vsRaiseCall)&&(pos==='BTN'||pos==='CO'||pos==='HJ'))return{action:'CALL',size:null,reason:`Колл рейза с ${key} в позиции`,src:'script'};
+    return{action:'FOLD',size:null,reason:`Фолд против рейза — ${key} не в диапазоне продолжения`,src:'script'};
+  }
     const range=OR[pos]||[];
     if(ir(key,range)){const size=OS[pos]||2.5;return{action:'RAISE',size,reason:`Открытие ${key} с ${pos} рейз ${size}BB`,src:'script'};}
     if(pos==='BB')return{action:'CHECK',size:null,reason:`BB — чек`,src:'script'};
@@ -461,7 +482,9 @@ async function analyze(b64){
   // Без камеры — сразу скрипт
   if(!b64&&key){
     const pos=document.getElementById('iPos').textContent||'';
-    const ctx={pos,street:S.street,handKey:key,stack:stack?parseFloat(stack):null,opp,mtt:S.mtt};
+    const oppCountVal=document.getElementById('oppCount').value;
+    const limpers=oppCountVal?parseInt(oppCountVal):1;
+    const ctx={pos,street:S.street,handKey:key,stack:stack?parseFloat(stack):null,opp,mtt:S.mtt,limpers};
     const d=decide(ctx);
     if(d){showDecision(d);return;}
   }
@@ -519,7 +542,9 @@ async function analyze(b64){
 
     // ШАГ 2: Префлоп — скрипт принимает решение
     if(detStreet==='preflop'&&detPos&&updKey){
-      const ctx={pos:detPos,street:'preflop',handKey:updKey,stack:detStack,opp:detOpp,mtt:S.mtt};
+      const oppCountVal=document.getElementById('oppCount').value;
+      const limpers=oppCountVal?parseInt(oppCountVal):1;
+      const ctx={pos:detPos,street:'preflop',handKey:updKey,stack:detStack,opp:detOpp,mtt:S.mtt,limpers};
       const d=decide(ctx);
       if(d){showDecision(d);return;}
     }
