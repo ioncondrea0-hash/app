@@ -616,14 +616,15 @@ If no cards visible: NO CARDS`;
       const bc=db.split(/[\s,]+/).filter(Boolean);
       if(bc.length>=5)dst='river';else if(bc.length===4)dst='turn';else if(bc.length>=3)dst='flop';
     }
-    const detPos=VP.includes(dp)?dp:'';
+    // Позиция: из распознавания или из iP (ранее сохранённая)
+    const detPos=VP.includes(dp)?dp:(VP.includes(document.getElementById('iP').textContent)?document.getElementById('iP').textContent:'');
     const detStack=m[6]?parseFloat(m[6]):null;
     const detBet=facingBet?(rawBet&&rawBet!=='?'?parseFloat(rawBet):2.5):(noBet?0:(rawBet?parseFloat(rawBet):null));
     const updKey=hk(S.hole[0],S.hole[1]);
 
     // МАРШРУТИЗАЦИЯ: префлоп → скрипт, постфлоп → всегда AI
-    if(dst==='preflop'&&detPos&&updKey){
-      const ctx2={pos:detPos,street:'preflop',key:updKey,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers};
+    if(dst==='preflop'&&updKey){
+      const ctx2={pos:detPos||'',street:'preflop',key:updKey,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers};
       const d2=decide(ctx2);
       if(d2){
         if(facingBet&&d2.action==='CHECK'){/* кнопки говорят что стоит ставка — идём к AI */}
