@@ -483,39 +483,95 @@ async function analyze(b64){
   }
 
   try{
-    const recP=`На фото покерный стол. Ответь ОДНОЙ строкой в точном формате:
-[C:cards|B:board|P:position|POT:pot|BET:bet|STK:stack|O:action]
+    // STEP 1: Read the screen — buttons first, then table data
+    const recP=`You are analyzing a screenshot of a poker app (mobile or desktop client).
 
-HERO внизу экрана. Position: жетон D=BTN, считай игроков по часовой до HERO (1=CO,2=HJ,3=MP,4=UTG). Жетон 0.5BB у HERO=SB, 1BB=BB.
-Если карты не видны: NO CARDS
+PRIORITY SIGNAL — ACTION BUTTONS (most reliable):
+Look at the bottom of the screen for the player's action buttons.
+- If you see buttons like "Call", "Fold", "Raise" (or "Колл", "Фолд", "Рейз") → BUTTONS:CFR
+- If you see buttons like "Check", "Bet" (or "Чек", "Бет") → BUTTONS:CB
+- If no buttons visible → BUTTONS:none
 
-Example: [C:Ah Kd|B:none|P:BTN|POT:10|BET:2.5|STK:45|O:none]`;
+This tells us whether there is a bet facing HERO:
+- CFR buttons = there IS a bet to act on (Call/Fold/Raise situation)
+- CB buttons = NO bet facing hero (Check/Bet situation)
+
+Also extract:
+- HERO cards (bottom of screen, 2 cards). If not visible: NO CARDS
+- Board cards (community cards in center)
+- HERO position: dealer chip D=BTN, count clockwise to HERO: 1=CO,2=HJ,3=MP,4=UTG. Small blind chip=SB, big blind=BB.
+- Pot size in BB (number near pot label)
+- Bet/call amount in BB shown on the Call button or bet display (if CFR buttons: this is the amount to call)
+- HERO stack in BB
+- Opponent action text visible (raise, bet, all-in, limp, check, etc.)
+
+Answer with EXACTLY ONE LINE in this format:
+[C:Ah Kd|B:Tc 7h 2s|P:BTN|POT:15|BET:5|STK:42|O:raise|BUTTONS:CFR]
+
+If no cards visible: NO CARDS`;
 
     const rec=await apiCall(recP,b64);
     if(!rec||rec.includes('NO CARDS')||rec.includes('КАРТЫ НЕ ВИДНЫ')){showErr('🃏 Карты не видны');return;}
-    
-    const m=rec.match(/\[?[CК]:(.*?)\|[BБ]:(.*?)\|[PП]:(.*?)\|(?:POT|БК):(.*?)\|(?:BET|СТ):(.*?)\|(?:STK|СК):(.*?)\|[OО]:([^\]\n]*)/i);
+
+    // Parse the response
+    const m=rec.match(/\[?[CК]:(.*?)\|[BБ]:(.*?)\|[PП]:(.*?)\|(?:POT|БК):(.*?)\|(?:BET|СТ):(.*?)\|(?:STK|СК):(.*?)\|[OО]:([^|\]\n]*?)(?:\|BUTTONS:([^\]\n]*))?[\]$]/i)
+      ||rec.match(/\[?[CК]:(.*?)\|[BБ]:(.*?)\|[PП]:(.*?)\|(?:POT|БК):(.*?)\|(?:BET|СТ):(.*?)\|(?:STK|СК):(.*?)\|[OО]:([^\]\n]*)/i);
 
     if(!m){
-      // Fallback — Claude анализирует напрямую
+      // Fallback — direct analysis with button context
       const sn={early:'Начало МТТ',mid:'Середина МТТ',bubble:'Пузырь',ft:'Финальный стол'};
-      const anlP=`MTT poker coach. Stage: ${sn[S.mtt]}.\n${rec}\n\nNo markdown! Answer:\nFOLD/CALL/RAISE/CHECK\nSIZE: X.XBB (if RAISE)\n1-2 sentences in Russian.`;
+      // Try to extract BUTTONS from raw response even without full parse
+      const rawBtns=rec.match(/BUTTONS:(CFR|CB|none)/i)?.[1]?.toUpperCase()||'';
+      const facingBet=rawBtns==='CFR';
+      const anlP=`MTT poker coach. Stage: ${sn[S.mtt]}.\n${rec}\n\nSituation: ${facingBet?'There IS a bet facing hero (Call/Fold/Raise available)':'No bet facing hero (Check/Bet available)'}.\nNo markdown! Answer:\nFOLD/CALL/RAISE/CHECK\nSIZE: X.XBB (if RAISE)\n1-2 sentences in Russian.`;
       const anl=await apiCall(anlP,null);
       const first=anl.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
       const ACTS=['FOLD','CALL','RAISE','CHECK'];
-      const action=ACTS.find(a=>first.includes(a))||ACTS.find(a=>anl.toUpperCase().includes(a))||'?';
+      // If facing bet, never suggest CHECK from fallback
+      let action=ACTS.find(a=>first.includes(a))||ACTS.find(a=>anl.toUpperCase().includes(a))||'?';
+      if(facingBet&&action==='CHECK')action='CALL';
       let size=null;const sm2=anl.match(/SIZE:\s*([\d.]+)\s*BB/i)||anl.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i);if(sm2)size=parseFloat(sm2[1]);
       showDec({action,size,reason:anl.replace(/SIZE:[\d.\s]*BB/gi,'').replace(/РАЗМЕР:[\d.\s]*BB/gi,'').trim(),src:'ai'});
       return;
     }
+
+    // Extract BUTTONS field — group 9 if present, or search raw
+    const rawButtons=(m[9]||rec.match(/BUTTONS:(CFR|CB|none)/i)?.[1]||'').toUpperCase().trim();
+    // CFR = Call/Fold/Raise buttons visible → there IS a bet facing hero
+    const facingBet = rawButtons==='CFR';
+    // CB = Check/Bet buttons visible → NO bet facing hero
+    const noBet = rawButtons==='CB';
+
     document.getElementById('iC').textContent=m[1]?.trim()||'—';
     document.getElementById('iB').textContent=m[2]?.trim()||'—';
     const dp=m[3]?.trim()||'';
     if(VP.includes(dp))document.getElementById('iP').textContent=dp;
     document.getElementById('iPt').textContent=m[4]?.trim()||'—';
-    document.getElementById('iBt').textContent=m[5]?.trim()||'—';
+
+    // BET: use button signal as override when chips are ambiguous
+    let rawBet=m[5]?.trim()||'';
+    if(facingBet&&(rawBet==='0'||rawBet==='none'||rawBet==='—'||rawBet==='')){
+      // Buttons say there IS a bet but we couldn't read the amount — mark as unknown bet
+      rawBet='?';
+    }
+    if(noBet){
+      // Buttons say no bet — override any misread
+      rawBet='0';
+    }
+    document.getElementById('iBt').textContent=rawBet||'—';
     document.getElementById('iSt').textContent=m[6]?.trim()||'—';
-    document.getElementById('iO').textContent=m[7]?.trim()||'—';
+
+    // Determine opponent action: button signal takes priority
+    let rawOppText=m[7]?.trim()||'';
+    if(facingBet&&!rawOppText){rawOppText='рейз';}// at minimum there's a bet/raise facing us
+    const detOpp=no(rawOppText||opp);
+    document.getElementById('iO').textContent=detOpp||rawOppText||'—';
+
+    // Show button signal in status bar
+    if(rawButtons==='CFR'){document.getElementById('cst').textContent='⚡ СТАВКА ПЕРЕД HERO';}
+    else if(rawButtons==='CB'){document.getElementById('cst').textContent='✓ РАСПОЗНАНО (чек доступен)';}
+    else{document.getElementById('cst').textContent='СЛЕЖУ ЗА СТОЛОМ';}
+
     if(m[1]&&m[1].trim()!=='—'&&!hole){
       m[1].trim().split(' ').slice(0,2).forEach((code,i)=>{const c=pc(code);if(c)S.hole[i]=c;});
       renderC();
@@ -529,19 +585,29 @@ Example: [C:Ah Kd|B:none|P:BTN|POT:10|BET:2.5|STK:45|O:none]`;
     }
     const detPos=VP.includes(dp)?dp:'';
     const detStack=m[6]?parseFloat(m[6]):null;
-    const detBet=m[5]?parseFloat(m[5]):null;
-    const detOpp=no(m[7]?.trim()||opp);
+    // For bet: if facing bet but amount unknown, use a placeholder so decide() goes to AI
+    const detBet=facingBet?(rawBet&&rawBet!=='?'?parseFloat(rawBet):2.5):(noBet?0:(rawBet?parseFloat(rawBet):null));
     const updKey=hk(S.hole[0],S.hole[1]);
     if(dst==='preflop'&&detPos&&updKey){
       const ctx2={pos:detPos,street:'preflop',key:updKey,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers};
-      const d2=decide(ctx2);if(d2){showDec(d2);return;}
+      const d2=decide(ctx2);
+      if(d2){
+        // Sanity-check: if buttons say facing bet, CHECK is wrong
+        if(facingBet&&d2.action==='CHECK'){/* skip script, go to AI */}
+        else{showDec(d2);return;}
+      }
     }
     const sn={early:'Начало МТТ',mid:'Середина МТТ',bubble:'Пузырь',ft:'Финальный стол'};
-    const anlP='МТТ тренер. Стадия: '+sn[S.mtt]+'.\nКарты: '+(m[1]?.trim()||hole||'?')+'\nБорд: '+(db||'нет')+'\nПозиция: '+(detPos||'?')+'\nБанк: '+(m[4]?.trim()||pot||'?')+'BB | Ставка: '+(m[5]?.trim()||bet||'0')+'BB\nСтек: '+(m[6]?.trim()||stack||'?')+'BB\nОппонент: '+(detOpp||'нет')+'\n\nБЕЗ markdown!\nFOLD/CALL/RAISE/CHECK\nРАЗМЕР: X.XBB (только если RAISE)\n1-2 предложения на русском.';
+    const btnCtx=facingBet?'⚠️ На экране видны кнопки Call/Fold/Raise — перед HERO СТОИТ СТАВКА. Вариант CHECK недопустим.'
+      :noBet?'На экране видны кнопки Check/Bet — ставки перед HERO нет.'
+      :'';
+    const anlP='МТТ тренер. Стадия: '+sn[S.mtt]+'.\nКарты: '+(m[1]?.trim()||hole||'?')+'\nБорд: '+(db||'нет')+'\nПозиция: '+(detPos||'?')+'\nБанк: '+(m[4]?.trim()||pot||'?')+'BB | Ставка: '+(rawBet&&rawBet!=='?'?rawBet:detBet||'неизвестна')+'BB\nСтек: '+(m[6]?.trim()||stack||'?')+'BB\nОппонент: '+(detOpp||'нет')+'\n'+(btnCtx?btnCtx+'\n':'')+'\nБЕЗ markdown!\nFOLD/CALL/RAISE/CHECK\nРАЗМЕР: X.XBB (только если RAISE)\n1-2 предложения на русском.';
     const anl=await apiCall(anlP,null);
     const first=anl.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
     const ACTS=['FOLD','CALL','RAISE','CHECK'];
-    const action=ACTS.find(a=>first.includes(a))||ACTS.find(a=>anl.toUpperCase().includes(a))||'?';
+    let action=ACTS.find(a=>first.includes(a))||ACTS.find(a=>anl.toUpperCase().includes(a))||'?';
+    // Final safety check: if buttons explicitly say there's a bet, never output CHECK
+    if(facingBet&&action==='CHECK')action='CALL';
     let size=null;const sm2=anl.match(/РАЗМЕР:\s*([\d.]+)\s*BB/i);if(sm2)size=parseFloat(sm2[1]);
     showDec({action,size,reason:anl.replace(/РАЗМЕР:[\d.\s]*BB/gi,'').trim(),src:'ai'});
   }catch(e){console.error(e);showErr('❌ '+e.message);}
