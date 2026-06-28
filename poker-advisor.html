@@ -256,18 +256,50 @@ const CIRC=2*Math.PI*18;
 const RO='AKQJT98765432';
 const VP=['BTN','SB','BB','UTG','UTG+1','MP','HJ','CO'];
 
-// GTO OPENING RANGES - Jonathan Little / PokerCoaching.com (MTT 75BB)
+// GTO OPENING RANGES - PokerCoaching.com / Jonathan Little (MTT 75BB, solver-based 2025)
+// UTG: ~13% | UTG+1: ~15% | MP(LJ): ~18% | HJ: ~21% | CO: ~27% | BTN: ~51% | SB: raise ~40%
 const OR={
-  UTG:['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','KQo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','K9s','QJs','QTs','Q9s'],
-  'UTG+1':['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','ATo','KQo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','98s'],
-  MP:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','AKo','AQo','AJo','ATo','KQo','KJo','KTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','T8s','98s','76s'],
-  HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','KQo','KJo','KTo','QJo','QTo','JTo','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','QJs','QTs','Q9s','Q8s','JTs','J9s','J8s','T9s','T8s','T7s','98s','97s','87s','76s','65s','54s'],
-  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','KTo','K9o','QJo','QTo','Q9o','JTo','J9o','T9o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','JTs','J9s','J8s','J7s','T9s','T8s','T7s','T6s','98s','97s','96s','87s','86s','76s','75s','65s','54s'],
-  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','QJo','QTo','Q9o','Q8o','JTo','J9o','J8o','T9o','T8o','T7o','98o','97o','87o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','98s','97s','96s','95s','87s','86s','85s','76s','75s','74s','65s','64s','54s','53s','43s'],
-  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','A4o','A3o','A2o','KQo','KJo','KTo','K9o','K8o','K7o','K6o','K5o','K4o','K3o','K2o','QJo','QTo','Q9o','Q8o','Q7o','Q6o','Q5o','Q4o','Q3o','Q2o','JTo','J9o','J8o','J7o','J6o','T9o','T8o','T7o','T6o','98o','97o','96o','95o','87o','86o','85o','75o','76o','64o','54o','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','Q7s','Q6s','Q5s','Q4s','Q3s','Q2s','JTs','J9s','J8s','J7s','J6s','J5s','J4s','J3s','J2s','T9s','T8s','T7s','T6s','T5s','T4s','T3s','T2s','98s','97s','96s','95s','94s','93s','92s','87s','86s','85s','84s','83s','82s','76s','75s','74s','73s','72s','65s','64s','63s','62s','54s','53s','52s','43s','42s','32s'],
+  UTG:['AA','KK','QQ','JJ','TT','99','88','77','66','AKo','AQo','AJo','KQo',
+       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s',
+       'KQs','KJs','KTs','K9s','QJs','QTs','J9s','T9s','98s'],
+  'UTG+1':['AA','KK','QQ','JJ','TT','99','88','77','66','55',
+            'AKo','AQo','AJo','ATo','KQo',
+            'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+            'KQs','KJs','KTs','K9s','QJs','QTs','Q9s','JTs','J9s','T9s','98s','87s','76s'],
+  MP:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44',
+      'AKo','AQo','AJo','ATo','KQo','KJo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','JTs','J9s','T9s','T8s','98s','87s','76s','65s'],
+  HJ:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','KQo','KJo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','Q8s',
+      'JTs','J9s','J8s','T9s','T8s','98s','87s','76s','65s','54s'],
+  CO:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','KQo','KJo',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','K7s','QJs','QTs','Q9s','Q8s',
+      'JTs','J9s','J8s','T9s','T8s','T7s','98s','97s','86s','75s','64s','54s','43s'],
+  BTN:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+       'AKo','AQo','AJo','ATo','A9o','A8o','A7o','KQo','KJo','KTo','K9o','QJo','QTo','Q8o','JTo','J9o','T9o','98o','87o',
+       'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+       'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s',
+       'QJs','QTs','Q9s','Q8s','Q7s','Q6s',
+       'JTs','J9s','J8s','J7s','J6s',
+       'T9s','T8s','T7s','T6s',
+       '98s','97s','96s','87s','86s','85s','76s','75s','65s','64s','53s','43s'],
+  SB:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
+      'AKo','AQo','AJo','ATo','A9o','A8o','A7o','A6o','A5o','KQo','KJo','KTo','K9o','K8o','QJo','QTo','Q9o','JTo','J9o','T9o','T8o','98o','87o',
+      'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
+      'KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s',
+      'QJs','QTs','Q9s','Q8s','Q7s',
+      'JTs','J9s','J8s','J7s','J6s',
+      'T9s','T8s','T7s','T6s',
+      '98s','97s','96s','87s','86s','85s','76s','75s','65s','64s','54s','43s'],
   BB:[]
 };
-const OS={UTG:2.5,MP:2.5,HJ:2.5,CO:2.5,BTN:2.5,SB:3,'UTG+1':2.5,BB:0};
+// Open sizes: UTG/MP smaller (less squeeze risk), BTN/SB bigger (discourage BB calls)
+const OS={UTG:2.2,'UTG+1':2.2,MP:2.3,HJ:2.5,CO:2.5,BTN:2.5,SB:3,BB:0};
 
 // PUSH/FOLD - Jonathan Little / PokerCoaching.com (Nash equilibrium, no ante)
 const PR={
@@ -330,12 +362,13 @@ function matchR(rule,ctx){
   return true;
 }
 
-// SCRIPT ENGINE
+// SCRIPT ENGINE — только преflop. Флоп/тёрн/ривер → всегда AI.
 function decide(ctx){
   const{pos,street,key,stack,opp,bet}=ctx;
   if(!key)return null;
-  // Custom rules first
+  // Custom rules — работают на любом стрите
   for(const r of rules){if(matchR(r,ctx))return{action:r.action,size:r.size?parseFloat(r.size):null,reason:'[Правило] '+(r.reason||r.action),src:'script'};}
+  // Постфлоп → только AI
   if(street!=='preflop')return null;
   // Push/fold short stack
   if(stack&&stack<=15){
@@ -357,7 +390,7 @@ function decide(ctx){
     if(ir(key,['TT','99','AQo','AQs'])&&(pos==='BTN'||pos==='CO'))return{action:'CALL',size:null,reason:'Колл 3-бета в позиции с '+key,src:'script'};
     return{action:'FOLD',size:null,reason:'Фолд против 3-бета с '+key,src:'script'};
   }
-  // vs raise (pot odds formula - GTO Wizard)
+  // vs raise
   if(opp==='рейз'){
     const rs=bet?parseFloat(bet):2.5;
     const call=rs-1;
@@ -384,7 +417,7 @@ function decide(ctx){
   if(!opp||opp===''){
     const range=OR[pos]||[];
     if(ir(key,range)){const sz=OS[pos]||2.5;return{action:'RAISE',size:sz,reason:'Открытие '+key+' с '+pos+' рейз '+sz+'BB',src:'script'};}
-    if(pos==='BB')return{action:'CHECK',size:null,reason:'BB — чек',src:'script'};
+    if(pos==='BB')return{action:'CHECK',size:null,reason:'BB — чек (опция)',src:'script'};
     return{action:'FOLD',size:null,reason:key+' не в диапазоне открытия с '+pos,src:'script'};
   }
   return null;
@@ -585,23 +618,47 @@ If no cards visible: NO CARDS`;
     }
     const detPos=VP.includes(dp)?dp:'';
     const detStack=m[6]?parseFloat(m[6]):null;
-    // For bet: if facing bet but amount unknown, use a placeholder so decide() goes to AI
     const detBet=facingBet?(rawBet&&rawBet!=='?'?parseFloat(rawBet):2.5):(noBet?0:(rawBet?parseFloat(rawBet):null));
     const updKey=hk(S.hole[0],S.hole[1]);
+
+    // МАРШРУТИЗАЦИЯ: префлоп → скрипт, постфлоп → всегда AI
     if(dst==='preflop'&&detPos&&updKey){
       const ctx2={pos:detPos,street:'preflop',key:updKey,stack:detStack,bet:detBet,opp:detOpp,mtt:S.mtt,limpers};
       const d2=decide(ctx2);
       if(d2){
-        // Sanity-check: if buttons say facing bet, CHECK is wrong
-        if(facingBet&&d2.action==='CHECK'){/* skip script, go to AI */}
+        if(facingBet&&d2.action==='CHECK'){/* кнопки говорят что стоит ставка — идём к AI */}
         else{showDec(d2);return;}
       }
     }
+    // Постфлоп и непокрытые префлоп-случаи → AI
     const sn={early:'Начало МТТ',mid:'Середина МТТ',bubble:'Пузырь',ft:'Финальный стол'};
-    const btnCtx=facingBet?'⚠️ На экране видны кнопки Call/Fold/Raise — перед HERO СТОИТ СТАВКА. Вариант CHECK недопустим.'
-      :noBet?'На экране видны кнопки Check/Bet — ставки перед HERO нет.'
+    const stritName={preflop:'Префлоп',flop:'Флоп',turn:'Тёрн',river:'Ривер'};
+    const btnCtx=facingBet?'⚠️ Кнопки Call/Fold/Raise — перед HERO СТОИТ СТАВКА. CHECK недопустим.'
+      :noBet?'Кнопки Check/Bet — ставки нет.'
       :'';
-    const anlP='МТТ тренер. Стадия: '+sn[S.mtt]+'.\nКарты: '+(m[1]?.trim()||hole||'?')+'\nБорд: '+(db||'нет')+'\nПозиция: '+(detPos||'?')+'\nБанк: '+(m[4]?.trim()||pot||'?')+'BB | Ставка: '+(rawBet&&rawBet!=='?'?rawBet:detBet||'неизвестна')+'BB\nСтек: '+(m[6]?.trim()||stack||'?')+'BB\nОппонент: '+(detOpp||'нет')+'\n'+(btnCtx?btnCtx+'\n':'')+'\nБЕЗ markdown!\nFOLD/CALL/RAISE/CHECK\nРАЗМЕР: X.XBB (только если RAISE)\n1-2 предложения на русском.';
+    // Постфлоп-специфичный промпт с детальным контекстом
+    let anlP;
+    if(dst!=='preflop'){
+      const spr=detStack&&detBet?(detStack/(parseFloat(m[4]?.trim()||pot||'10'))).toFixed(1):'?';
+      anlP='МТТ тренер. Стадия: '+sn[S.mtt]+'. Стрит: '+stritName[dst]+'.\n'
+        +'Рука HERO: '+(m[1]?.trim()||hole||'?')+'\n'
+        +'Борд: '+(db||'?')+'\n'
+        +'Позиция: '+(detPos||'?')+'\n'
+        +'Банк: '+(m[4]?.trim()||pot||'?')+'BB | Ставка оппонента: '+(rawBet&&rawBet!=='?'?rawBet:detBet||'0')+'BB\n'
+        +'Стек HERO: '+(m[6]?.trim()||stack||'?')+'BB | SPR ≈ '+spr+'\n'
+        +'Действие оппонента: '+(detOpp||'нет')+'\n'
+        +(btnCtx?btnCtx+'\n':'')
+        +'\nПроанализируй:\n'
+        +'1. Сила руки на этом борде (топ-пара, дро, сет и т.д.)\n'
+        +'2. Текстура борда (дроу-борд / сухой / парный)\n'
+        +'3. Пот-оддс если есть ставка\n'
+        +'\nБЕЗ markdown! Ответ:\n'
+        +'FOLD/CALL/RAISE/CHECK\n'
+        +'РАЗМЕР: X.XBB (только если RAISE или BET)\n'
+        +'2-3 предложения на русском — почему именно это действие.';
+    } else {
+      anlP='МТТ тренер. Стадия: '+sn[S.mtt]+'.\nКарты: '+(m[1]?.trim()||hole||'?')+'\nБорд: '+(db||'нет')+'\nПозиция: '+(detPos||'?')+'\nБанк: '+(m[4]?.trim()||pot||'?')+'BB | Ставка: '+(rawBet&&rawBet!=='?'?rawBet:detBet||'0')+'BB\nСтек: '+(m[6]?.trim()||stack||'?')+'BB\nОппонент: '+(detOpp||'нет')+'\n'+(btnCtx?btnCtx+'\n':'')+'\nБЕЗ markdown!\nFOLD/CALL/RAISE/CHECK\nРАЗМЕР: X.XBB (только если RAISE)\n1-2 предложения на русском.';
+    }
     const anl=await apiCall(anlP,null);
     const first=anl.trim().split(/[\s\n,.!:]/)[0].toUpperCase();
     const ACTS=['FOLD','CALL','RAISE','CHECK'];
