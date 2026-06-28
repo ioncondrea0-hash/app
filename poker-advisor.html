@@ -596,8 +596,18 @@ FOLD
         else detStreet='preflop';
       }
 
-      if(detPos&&updKey){
-        const ctx2={pos:detPos,street:detStreet,handKey:updKey,stack:detStack,pot:im[4]?parseFloat(im[4]):null,bet:im[5]?parseFloat(im[5]):null,opp:detOpp,mtt:S.mtt};
+      // Нормализуем действие оппонента
+      let normOpp=detOpp||opp||'';
+      if(normOpp.toLowerCase().includes('лимп'))normOpp='лимп';
+      else if(normOpp.toLowerCase().includes('3-бет')||normOpp.toLowerCase().includes('3бет'))normOpp='3-бет';
+      else if(normOpp.toLowerCase().includes('4-бет')||normOpp.toLowerCase().includes('4бет'))normOpp='4-бет';
+      else if(normOpp.toLowerCase().includes('олл-ин')||normOpp.toLowerCase().includes('all-in'))normOpp='олл-ин';
+      else if(normOpp.toLowerCase().includes('мин-рейз')||normOpp.toLowerCase().includes('рейз'))normOpp='рейз';
+      else if(normOpp.toLowerCase().includes('чек'))normOpp='чек';
+      else if(normOpp.toLowerCase().includes('фолд')||normOpp.toLowerCase().includes('fold'))normOpp='';
+
+      if(detPos&&updKey&&detStreet==='preflop'){
+        const ctx2={pos:detPos,street:detStreet,handKey:updKey,stack:detStack,pot:im[4]?parseFloat(im[4]):null,bet:im[5]?parseFloat(im[5]):null,opp:normOpp,mtt:S.mtt};
         const dec2=scriptDecide(ctx2);
         if(dec2){showDecision(dec2);return;}
       }
