@@ -494,11 +494,7 @@ Example: [C:Ah Kd|B:none|P:BTN|POT:10|BET:2.5|STK:45|O:none]`;
     const rec=await apiCall(recP,b64);
     if(!rec||rec.includes('NO CARDS')||rec.includes('КАРТЫ НЕ ВИДНЫ')){showErr('🃏 Карты не видны');return;}
     
-    // Match English or Russian keys, with or without brackets
-    const m=rec.match(/\[?C:(.*?)\|B:(.*?)\|P:(.*?)\|POT:(.*?)\|BET:(.*?)\|STK:(.*?)\|O:(.*?)[\]$]/i)
-           ||rec.match(/\[?К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:(.*?)[\]$\n]/i)
-           ||rec.match(/C:(.*?)\|B:(.*?)\|P:(.*?)\|POT:(.*?)\|BET:(.*?)\|STK:(.*?)\|O:([^\]\n]*)/i)
-           ||rec.match(/К:(.*?)\|Б:(.*?)\|П:(.*?)\|БК:(.*?)\|СТ:(.*?)\|СК:(.*?)\|О:([^\]\n]*)/i);
+    const m=rec.match(/\[?[CК]:(.*?)\|[BБ]:(.*?)\|[PП]:(.*?)\|(?:POT|БК):(.*?)\|(?:BET|СТ):(.*?)\|(?:STK|СК):(.*?)\|[OО]:([^\]\n]*)/i);
 
     if(!m){
       // Fallback — Claude анализирует напрямую
